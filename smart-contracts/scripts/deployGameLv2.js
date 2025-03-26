@@ -16,6 +16,9 @@ async function main() {
   // Get the contract address
   const contractAddress = await erikGameLv2.getAddress();
   
+  // Get network information including chainId
+  const chainId = (await ethers.provider.getNetwork()).chainId;
+  
   // Log success with contract details
   log("ErikGameLv2 deployment complete!", { 
     type: 'info',
@@ -23,6 +26,7 @@ async function main() {
       name: "ErikGameLv2",
       address: contractAddress,
       network: network.name,
+      chainId: chainId.toString(),
       abi: ErikGameLv2.interface.fragments,
       notes: "Game of Twinkles - Level 2 with authorization required for token two"
     },

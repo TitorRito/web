@@ -118,6 +118,10 @@ function log(message, options = {}) {
       logMessage += `\n  - Network: ${contractDetails.network}`;
     }
     
+    if (contractDetails.chainId) {
+      logMessage += `\n  - Chain ID: ${contractDetails.chainId}`;
+    }
+    
     if (contractDetails.abi) {
       const friendly = formatABI(contractDetails.abi);
       logMessage += '\n  - ABI Summary:';

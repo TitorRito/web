@@ -16,6 +16,7 @@ const {log} = require("./utils");
         // Get the network information
         const network = await ethers.provider.getNetwork();
         const networkName = network.name === 'unknown' ? 'localhost' : network.name;
+        const chainId = network.chainId.toString();
         
         // Single comprehensive log with all contract details
         log(`${name} deployment completed successfully`, {
@@ -24,6 +25,7 @@ const {log} = require("./utils");
                 name: name,
                 address: contractAddress,
                 network: networkName,
+                chainId: chainId,
                 abi: Contract.interface.fragments,
                 notes: "Game contract deployed with standard configuration"
             }
