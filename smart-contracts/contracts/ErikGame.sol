@@ -9,7 +9,7 @@ pragma solidity ^0.8.20;
  */
 
 contract ErikGame {
-    address private _auth;
+    address public _auth;
     // string public name = "Game of Seven Evens";
     string public name = "Game of Twinkles";
     string public constant ONE = "1";
@@ -44,5 +44,9 @@ contract ErikGame {
 
     function getStatus() public view returns (uint256, uint256) {
         return (tokenOneBalance[msg.sender], tokenTwoBalance[msg.sender]);
+    }
+
+    function getAuth() public view returns (address) {
+        return _auth;
     }
 }
