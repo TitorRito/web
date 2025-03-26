@@ -2,7 +2,7 @@ const {ethers} = require("hardhat");
 const {log} = require("./utils");
 
 (function deploy(){
-    const name = "ErikGameLv2";
+    const name = "ErikGame";
     // Remove initial log here
 
     async function main(){

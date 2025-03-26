@@ -1,0 +1,22 @@
+[2025-03-26T15:47:31.308Z] [INFO] ErikGameLv2 deployment complete!
+Contract Details:
+  - Name: ErikGameLv2
+  - Address: 0x8E320298A99f44cc47Ddc0Cb329bECBC932fd4D0
+  - Network: localhost
+  - ABI Summary:
+    Functions:
+      - ONE() → string  [view]
+      - TWO() → string  [view]
+      - _auth() → address  [view]
+      - authorizeTokenOne()  [nonpayable]
+      - getStatus() → uint256 , uint256  [view]
+      - getTokenOne() → string  [nonpayable]
+      - getTokenTwo() → string  [nonpayable]
+      - name() → string  [view]
+      - tokenOneAuthorized(address ) → bool  [view]
+      - tokenOneBalance(address ) → uint256  [view]
+      - tokenTwoBalance(address ) → uint256  [view]
+    Events:
+      - TokenEvent(address indexed user, string token)
+      - WelcomeAuthorizationEvent(address indexed user, string message)
+  - Notes: Game of Twinkles - Level 2 with authorization required for token two

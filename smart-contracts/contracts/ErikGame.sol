@@ -29,7 +29,7 @@ contract ErikGame {
         return ONE;
     }
 
-    function getTokenTwo() public returns (string memory) {
+    function getTokenTwo() public virtual returns (string memory) {
         require(
             tokenOneBalance[msg.sender] > 0,
             "You must have token one to get token two"
