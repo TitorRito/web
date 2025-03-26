@@ -34,7 +34,7 @@ export default function Navbar() {
                     <li key={route.name}>
                         <Link 
                             href={route.path} 
-                            className={`hover:underline ${isRouteActive(route.path) ? 'border-b-2 border-blue-500 pb-1' : ''}`}
+                            className={`:underline ${isRouteActive(route.path) ? 'border-b-2 border-blue-500 pb-1' : ''}`}
                         >
                             {route.name}
                         </Link>
