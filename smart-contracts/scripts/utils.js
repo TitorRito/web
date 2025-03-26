@@ -6,9 +6,10 @@ const path = require('path');
  * @param {string} name - Function or event name.
  * @param {string} inputs - Comma-separated string of input types and names.
  * @param {string} type - The type of the abi item to return (function, event, constructor ect)
+ * @param {string} stateMutability - The state mutability of the ABI.
  * @returns {string} - Formatted signature string.
  */
-function formatSignature(name, inputs, type) {
+function formatSignature(name, inputs, type, stateMutability) {
     let formattedInputs = '';
     if (inputs) {
         formattedInputs = inputs
@@ -17,19 +18,12 @@ function formatSignature(name, inputs, type) {
             .join(',');
     }
 
-    if (type === "function") {
-        return `function ${name}(${formattedInputs})`;
+    let signature = `${type} ${name}(${formattedInputs})`;
+    if (type === 'function') {
+        signature = `${type} ${name}(${formattedInputs}) ${stateMutability}`; // Add state mutability
     }
-    if (type === "event") {
-        return `event ${name}(${formattedInputs})`;
-    }
-    if (type === "constructor") {
-        return `constructor(${formattedInputs})`;
-    }
-    if (type === "error") {
-      return `error ${name}(${formattedInputs})`;
-    }
-    return `${type} ${name}(${formattedInputs})`;
+
+    return signature;
 }
 
 /**
@@ -46,10 +40,12 @@ function formatABI(abi) {
         let signature = null;
 
         if (item.type === 'function' || item.type === 'event' || item.type === 'constructor' || item.type === 'error') {
-            signature = formatSignature(item.name,
-                item.inputs
-                    ?.map((input) => `${input.type} ${input.name}`)
-                    .join(', ') || '', item.type);
+            signature = formatSignature(
+                item.name,
+                item.inputs?.map((input) => `${input.type} ${input.name}`).join(', ') || '',
+                item.type,
+                item.stateMutability // Pass state mutability
+            );
             humanReadableABI.push(signature);
         }
     });
