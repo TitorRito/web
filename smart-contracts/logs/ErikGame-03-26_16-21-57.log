@@ -1,0 +1,19 @@
+[2025-03-26T15:21:57.802Z] [SUCCESS] ErikGame deployment completed successfully
+Contract Details:
+  - Name: ErikGame
+  - Address: 0x84A4F2B41Ce6682206e74645F830e44A8315Bd5c
+  - Network: localhost
+  - ABI Summary:
+    Functions:
+      - ONE() → string  [view]
+      - TWO() → string  [view]
+      - _auth() → address  [view]
+      - getStatus() → uint256 , uint256  [view]
+      - getTokenOne() → string  [nonpayable]
+      - getTokenTwo() → string  [nonpayable]
+      - name() → string  [view]
+      - tokenOneBalance(address ) → uint256  [view]
+      - tokenTwoBalance(address ) → uint256  [view]
+    Events:
+      - TokenEvent(address indexed user, string token)
+  - Notes: Game contract deployed with standard configuration
