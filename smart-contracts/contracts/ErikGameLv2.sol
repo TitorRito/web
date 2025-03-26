@@ -1,60 +1,46 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "./ErikGame.sol";
+
 /*
  ** idea: that token two can only be obtained by owning token one first.
  ** lv1: anyone can get token one, or two, but rules still apply
  ** lv2: token 1 is a token of authorisation that the user must call/allow inside their wallet, to then recieve token 2.
  */
 
-contract ErikGameLv2 {
-    address public _auth;
-    string public name = "Game of Twinkles";
-    string public constant ONE = "1";
-    string public constant TWO = "2";
-
-    mapping(address => uint256) public tokenOneBalance;
-    mapping(address => uint256) public tokenTwoBalance;
-    
-    // Add mapping for token one authorization
+contract ErikGameLv2 is ErikGame {
     mapping(address => bool) public tokenOneAuthorized;
 
-    constructor() {
-        _auth = msg.sender;
-    }
+    constructor() ErikGame() {}
 
-    event TokenEvent(address indexed user, string token);
+    event WelcomeAuthorizationEvent(address indexed user, string message);
 
-    function getTokenOne() public returns (string memory) {
-        tokenOneBalance[msg.sender] += 1;
-        emit TokenEvent(msg.sender, ONE);
-
-        return ONE;
-    }
-    
-    // Add function to authorize token one usage
     function authorizeTokenOne() public {
-        require(tokenOneBalance[msg.sender] > 0, "You don't have any token one to authorize");
+        require(
+            tokenOneBalance[msg.sender] > 0,
+            "You don't have any token one to authorize"
+        );
         tokenOneAuthorized[msg.sender] = true;
-        emit TokenEvent(msg.sender, "Authorization");
+        emit WelcomeAuthorizationEvent(
+            msg.sender,
+            "Thank you and welcome! Your address has authorized this contract"
+        );
     }
 
-    // Add modifier for token one authorization check
-    modifier onlyAuthorized() {
-        require(tokenOneBalance[msg.sender] > 0, "You must have token one to get token two");
-        require(tokenOneAuthorized[msg.sender], "You must authorize your token one first");
-        _;
-    }
+    function getTokenTwo() public override returns (string memory) {
+        require(
+            tokenOneBalance[msg.sender] > 0,
+            "You must have token one to get token two"
+        );
+        require(
+            tokenOneAuthorized[msg.sender],
+            "You must authorize your token one first"
+        );
 
-    function getTokenTwo() public onlyAuthorized returns (string memory) {
         tokenTwoBalance[msg.sender] += 1;
         emit TokenEvent(msg.sender, TWO);
 
         return TWO;
     }
-
-    function getStatus() public view returns (uint256, uint256) {
-        return (tokenOneBalance[msg.sender], tokenTwoBalance[msg.sender]);
-    }
-    
 }
