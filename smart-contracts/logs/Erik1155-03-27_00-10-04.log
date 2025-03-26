@@ -1,0 +1,44 @@
+[2025-03-26T23:10:04.211Z] [INFO] Erik1155 deployment complete!
+Contract Details:
+  - Name: Erik1155
+  - Address: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+  - Network: localhost
+  - Chain ID: 31337
+  - Human-Readable ABI:
+[
+  "constructor undefined()",
+  "error ERC1155InsufficientBalance(address,uint256,uint256,uint256)",
+  "error ERC1155InvalidApprover(address)",
+  "error ERC1155InvalidArrayLength(uint256,uint256)",
+  "error ERC1155InvalidOperator(address)",
+  "error ERC1155InvalidReceiver(address)",
+  "error ERC1155InvalidSender(address)",
+  "error ERC1155MissingApprovalForAll(address,address)",
+  "event ApprovalForAll(address,address,bool)",
+  "event TransferBatch(address,address,address,uint256[],uint256[])",
+  "event TransferSingle(address,address,address,uint256,uint256)",
+  "event URI(string,uint256)",
+  "function BASKET() view",
+  "function COOLDOWN() view",
+  "function FLOWER() view",
+  "function FRUIT() view",
+  "function PLANT() view",
+  "function SEED() view",
+  "function SOIL() view",
+  "function WATER() view",
+  "function balanceOf(address,uint256) view",
+  "function balanceOfBatch(address[],uint256[]) view",
+  "function burnToken(uint256) nonpayable",
+  "function forgeToken(uint256) nonpayable",
+  "function isApprovedForAll(address,address) view",
+  "function lastMintTime(address) view",
+  "function mintBasicToken(uint256) nonpayable",
+  "function safeBatchTransferFrom(address,address,uint256[],uint256[],bytes) nonpayable",
+  "function safeTransferFrom(address,address,uint256,uint256,bytes) nonpayable",
+  "function setApprovalForAll(address,bool) nonpayable",
+  "function supportsInterface(bytes4) view",
+  "function timeUntilNextMint(address) view",
+  "function tradeForBasic(uint256,uint256) nonpayable",
+  "function uri(uint256) view"
+]
+  - Notes: ERC1155 token with basic minting and forging functionality
