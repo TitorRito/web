@@ -35,4 +35,22 @@ describe("Eriks Contract Functions", function () {
         ).to.be.revertedWith("You must have token one to get token two");
         
     });
+
+    it("Should emit TokenEvent when tokens are minted", async function () {
+        const [owner, addr1] = await ethers.getSigners();
+
+        const ErikGame = await ethers.getContractFactory(CONTRACT_NAME);
+        const hardhatErikGame = await ErikGame.deploy();
+        await hardhatErikGame.waitForDeployment();
+
+        // Check event emission for getTokenOne
+        await expect(hardhatErikGame.connect(addr1).getTokenOne())
+            .to.emit(hardhatErikGame, "TokenEvent")
+            .withArgs(addr1.address, "1");
+
+        // Check event emission for getTokenTwo
+        await expect(hardhatErikGame.connect(addr1).getTokenTwo())
+            .to.emit(hardhatErikGame, "TokenEvent")
+            .withArgs(addr1.address, "2");
+    });
 });

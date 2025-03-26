@@ -5,12 +5,10 @@ pragma solidity ^0.8.20;
  ** idea: that token two can only be obtained by owning token one first.
  ** lv1: anyone can get token one, or two, but rules still apply
  ** lv2: token 1 is a token of authorisation that the user must call/allow inside their wallet, to then recieve token 2.
- ** lv3: you are addede to the vip array if you owner token 2.
  */
 
 contract ErikGame {
     address public _auth;
-    // string public name = "Game of Seven Evens";
     string public name = "Game of Twinkles";
     string public constant ONE = "1";
     string public constant TWO = "2";
@@ -44,9 +42,5 @@ contract ErikGame {
 
     function getStatus() public view returns (uint256, uint256) {
         return (tokenOneBalance[msg.sender], tokenTwoBalance[msg.sender]);
-    }
-
-    function getAuth() public view returns (address) {
-        return _auth;
     }
 }
