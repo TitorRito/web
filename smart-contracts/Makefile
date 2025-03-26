@@ -12,6 +12,7 @@ help:
 	@echo "  make clean           - Clean build artifacts"
 	@echo "  make deploy          - Deploy contracts to localhost (default)"
 	@echo "  make deploy-lv2      - Deploy ErikGameLv2 to localhost"
+	@echo "  make deploy-erik     - Deploy Erik1155 to localhost"
 	@echo "  make deploy-NETWORK=<network> - Deploy to specific network"
 
 # Compile contracts
@@ -44,6 +45,12 @@ deploy: compile
 deploy-lv2: compile
 	@echo "Deploying ErikGameLv2 to $(NETWORK)..."
 	npx hardhat run scripts/deployGameLv2.js --network $(NETWORK)
+
+# Deploy Erik1155 specifically
+.PHONY: deploy-erik
+deploy-erik: compile
+	@echo "Deploying Erik1155 to $(NETWORK)..."
+	npx hardhat run scripts/deployErik.js --network $(NETWORK)
 
 # Start a local Ganache instance
 .PHONY: ganache
