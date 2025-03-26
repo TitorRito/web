@@ -23,6 +23,7 @@ contract ErikGame {
     event TokenEvent(address indexed user, string token);
 
     function getTokenOne() public returns (string memory) {
+        require(tokenOneBalance[msg.sender] == 0, "You already have token one");
         tokenOneBalance[msg.sender] += 1;
         emit TokenEvent(msg.sender, ONE);
 
@@ -34,6 +35,7 @@ contract ErikGame {
             tokenOneBalance[msg.sender] > 0,
             "You must have token one to get token two"
         );
+        require(tokenTwoBalance[msg.sender] == 0, "You already have token two");
         tokenTwoBalance[msg.sender] += 1;
         emit TokenEvent(msg.sender, TWO);
 
