@@ -37,7 +37,7 @@ clean:
 .PHONY: deploy
 deploy: compile
 	@echo "Deploying contracts to $(NETWORK)..."
-	npx hardhat run scripts/deploy.js --network $(NETWORK)
+	npx hardhat run scripts/deployGame.js --network $(NETWORK)
 
 # Deploy ErikGameLv2 specifically
 .PHONY: deploy-lv2
