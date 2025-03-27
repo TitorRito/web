@@ -2,7 +2,8 @@
 import { use, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { User, Contract } from '@/lib/types';
-import LogInWallet from '@/components/LogInWallet';
+import LogInWallet from '@/components/w3/WalletLogIn';
+import ContractCreate from '@/components/w3/ContractCreate';
 
 async function getUserProvider(): Promise<User> {
   if (!window.ethereum) {
@@ -88,8 +89,6 @@ export default function Dapp() {
       setError('Error: no user signer instance from ethers provided');
       return;
     }
-
-
   }
 
   if (window) {
@@ -98,11 +97,14 @@ export default function Dapp() {
   }
 
   return (
-    <div className='flex flex-col items-center justify-around gap-4 h-screen'>
+    <div className='flex flex-col items-center justify-start gap-4 h-screen py-8'>
       <LogInWallet
         user={user}
         handleConnection={handleConnectWallet}
       />
+      {user && (
+        contract ? <div>Contract: {contract.address}</div> : <ContractCreate />)
+      }
     </div>
   );
 }

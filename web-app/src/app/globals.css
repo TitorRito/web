@@ -46,3 +46,8 @@ button {
 input:focus, textarea:focus {
   outline: none;
 }
+
+::selection {
+  background: var(--foreground);
+  color: var(--background);
+}

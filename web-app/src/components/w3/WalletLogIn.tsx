@@ -54,7 +54,7 @@ const UserUI = ({ user }: { user: User }) => {
     );
 };
 
-const LogInWallet = ({
+const WalletLogIn = ({
     user,
     handleConnection
 }: {
@@ -93,4 +93,4 @@ const LogInWallet = ({
     );
 };
 
-export default LogInWallet;
+export default WalletLogIn;

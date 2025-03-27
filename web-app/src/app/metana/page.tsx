@@ -1,5 +1,5 @@
 import React from "react";
-import { DappCard } from "@/components/DappCard";
+import { DappCard } from "@/components/w3/DappCard";
 
 export default function MetanaPage() {
   const projects = [
