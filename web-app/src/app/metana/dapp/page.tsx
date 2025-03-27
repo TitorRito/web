@@ -51,9 +51,8 @@ type Contract = {
   //a provider = read only, a signer = read and write | important when creating the instance of a contract
 }
 
-
-let testContractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-let testContractAbi = [
+const testContractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+const testContractAbi = [
   "event URI(string,uint256)",
   "function BASKET() view",
   "function COOLDOWN() view",
@@ -143,13 +142,22 @@ export default function Dapp() {
       return;
     }
 
-    const  address = (document.getElementById('ui-contract') as HTMLInputElement).value ? (document.getElementById('ui-contract') as HTMLInputElement).value : testContractAddress;
+    let address = (document.getElementById('ui-contract') as HTMLInputElement).value;
 
-    const abi = (document.getElementById('ui-abi') as HTMLTextAreaElement).value ? ((document.getElementById('ui-abi') as HTMLTextAreaElement).value) : testContractAbi;
+    if (address.length < 1)
+      address = testContractAddress;
 
-    console.log('address', address);
-    console.log('abi', abi);
 
+    const userAbi = (document.getElementById('ui-abi') as HTMLTextAreaElement).value;
+
+    let abi = [];
+    if (userAbi.length < 1)
+      abi = testContractAbi;
+    else
+      abi = userAbi.split(',').filter((line) => line.trim() !== "");
+
+    console.log('address, ', address);
+    console.log('abi, ', abi);
 
     try {
       const contractInstance = new ethers.Contract(address, abi, user.signer);
