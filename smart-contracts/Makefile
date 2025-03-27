@@ -2,6 +2,8 @@
 
 # Default network
 NETWORK ?= localhost
+# Arguments for deploy-generic, allowing space-separated contract names
+CONTRACTS ?=
 
 # Help command
 .PHONY: help
@@ -13,6 +15,7 @@ help:
 	@echo "  make deploy          - Deploy contracts to localhost (default)"
 	@echo "  make deploy-lv2      - Deploy ErikGameLv2 to localhost"
 	@echo "  make deploy-erik     - Deploy Erik1155 to localhost"
+	@echo "  make dep CONTRACTS=\"Contract1 Contract2 ...\" - Deploy specified contracts (generic deployment)"
 	@echo "  make deploy-NETWORK=<network> - Deploy to specific network"
 
 # Compile contracts
@@ -51,6 +54,12 @@ deploy-lv2: compile
 deploy-erik: compile
 	@echo "Deploying Erik1155 to $(NETWORK)..."
 	npx hardhat run scripts/deployErik.js --network $(NETWORK)
+
+# Generic contract deployment
+.PHONY: dep
+dep: compile
+	@echo "Deploying specified contracts to $(NETWORK)..."
+	npx hardhat run scripts/deployGeneric.js --network $(NETWORK)
 
 # Start a local Ganache instance
 .PHONY: ganache

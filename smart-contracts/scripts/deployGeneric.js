@@ -1,39 +1,77 @@
-//deploy generic
-const { ethers, network } = require("hardhat");
+const { ethers } = require("hardhat");
+const fs = require('fs');
+const path = require('path');
 
-const contractToDeploy = process.argv[2];
+const COLORS = {
+    RESET: "\x1b[0m",
+    RED: "\x1b[31m",
+    GREEN: "\x1b[32m",
+    YELLOW: "\x1b[33m",
+    BLUE: "\x1b[34m",
+    MAGENTA: "\x1b[35m",
+    CYAN: "\x1b[36m"
+};
 
-if (!contractToDeploy) {
-    console.error("Please provide the contract name to deploy as argv2");
-    process.exit(1);
+const contractsToDeploy = ["Erik1155", "Erik20", "ErikGame"];
+
+function logToFile(contractObj) {
+    const logsDir = path.join(__dirname, '../logs');
+    if (!fs.existsSync(logsDir)) {
+        console.log(`${COLORS.CYAN}Log Dif not found... creating it...${COLORS.RESET}`);
+        fs.mkdirSync(logsDir);
+    }
+
+    const filename = `${contractObj.name}-${contractObj.timestamp.replace(/[:\s-]/g, '')}.json`;
+    const filePath = path.join(logsDir, filename);
+
+    try {
+        fs.writeFileSync(filePath, JSON.stringify(contractObj, null, 2));
+    } catch (error) {
+        console.error(error);
+        throw new Error(`Failed to write to file: ${filename}`);
+    }
 }
 
+function getFormattedTimestamp(date) {
+    return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+}
 
 async function main() {
-    console.log(`Deploying ${contractToDeploy}...`);
+    console.log(`\n${COLORS.MAGENTA}HARDHAT ${COLORS.RESET} to deploy ${COLORS.YELLOW}${contractsToDeploy.length}${COLORS.RESET} contracts: ${COLORS.YELLOW}${contractsToDeploy.join(', ')}${COLORS.YELLOW}${COLORS.RESET}\n`);
 
-    // Get the contract factory
-    const Contract = await ethers.getContractFactory(contractToDeploy);
+    for (const contractName of contractsToDeploy) {
+        try {
+            console.log(`${COLORS.CYAN}--- Deploying ${contractName} ---${COLORS.RESET}`);
+            const Contract = await ethers.getContractFactory(contractName);
+            const contract = await Contract.deploy();
+            await contract.waitForDeployment();
 
-    // Deploy the contract - for v6, deploy() returns the deployed instance directly
-    const contract = await Contract.deploy();
+            const providerNetwork = await ethers.provider.getNetwork();
 
-    // Wait for deployment to confirm
-    await contract.deploymentTransaction.wait();
+            const formattedTimestamp = getFormattedTimestamp(new Date());
 
-    // Get the contract address
-    const contractAddress = await contract.getAddress();
-
-    const chainId = (await ethers.provider.getNetwork()).chainId;
-
-    // Log success with contract details
-    console.log(`${contractToDeploy} deployment complete!`);
-    console.log(`Contract Details:
-  - Name: ${contractToDeploy}
-  - Address: ${contractAddress}
-  - Network: ${network.name}
-  - ChainId: ${chainId}
-  - ABI: ${JSON.stringify(Contract.interface.fragments)}
-`);
-
+            const contractObj = {
+                name: contractName,
+                address: contract.target,
+                network: providerNetwork.name,
+                chainId: providerNetwork.chainId.toString(),
+                abi: JSON.stringify(Contract.interface.fragments),
+                timestamp: formattedTimestamp
+            };
+            logToFile(contractObj);
+            console.log(`${COLORS.YELLOW}[${contractObj.timestamp}]${COLORS.RESET} Successfully deployed ${COLORS.GREEN}${contractName}${COLORS.RESET} at ${COLORS.GREEN}${contract.target}${COLORS.RESET} on chain ID ${COLORS.GREEN}${providerNetwork.chainId}${COLORS.RESET}`);
+        } catch (error) {
+            console.error(`Failed to deploy ${COLORS.RED}${contractName}${COLORS.RESET}`);
+        }
+    }
 }
+
+main()
+    .then(() => {
+        console.log(`\n${COLORS.GREEN}Finished deploying all contracts.${COLORS.RESET}`);
+        process.exit(0);
+    })
+    .catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });
