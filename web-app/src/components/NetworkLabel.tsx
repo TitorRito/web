@@ -14,7 +14,7 @@ const NetworkLabel: React.FC<NetworkProps> = ({ network }) => {
     };
 
     return (
-        <div onClick={handleChange} className='bg-cyan-800 p-2 rounded-md'>
+        <div onClick={handleChange} className='bg-cyan-800 p-2 rounded-md cursor-pointer hover:scale-105'>
             {network.id}  {network.name && network.name != "unknown"}
         </div>
     );

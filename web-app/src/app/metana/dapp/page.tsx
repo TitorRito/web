@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { User, Contract } from '@/lib/types';
 import LogInWallet from '@/components/LogInWallet';
@@ -50,6 +50,20 @@ export default function Dapp() {
   const [user, setUser] = useState<User | null>(null);
   const [contract, setContract] = useState<Contract | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    console.log('useEffect: entry');
+
+    // (async () => {
+    //   try {
+    //     const userData = await getUserProvider();
+    //     setUser(userData);
+    //   } catch (error: any) {
+    //     console.error("Failed to connect wallet:", error);
+    //     setError(error.message || "Failed to connect wallet");
+    //   }
+    // })();
+  }, []);
 
   const handleConnectWallet = async () => {
     try {
