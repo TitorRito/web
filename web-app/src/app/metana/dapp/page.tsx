@@ -5,6 +5,30 @@ import { User, Contract } from '@/lib/types';
 import LogInWallet from '@/components/w3/WalletLogIn';
 import ContractCreate from '@/components/w3/ContractCreate';
 
+/*
+my first wallet interaction. from ethers
+we need | provider, contract, signer,
+......... address, network, balance
+
+wallet/user steps:
+1. user connects wallet using web provider
+2. user can now see his address, network, balance
+
+contract/abi steps:
+1. user can create instance of contract | abi and address is needed
+2. user can browse our contracts, or complelety greate new contract
+3. user can interact with contract, read, write, listen
+
+dudus and improvements:
+- toast notification when eth_ tx are called. ()
+- user can switch network
+- 2 buttons. play my gameplay, or new contract interaction
+
+
+--game theory for contract 1155 -> login with wallet, select contract, play game, start time, if highscore in localhost. share compontent to social share
+*/
+
+
 async function getUserProvider(): Promise<User> {
   if (!window.ethereum) {
     throw new Error("No Ethereum provider found. Please install MetaMask or another wallet extension.");
