@@ -7,6 +7,7 @@ interface NetworkProps {
     };
 }
 
+//todo: get network and handle dropdown change to request network eth_
 const NetworkLabel: React.FC<NetworkProps> = ({ network }) => {
     const handleChange = () => {
         console.log('Network clicked:', network);
