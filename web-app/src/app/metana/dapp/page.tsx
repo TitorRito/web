@@ -48,7 +48,27 @@ type Contract = {
   // events: ethers.EventFilter | null;
   // signer: ethers.JsonRpcSigner | null;
   // provider: ethers.BrowserProvider | null;
+  //a provider = read only, a signer = read and write | important when creating the instance of a contract
 }
+
+
+let testContractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+let testContractAbi = [
+  "event URI(string,uint256)",
+  "function BASKET() view",
+  "function COOLDOWN() view",
+  "function FLOWER() view",
+  "function FRUIT() view",
+  "function PLANT() view",
+  "function SEED() view",
+  "function SOIL() view",
+  "function WATER() view",
+  "function balanceOf(address,uint256) view",
+  "function balanceOfBatch(address[],uint256[]) view",
+  "function burnToken(uint256) nonpayable",
+  "function forgeToken(uint256) nonpayable",
+  "function lastMintTime(address) view",
+]
 
 async function getUserProvider(): Promise<User> {
   // Check if ethereum provider exists
@@ -113,11 +133,37 @@ export default function Dapp() {
   //new ethers.Contract( address , abi , signerOrProvider )
   const handleCreateContract = async () => {
     console.log('handle: create contract');
-    const address = (document.getElementById('ui-contract') as HTMLInputElement).value;
-    const abi = (document.getElementById('ui-abi') as HTMLTextAreaElement).value;
 
-    console.log('address:', address);
-    console.log('abi:', abi);
+    if (!user) {
+      setError('Please connect your wallet first');
+      return;
+    }
+    if (!user.signer) {
+      setError('Error: no user signer instance from ethers provided');
+      return;
+    }
+
+    const  address = (document.getElementById('ui-contract') as HTMLInputElement).value ? (document.getElementById('ui-contract') as HTMLInputElement).value : testContractAddress;
+
+    const abi = (document.getElementById('ui-abi') as HTMLTextAreaElement).value ? ((document.getElementById('ui-abi') as HTMLTextAreaElement).value) : testContractAbi;
+
+    console.log('address', address);
+    console.log('abi', abi);
+
+
+    try {
+      const contractInstance = new ethers.Contract(address, abi, user.signer);
+      console.log('contract instance', contractInstance);
+      setContract({
+        address,
+        abi: abi,
+        instance: contractInstance,
+        state: 'created'
+      });
+    } catch (e) {
+      console.log('big fat error', e);
+    }
+
   }
 
   if (window) {
@@ -140,7 +186,7 @@ export default function Dapp() {
 
         {error && <div className="text-red-500">{error}</div>}
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 w-[800px]">
           <h2 className='border-b text-blue-500 text-center'>Contracts</h2>
           {/* do dropdown with custom contracts or update new */}
 
@@ -156,7 +202,7 @@ export default function Dapp() {
               </div>
               <div className='flex gap-4 items-center'>
                 <label htmlFor="ui-abi">ABI:</label>
-                <textarea id="ui-abi" className="border p-2 rounded grow" placeholder="[]" />
+                <textarea style={{ minHeight: '400px' }} id="ui-abi" className="border p-2 rounded grow" placeholder="[]" />
               </div>
               <div className='flex gap-4 items-center'>
                 <label htmlFor="ui-signer">Signer:</label>
