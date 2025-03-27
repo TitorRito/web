@@ -1,5 +1,5 @@
 "use client";
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { User, Contract } from '@/lib/types';
 import LogInWallet from '@/components/w3/WalletLogIn';
@@ -102,9 +102,9 @@ export default function Dapp() {
         user={user}
         handleConnection={handleConnectWallet}
       />
-      {user && (
-        contract ? <div>Contract: {contract.address}</div> : <ContractCreate />)
-      }
+      {/* {user && ( */}
+        contract ? <div>Contract: {contract?.address}</div> : <ContractCreate />
+      {/* )} */}
     </div>
   );
 }
