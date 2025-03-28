@@ -60,11 +60,6 @@ textarea:focus {
   width: 100vw;
   display: flex;
   justify-content: space-around;
-  border: 1px solid #DDA853;
-
-  >* {
-    border: 1px solid var(--foreground);
-  }
 }
 
 .titor {
@@ -75,10 +70,11 @@ textarea:focus {
   width: 100%;
   height: 100%;
   gap: 20px;
+}
 
-  >* {
-    border: 1px solid var(--foreground);
-  }
+.titor.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.8s ease-in-out forwards;
 }
 
 .rito {
@@ -103,8 +99,6 @@ textarea:focus {
 .nav-item {
   padding: 16px 24px;
   border-radius: 8px;
-  background-color: rgba(221, 168, 83, 0.08);
-  border: 1px solid var(--foreground);
   cursor: pointer;
   font-weight: 500;
   letter-spacing: 0.5px;
@@ -114,10 +108,27 @@ textarea:focus {
   overflow: hidden;
 }
 
-.nav-item:hover, .nav-item-active {
+.nav-item-animate {
+  opacity: 0;
+  animation: fallIn 1s ease-in-out forwards;
+}
+
+.nav-item-special {
+  animation: fallInSpecial 1.8s ease-in-out forwards;
+}
+
+.nav-item.show-item {
+  animation: fallIn 1s ease-in-out forwards;
+}
+
+.nav-item.show-item-special {
+  animation: fallInSpecial 1.8s ease-in-out forwards;
+}
+
+.nav-item:hover,
+.nav-item-active {
   transform: translateY(-4px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  background-color: rgba(221, 168, 83, 0.15);
 }
 
 .nav-item::after {
@@ -127,51 +138,146 @@ textarea:focus {
   left: 0;
   width: 0;
   height: 2px;
-  background-color: var(--foreground);
+  background-color: currentColor;
   transition: width 0.3s ease;
 }
 
-.nav-item:hover::after, .nav-item-active::after {
+.nav-item:hover::after,
+.nav-item-active::after {
   width: 100%;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fallIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-50vh);
+  }
+
+  60% {
+    transform: translateY(20px);
+  }
+
+  80% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fallInSpecial {
+  0% {
+    opacity: 0;
+    transform: translateY(-70vh);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(30px);
+  }
+
+  60% {
+    transform: translateY(-20px);
+  }
+
+  70% {
+    transform: translateY(15px);
+  }
+
+  80% {
+    transform: translateY(-10px);
+  }
+
+  90% {
+    transform: translateY(5px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes appearIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  .nav-item.show-item {
+    animation: appearIn 0.5s ease-out forwards;
+  }
+
+  .nav-item.show-item-special {
+    animation: appearIn 0.8s ease-out forwards;
+  }
 }
 
 /* Avatar styles */
 .avatar {
-  --size: 402px; /* Define the size variable */
+  --size: 402px;
+  /* Define the size variable */
   width: var(--size);
   height: var(--size);
   padding: 24px 12px;
+  border: 1px solid var(--foreground);
   border-radius: 50%;
-  position: relative; /* Context for absolute positioning */
+  position: relative;
+  /* Context for absolute positioning */
 }
 
 /* First dot */
 .icon-a {
   position: absolute;
-  top: 12%; /* Distance from top edge */
-  right: 8%; /* Slightly more from right than icon-b */
-  width: 6%; /* Size proportional to avatar */
+  top: 12%;
+  /* Distance from top edge */
+  right: 8%;
+  /* Slightly more from right than icon-b */
+  width: 6%;
+  /* Size proportional to avatar */
   height: 6%;
-  border: calc(var(--size) * 0.01) solid #D2691E; /* Responsive border */
+  border: calc(var(--size) * 0.01) solid #D2691E;
+  /* Responsive border */
   border-radius: 50%;
-  z-index: 2; /* Ensure it’s on top if needed */
+  z-index: 2;
+  /* Ensure it’s on top if needed */
 }
 
 /* Second dot */
 .icon-b {
   position: absolute;
-  top: 7%; /* Slightly below icon-a */
-  right: 13%; /* Closer to right edge */
-  width: 6%; /* Same size as icon-a */
+  top: 7%;
+  /* Slightly below icon-a */
+  right: 13%;
+  /* Closer to right edge */
+  width: 6%;
+  /* Same size as icon-a */
   height: 6%;
-  border: calc(var(--size) * 0.01) solid #D2691E; /* Responsive border */
+  border: calc(var(--size) * 0.01) solid #D2691E;
+  /* Responsive border */
   border-radius: 50%;
-  z-index: 1; /* Below icon-a if they overlap */
+  z-index: 1;
+  /* Below icon-a if they overlap */
 }
 
 .logo {
@@ -185,19 +291,202 @@ textarea:focus {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    border: 1px solid var(--foreground);
-    
-    >*{
+
+    >* {
       height: 42px;
       width: 42px;
       text-align: center;
       cursor: pointer;
+
       &:hover {
         transform: scale(1.1);
         transition: transform 0.3s;
-        background-color: #4A4A4A;
       }
     }
 
   }
+}
+
+/* Quote Carousel Styles */
+.quotes-carousel {
+  width: 80%;
+  max-width: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.carousel-content {
+  display: flex;
+  width: 100%;
+  transition: transform 0.5s ease-in-out;
+  transform: translateX(calc(-100% * var(--current-index)));
+}
+
+.carousel-item {
+  width: 100%;
+  flex-shrink: 0;
+  padding: 30px;
+  position: relative;
+}
+
+.hover-blur blockquote p {
+  filter: blur(2px);
+  transition: filter 0.3s ease;
+}
+
+.carousel-item blockquote {
+  margin: 0;
+  font-style: italic;
+  text-align: center;
+}
+
+.carousel-item blockquote p {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  font-weight: 300;
+  text-align: center;
+  transition: filter 0.3s ease;
+}
+
+.carousel-toggle-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(11, 28, 37, 0.7);
+  color: var(--foreground);
+  border: 2px solid var(--foreground);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+  font-size: 18px;
+  padding: 0;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+  z-index: 10;
+}
+
+.carousel-toggle-btn:hover {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.carousel-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.carousel-btn {
+  background: transparent;
+  color: var(--foreground);
+  border: 2px solid var(--foreground);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 18px;
+  padding: 0;
+}
+
+.carousel-btn:hover {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.carousel-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(221, 168, 83, 0.3);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.carousel-dot.active {
+  background: var(--foreground);
+  transform: scale(1.2);
+}
+
+.render-div {
+  margin-top: 20px;
+  padding: 20px;
+  min-height: 100px;
+  width: 80%;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Welcome Message Styles */
+.welcome-message {
+  font-size: 2rem;
+  text-align: center;
+  max-width: 80%;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  animation: fadeInOut 3.5s ease-in-out forwards;
+}
+
+.welcome-message p {
+  margin: 0.5rem 0;
+  font-weight: 300;
+  letter-spacing: 1px;
+  line-height: 1.5;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  15% {
+    /* Faster fade in since we have more time */
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  85% {
+    /* Keep visible longer */
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.8s ease-in-out forwards;
 }
