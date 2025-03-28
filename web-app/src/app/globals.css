@@ -256,7 +256,7 @@ textarea:focus {
   width: 6%;
   /* Size proportional to avatar */
   height: 6%;
-  border: calc(var(--size) * 0.01) solid #D2691E;
+  border: calc(var(--size) * 0.01) solid #4ed21e;
   /* Responsive border */
   border-radius: 50%;
   z-index: 2;
