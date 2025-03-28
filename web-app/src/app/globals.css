@@ -43,11 +43,112 @@ button {
   }
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
   outline: none;
 }
 
 ::selection {
   background: var(--foreground);
   color: var(--background);
+}
+
+
+/* -- landing page styles -- */
+.full-container {
+  height: 92vh;
+  width: 100vw;
+  display: flex;
+  justify-content: space-around;
+  border: 1px solid #DDA853;
+
+  >* {
+    border: 1px solid var(--foreground);
+  }
+}
+
+.titor {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  gap: 20px;
+
+  >* {
+    border: 1px solid var(--foreground);
+  }
+}
+
+.rito {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  gap: 20px;
+}
+
+/* Avatar styles */
+.avatar {
+  --size: 402px; /* Define the size variable */
+  width: var(--size);
+  height: var(--size);
+  padding: 24px 12px;
+  border-radius: 50%;
+  position: relative; /* Context for absolute positioning */
+}
+
+/* First dot */
+.icon-a {
+  position: absolute;
+  top: 12%; /* Distance from top edge */
+  right: 8%; /* Slightly more from right than icon-b */
+  width: 6%; /* Size proportional to avatar */
+  height: 6%;
+  border: calc(var(--size) * 0.01) solid #D2691E; /* Responsive border */
+  border-radius: 50%;
+  z-index: 2; /* Ensure it’s on top if needed */
+}
+
+/* Second dot */
+.icon-b {
+  position: absolute;
+  top: 7%; /* Slightly below icon-a */
+  right: 13%; /* Closer to right edge */
+  width: 6%; /* Same size as icon-a */
+  height: 6%;
+  border: calc(var(--size) * 0.01) solid #D2691E; /* Responsive border */
+  border-radius: 50%;
+  z-index: 1; /* Below icon-a if they overlap */
+}
+
+.logo {
+  display: grid;
+  width: 402px;
+  grid-template-columns: repeat(4, 1fr);
+  justify-items: center;
+  align-items: center;
+
+  .logo-child {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    border: 1px solid var(--foreground);
+    
+    >*{
+      height: 42px;
+      width: 42px;
+      text-align: center;
+      cursor: pointer;
+      &:hover {
+        transform: scale(1.1);
+        transition: transform 0.3s;
+        background-color: #4A4A4A;
+      }
+    }
+
+  }
 }
