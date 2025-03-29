@@ -5,7 +5,8 @@ import {
   FaGithub, FaLinkedin, FaInstagram, FaFileAlt, 
   FaCalendar, FaWhatsapp, FaEnvelope, FaTwitter,
   FaCode, FaTerminal, FaEdit, FaEthereum,
-  FaDatabase, FaPython, FaJsSquare, FaReact
+  FaDatabase, FaPython, FaJsSquare, FaReact,
+  FaMapMarkerAlt, FaLaptop, FaEthereum as FaWeb3, FaWind
 } from 'react-icons/fa';
 
 // Define LogoItem type (renamed from MenuItem)
@@ -163,6 +164,42 @@ function WelcomeMsg({ onComplete }: { onComplete: () => void }) {
   );
 }
 
+// Footer component
+function Footer() {
+  const [isVisible, setIsVisible] = useState(false);
+  
+  useEffect(() => {
+    // Slight delay for subtle appearance after main content loads
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  return (
+    <footer className={`site-footer ${isVisible ? 'footer-visible' : ''}`}>
+      <div className="footer-content">
+        <div className="footer-item">
+          <FaMapMarkerAlt />
+          Based in Tarifa, Spain
+        </div>
+        <div className="footer-item">
+          <FaLaptop />
+          Interested in remote work
+        </div>
+        <div className="footer-item">
+          <FaWeb3 />
+          looking for cool projects. duh.
+        </div>
+        <div className="footer-item">
+          I also teach kitesrufing, professionally. 
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 export default function Home() {
   // Group 1: Social
   const group1: LogoItem[] = [
@@ -250,54 +287,57 @@ export default function Home() {
   }
 
   return (
-    <div className="full-container">
-      {showWelcome && (
-        <div className="titor">
-          <WelcomeMsg onComplete={handleWelcomeComplete} />
-        </div>
-      )}
-
-      {showTitor && (
-        <div className="titor fade-in">
-          <div className="avatar">
-            <div className="icon-a"></div>
-            <div className="icon-b"></div>
+    <>
+      <div className="full-container">
+        {showWelcome && (
+          <div className="titor">
+            <WelcomeMsg onComplete={handleWelcomeComplete} />
           </div>
-          <div className="logo">
-            <LogoChild items={group1} />
-            <LogoChild items={group2} />
-            <LogoChild items={group3} />
-            <LogoChild items={group4} />
-          </div>
-          <QuoteCarousel />
-        </div>
-      )}
+        )}
 
-      <div className="rito">
-        <div className="nav-container">
-          {navItems.map((item, index) => (
-            <div
-              key={index}
-              className={`
-                nav-item 
-                ${hoveredItem === index ? 'nav-item-active' : ''} 
-                nav-item-animate
-                ${index === navItems.length - 1 ? 'nav-item-special' : ''}
-              `}
-              style={{
-                color: item.color,
-                borderBottomColor: item.color,
-                animationDelay: `${index * 0.2}s`
-              }}
-              onMouseEnter={() => setHoveredItem(index)}
-              onMouseLeave={() => setHoveredItem(null)}
-              onClick={() => handleNavClick(item)}
-            >
-              {item.name}
+        {showTitor && (
+          <div className="titor fade-in">
+            <div className="avatar">
+              <div className="icon-a"></div>
+              <div className="icon-b"></div>
             </div>
-          ))}
+            <div className="logo">
+              <LogoChild items={group1} />
+              <LogoChild items={group2} />
+              <LogoChild items={group3} />
+              <LogoChild items={group4} />
+            </div>
+            <QuoteCarousel />
+          </div>
+        )}
+
+        <div className="rito">
+          <div className="nav-container">
+            {navItems.map((item, index) => (
+              <div
+                key={index}
+                className={`
+                  nav-item 
+                  ${hoveredItem === index ? 'nav-item-active' : ''} 
+                  nav-item-animate
+                  ${index === navItems.length - 1 ? 'nav-item-special' : ''}
+                `}
+                style={{
+                  color: item.color,
+                  borderBottomColor: item.color,
+                  animationDelay: `${index * 0.2}s`
+                }}
+                onMouseEnter={() => setHoveredItem(index)}
+                onMouseLeave={() => setHoveredItem(null)}
+                onClick={() => handleNavClick(item)}
+              >
+                {item.name}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 }
