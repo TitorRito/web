@@ -1,13 +1,29 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import { IconType } from 'react-icons';
+import { 
+  FaGithub, FaLinkedin, FaInstagram, FaFileAlt, 
+  FaCalendar, FaWhatsapp, FaEnvelope, FaTwitter,
+  FaCode, FaTerminal, FaEdit, FaEthereum,
+  FaDatabase, FaPython, FaJsSquare, FaReact
+} from 'react-icons/fa';
 
-function LogoChild() {
+// Define LogoItem type (renamed from MenuItem)
+interface LogoItem {
+  name: string;
+  icon: IconType;
+  onClick: () => void;
+}
+
+// Updated LogoChild component to accept logo items
+function LogoChild({ items }: { items: LogoItem[] }) {
   return (
     <div className="logo-child">
-      <div>a</div>
-      <div>a</div>
-      <div>a</div>
-      <div>a</div>
+      {items.map((item, index) => (
+        <div key={index} onClick={item.onClick} title={item.name}>
+          <item.icon />
+        </div>
+      ))}
     </div>
   );
 }
@@ -148,12 +164,44 @@ function WelcomeMsg({ onComplete }: { onComplete: () => void }) {
 }
 
 export default function Home() {
+  // Group 1: Social
+  const group1: LogoItem[] = [
+    { name: 'GitHub', icon: FaGithub, onClick: () => console.log('GitHub clicked') },
+    { name: 'LinkedIn', icon: FaLinkedin, onClick: () => console.log('LinkedIn clicked') },
+    { name: 'Instagram', icon: FaInstagram, onClick: () => console.log('Instagram clicked') },
+    { name: 'CV', icon: FaFileAlt, onClick: () => console.log('CV clicked') },
+  ];
+
+  // Group 2: Communication
+  const group2: LogoItem[] = [
+    { name: 'Calendly', icon: FaCalendar, onClick: () => console.log('Calendly clicked') },
+    { name: 'WhatsApp', icon: FaWhatsapp, onClick: () => console.log('WhatsApp clicked') },
+    { name: 'Email', icon: FaEnvelope, onClick: () => console.log('Email clicked') },
+    { name: 'X', icon: FaTwitter, onClick: () => console.log('X clicked') },
+  ];
+
+  // Group 3: Development Tools
+  const group3: LogoItem[] = [
+    { name: 'C', icon: FaCode, onClick: () => console.log('C clicked') },
+    { name: 'Bash', icon: FaTerminal, onClick: () => console.log('Bash clicked') },
+    { name: 'Vim', icon: FaEdit, onClick: () => console.log('Vim clicked') },
+    { name: 'Solidity', icon: FaEthereum, onClick: () => console.log('Solidity clicked') },
+  ];
+
+  // Group 4: Additional Tech
+  const group4: LogoItem[] = [
+    { name: 'Database', icon: FaDatabase, onClick: () => console.log('Database clicked') },
+    { name: 'Python', icon: FaPython, onClick: () => console.log('Python clicked') },
+    { name: 'JavaScript', icon: FaJsSquare, onClick: () => console.log('JavaScript clicked') },
+    { name: 'React', icon: FaReact, onClick: () => console.log('React clicked') },
+  ];
+
   const navItems = [
     { color: "#ff6b6b", name: "dynamic language" },
-    { color: "#ffa94d", name: "tech stack" },
     { color: "#4dabf7", name: "school and projects" },
-    { color: "#9775fa", name: "blogs and archives" },
+    { color: "#ffa94d", name: "my full stack tech stack" },
     { color: "#999999", name: "subscriptions and recommendations" },
+    { color: "#9775fa", name: "blogs, archives, and aspirations" },
     { color: "#38d9a9", name: "contact me" }
   ];
 
@@ -216,10 +264,10 @@ export default function Home() {
             <div className="icon-b"></div>
           </div>
           <div className="logo">
-            <LogoChild />
-            <LogoChild />
-            <LogoChild />
-            <LogoChild />
+            <LogoChild items={group1} />
+            <LogoChild items={group2} />
+            <LogoChild items={group3} />
+            <LogoChild items={group4} />
           </div>
           <QuoteCarousel />
         </div>
