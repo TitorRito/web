@@ -11,9 +11,10 @@ interface ContractDetails {
 interface ContractPopUpProps {
   contract: ContractDetails | null;
   onClose: () => void;
+  onImport?: (contract: ContractDetails) => void;
 }
 
-export default function ContractPopUp({ contract, onClose }: ContractPopUpProps) {
+export default function ContractPopUp({ contract, onClose, onImport }: ContractPopUpProps) {
   const popupRef = useRef<HTMLDivElement>(null);
 
   // Handle ESC key press to close popup
@@ -39,6 +40,13 @@ export default function ContractPopUp({ contract, onClose }: ContractPopUpProps)
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [onClose]);
+
+  const handleImport = () => {
+    if (contract && onImport) {
+      onImport(contract);
+      onClose();
+    }
+  };
 
   if (!contract) return null;
 
@@ -88,6 +96,18 @@ export default function ContractPopUp({ contract, onClose }: ContractPopUpProps)
                 {JSON.stringify(contract.abi, null, 2)}
               </pre>
             </div>
+          )}
+        </div>
+
+        {/* Add import button at the bottom */}
+        <div className="mt-6 flex justify-end">
+          {onImport && (
+            <button
+              onClick={handleImport}
+              className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded"
+            >
+              Import Contract
+            </button>
           )}
         </div>
       </div>

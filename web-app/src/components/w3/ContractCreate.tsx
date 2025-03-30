@@ -2,8 +2,6 @@ import { useState, FormEvent } from 'react';
 import ContractCreateCustomForm from './ContractCreateCustomForm';
 import ContractCreateImportList from './ContractCreateImportList';
 
-
-
 interface ContractOptionsProps {
     selectedOption: 'custom' | 'import' | null;
     setSelectedOption: (option: 'custom' | 'import') => void;
@@ -28,7 +26,11 @@ function ContractOptions({ selectedOption, setSelectedOption }: ContractOptionsP
     );
 }
 
-export default function ContractCreate(handleCreateContract: any) {
+interface ContractCreateProps {
+    handleCreateContract: (contract: any) => void;
+}
+
+export default function ContractCreate({ handleCreateContract }: ContractCreateProps) {
     const [selectedOption, setSelectedOption] = useState<'custom' | 'import' | null>(null);
     const [formData, setFormData] = useState({
         address: '',
@@ -51,25 +53,22 @@ export default function ContractCreate(handleCreateContract: any) {
 
     return (
         <div className="border rounded-lg shadow-md min-w-[250px]">
-            <h2 className='text-center text-lg p-2'>Create Contract</h2>
+            <h2 className='text-center text-lg p-2 m-2'>Create Contract</h2>
             <ContractOptions
                 selectedOption={selectedOption}
                 setSelectedOption={setSelectedOption}
             />
+            {selectedOption === 'custom' && (
+                <ContractCreateCustomForm
+                    formData={formData}
+                    handleInputChange={handleInputChange}
+                    handleSubmit={handleSubmit}
+                />
+            )}
 
-            <div className="p-4">
-                {selectedOption === 'custom' && (
-                    <ContractCreateCustomForm
-                        formData={formData}
-                        handleInputChange={handleInputChange}
-                        handleSubmit={handleSubmit}
-                    />
-                )}
-
-                {selectedOption === 'import' && (
-                    <ContractCreateImportList handleCreateContract={handleCreateContract}/>
-                )}
-            </div>
+            {selectedOption === 'import' && (
+                <ContractCreateImportList handleCreateContract={handleCreateContract} />
+            )}
         </div>
     );
 }

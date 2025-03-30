@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { User, Contract } from '@/lib/types';
 import LogInWallet from '@/components/w3/WalletLogIn';
 import ContractCreate from '@/components/w3/ContractCreate';
+import ContractABI from '@/components/w3/ContractAbi';
 
 /*
 my first wallet interaction. from ethers
@@ -52,7 +53,7 @@ async function getUserProvider(): Promise<User> {
     const address = await signer.getAddress();
 
     const network = await provider.getNetwork();
-    const chainId = Number(network.chainId);  // Get chainId as a number
+    const chainId = network.chainId.toString();
 
     const balanceWei = await provider.getBalance(address);
     const balance = ethers.formatEther(balanceWei);
@@ -78,17 +79,13 @@ export default function Dapp() {
 
   useEffect(() => {
     console.log('useEffect: entry');
-
-    // (async () => {
-    //   try {
-    //     const userData = await getUserProvider();
-    //     setUser(userData);
-    //   } catch (error: any) {
-    //     console.error("Failed to connect wallet:", error);
-    //     setError(error.message || "Failed to connect wallet");
-    //   }
-    // })();
   }, []);
+
+  useEffect(() => {
+    if (contract) {
+      console.log('Contract updated:');
+    }
+  }, [contract]);
 
   const handleConnectWallet = async () => {
     try {
@@ -103,9 +100,6 @@ export default function Dapp() {
   }
 
   const handleCreateContract = async (arg: any) => {
-
-    console.log('handle: create contract', arg);
-
     if (!user) {
       setError('Please connect your wallet first');
       return;
@@ -114,21 +108,71 @@ export default function Dapp() {
       setError('Error: no user signer instance from ethers provided');
       return;
     }
+
+    try {
+      const contractAddress = arg.address;
+      const contractABI = arg.abi;
+
+      if (!contractAddress || !ethers.isAddress(contractAddress)) {
+        setError('Invalid contract address');
+        return;
+      }
+
+      if (!contractABI) {
+        setError('Missing contract ABI');
+        return;
+      }
+
+      const contractInstance = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        user.signer
+      );
+
+      setContract({
+        address: contractAddress,
+        chainId: Number(user.chainId),
+        abi: contractABI,
+        instance: contractInstance
+      });
+
+      setError(null);
+
+    } catch (e: any) {
+      console.error('Error creating contract instance:', e);
+      setError(e.message || 'Failed to create contract instance');
+    }
   }
 
-  // if (window) {
-  //   window.u = user;
-  //   window.c = contract;
-  // }
+  const handleResetContract = () => {
+    setContract(null);
+  };
 
   return (
     <div className='flex flex-col items-center justify-start gap-4 h-screen py-8'>
+      {error && (
+        <div className="text-red-500">
+          Error: {error}
+        </div>
+      )}
+
       <LogInWallet
         user={user}
         handleConnection={handleConnectWallet}
       />
+
       {contract ? (
-        <div>Contract: {contract?.address}</div>
+        <div className="w-full max-w-4xl py-5">
+          <ContractABI contract={contract} />
+          <div className="mt-4 text-center">
+            <button
+              onClick={handleResetContract}
+              className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+            >
+              Use Different Contract
+            </button>
+          </div>
+        </div>
       ) : (
         <ContractCreate handleCreateContract={handleCreateContract} />
       )}
