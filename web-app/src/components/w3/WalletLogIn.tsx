@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { User } from '@/lib/types';
 import NetworkLabel from './NetworkLabel';
 import { WalletLoader } from '@/lib/svgs';
+import NetworkSelector from './NetworkSelector';
+import { networks, NetworkConfig } from '@/lib/networks';
 
 const Login = ({ handleConnection, isConnecting }: { handleConnection: () => Promise<void>, isConnecting: boolean }) => {
     return (
@@ -16,7 +18,9 @@ const Login = ({ handleConnection, isConnecting }: { handleConnection: () => Pro
     )
 };
 
-const UserUI = ({ user }: { user: User }) => {
+const UserUI = ({ user, onSwitchNetwork }: { user: User, onSwitchNetwork: (network: NetworkConfig) => void }) => {
+    const [showNetworkSelector, setShowNetworkSelector] = useState(false);
+
     const shortenAddress = (address: string) => {
         return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
     };
@@ -64,16 +68,30 @@ const UserUI = ({ user }: { user: User }) => {
                     
                     <div className="grid grid-cols-2 gap-4">
                         {/* Network section */}
-                        <div className="space-y-1.5">
+                        <div className="space-y-1.5 relative">
                             <div className="flex items-center text-xs text-gray-400 font-medium">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clipRule="evenodd" />
                                 </svg>
                                 NETWORK
                             </div>
-                            <div className="h-9 flex items-center">
-                                <NetworkLabel network={{ id: user.chainId || 'Unknown', name: user.network || 'Unknown' }} />
+                            <div 
+                              className="h-9 flex items-center cursor-pointer hover:bg-gray-800 p-1 rounded-lg transition-colors group"
+                              onClick={() => setShowNetworkSelector(!showNetworkSelector)}
+                            >
+                                <NetworkLabel network={{ id: user.chainId || 'Unknown', name: user.network }} />
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1 text-gray-500 group-hover:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
                             </div>
+                            
+                            {showNetworkSelector && (
+                              <NetworkSelector
+                                currentChainId={user.chainId || '0'}
+                                onNetworkChange={onSwitchNetwork}
+                                onClose={() => setShowNetworkSelector(false)}
+                              />
+                            )}
                         </div>
                         
                         {/* Balance section */}
@@ -102,10 +120,12 @@ const UserUI = ({ user }: { user: User }) => {
 
 const WalletLogIn = ({
     user,
-    handleConnection
+    handleConnection,
+    onSwitchNetwork
 }: {
     user: User | null,
-    handleConnection: () => Promise<void>
+    handleConnection: () => Promise<void>,
+    onSwitchNetwork?: (network: NetworkConfig) => void
 }) => {
     const [isConnecting, setIsConnecting] = useState(false);
 
@@ -119,6 +139,12 @@ const WalletLogIn = ({
             console.error("Connection failed:", error);
         } finally {
             setIsConnecting(false);
+        }
+    };
+
+    const handleNetworkSwitch = (network: NetworkConfig) => {
+        if (onSwitchNetwork) {
+            onSwitchNetwork(network);
         }
     };
 
@@ -137,7 +163,7 @@ const WalletLogIn = ({
                 </div>
             </div>
             {user ? (
-                <UserUI user={user} />
+                <UserUI user={user} onSwitchNetwork={handleNetworkSwitch} />
             ) : (
                 <Login handleConnection={handleConnectionWithLoading} isConnecting={isConnecting} />
             )}

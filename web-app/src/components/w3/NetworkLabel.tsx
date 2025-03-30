@@ -1,23 +1,33 @@
 import React from 'react';
 
-interface NetworkProps {
-    network: {
-        id: string | number;
-        name: string;
-    };
+interface NetworkLabelProps {
+  network: {
+    id: string | number;
+    name?: string;
+  };
 }
 
-//todo: get network and handle dropdown change to request network eth_
-const NetworkLabel: React.FC<NetworkProps> = ({ network }) => {
-    const handleChange = () => {
-        console.log('Network clicked:', network);
-    };
-
-    return (
-        <div onClick={handleChange} className='bg-cyan-800 p-2 rounded-md cursor-pointer hover:scale-105'>
-            {network.id}  {network.name && network.name != "unknown"}
-        </div>
-    );
+const NetworkLabel = ({ network }: NetworkLabelProps) => {
+  const { id, name } = network;
+  
+  // Format display as chainId: name if name exists
+  const displayText = name ? `${id}: ${name}` : id;
+  
+  // Determine background color based on network id
+  let bgColorClass = 'bg-gray-600';
+  
+  // Common networks
+  if (id === '1' || id === 1) bgColorClass = 'bg-blue-600';  // Ethereum Mainnet
+  else if (id === '11155111' || id === 11155111) bgColorClass = 'bg-green-600';  // Sepolia
+  else if (id === '31337' || id === 31337) bgColorClass = 'bg-purple-600';  // Hardhat
+  else if (id === '5' || id === 5) bgColorClass = 'bg-yellow-600';  // Goerli
+  else if (id === '137' || id === 137) bgColorClass = 'bg-indigo-600';  // Polygon
+  
+  return (
+    <span className={`px-2 py-1 rounded text-xs font-medium ${bgColorClass} text-white`}>
+      {displayText}
+    </span>
+  );
 };
 
 export default NetworkLabel;
