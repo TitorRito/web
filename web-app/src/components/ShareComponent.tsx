@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface ShareComponentProps {
   url: string;
@@ -10,6 +10,26 @@ interface ShareComponentProps {
 export const ShareComponent: React.FC<ShareComponentProps> = ({ url, title }) => {
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Handle clicks outside the share menu to close it
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsShareMenuOpen(false);
+      }
+    }
+    
+    // Add event listener when menu is open
+    if (isShareMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    // Clean up the event listener
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isShareMenuOpen]);
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -20,7 +40,10 @@ export const ShareComponent: React.FC<ShareComponentProps> = ({ url, title }) =>
           url: url,
         });
       } catch (error) {
-        console.error('Error sharing:', error);
+        // Don't log the error to console when user cancels the share dialog
+        if ((error as Error).name !== 'AbortError') {
+          console.error('Error sharing:', error);
+        }
       }
     } else {
       // Fallback to toggle share menu with copy option
@@ -36,7 +59,7 @@ export const ShareComponent: React.FC<ShareComponentProps> = ({ url, title }) =>
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={menuRef}>
       <button 
         onClick={handleShare}
         className="

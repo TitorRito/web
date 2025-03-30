@@ -1,48 +1,71 @@
 'use client';
 
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ShareComponent } from "../ShareComponent";
+import { useTypingAnimation } from "../TypingAnimationContext";
+import { usePathname } from "next/navigation";
 
 interface DappCardProps {
     title: string;
     link: string;
     objectives: string[];
     stack?: string[];
+    index: number;
 }
 
-export const DappCard: React.FC<DappCardProps> = ({ title, link, objectives, stack }) => {
+export const DappCard: React.FC<DappCardProps> = ({ title, link, objectives, stack, index }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [typedTitle, setTypedTitle] = useState('');
     const [showCursor, setShowCursor] = useState(true);
-
-    // Typing animation effect
+    const [isTyping, setIsTyping] = useState(false);
+    const [isComplete, setIsComplete] = useState(false);
+    const [shareUrl, setShareUrl] = useState('');
+    const { registerCard, signalCompletion } = useTypingAnimation();
+    const pathname = usePathname();
+    
+    // Set up the share URL once the component is mounted on the client
     useEffect(() => {
+        // Only access window after component is mounted
+        setShareUrl(`${window.location.origin}/${link}`);
+    }, [link]);
+    
+    // Typing animation effect
+    const startTyping = useCallback(() => {
+        setIsTyping(true);
+    }, []);
+    
+    // Register this card with the context when mounted
+    useEffect(() => {
+        registerCard(index, startTyping);
+    }, [index, registerCard, startTyping]);
+    
+    useEffect(() => {
+        if (!isTyping) return;
+        
         let currentIndex = 0;
         let timer: NodeJS.Timeout;
         
-        // Only start the animation when component mounts
         const typingAnimation = () => {
             if (currentIndex <= title.length) {
                 setTypedTitle(title.substring(0, currentIndex));
                 currentIndex++;
                 timer = setTimeout(typingAnimation, 100); // Speed of typing
             } else {
-                // Once typing is done, toggle cursor blink
-                const cursorTimer = setInterval(() => {
-                    setShowCursor(prev => !prev);
-                }, 600);
-                return () => clearInterval(cursorTimer);
+                // When typing is complete, hide cursor and signal completion
+                setShowCursor(false);
+                setIsComplete(true);
+                signalCompletion(index);
             }
         };
 
         typingAnimation();
         return () => clearTimeout(timer);
-    }, [title]);
+    }, [isTyping, title, index, signalCompletion]);
 
     return (
         <div
-            className="bg-gray-900 rounded-lg shadow-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1 group"
+            className="bg-gray-900 rounded-lg shadow-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1 group flex flex-col h-full"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -51,11 +74,13 @@ export const DappCard: React.FC<DappCardProps> = ({ title, link, objectives, sta
                 <h2 className="text-lg font-mono text-blue-400 tracking-tight">
                     ~$ ./
                     <span className="text-green-400 font-bold">{typedTitle}</span>
-                    <span className={`text-gray-400 ${showCursor ? 'opacity-100' : 'opacity-0'}`}>|</span>
+                    {!isComplete && 
+                        <span className={`text-gray-400 ${showCursor ? 'opacity-100' : 'opacity-0'}`}>|</span>
+                    }
                 </h2>
             </div>
 
-            <div className="p-5 bg-gradient-to-b from-gray-900 to-gray-950">
+            <div className="p-5 bg-gradient-to-b from-gray-900 to-gray-950 flex-grow">
                 {/* Description section */}
                 <div className="space-y-3 mb-4">
                     <h3 className="text-gray-400 text-sm font-mono flex items-center">
@@ -115,7 +140,7 @@ export const DappCard: React.FC<DappCardProps> = ({ title, link, objectives, sta
             </div>
 
             <div className="bg-gray-950 px-4 py-3 flex justify-between items-center border-t border-gray-800 group-hover:border-blue-900/40 transition-colors">
-                <ShareComponent url={`${window.location.origin}/${link}`} title={title} />
+                {shareUrl && <ShareComponent url={shareUrl} title={title} />}
                 
                 <Link
                     href={link}
