@@ -94,7 +94,7 @@ const UserUI = ({ user, onSwitchNetwork }: { user: User, onSwitchNetwork: (netwo
                             )}
                         </div>
                         
-                        {/* Balance section */}
+                        {/* Balance section - Improved to show full ETH value */}
                         <div className="space-y-1.5">
                             <div className="flex items-center text-xs text-gray-400 font-medium">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
@@ -104,8 +104,8 @@ const UserUI = ({ user, onSwitchNetwork }: { user: User, onSwitchNetwork: (netwo
                                 BALANCE
                             </div>
                             <div className="bg-gray-800/70 px-3 py-2 rounded-lg text-gray-200 h-9 font-mono flex items-center justify-between">
-                                <span>{parseFloat(user.balance).toFixed(4)}</span>
-                                <span className="text-xs text-gray-400 ml-1">ETH</span>
+                                <span className="truncate mr-2">{parseFloat(user.balance).toFixed(4)}</span>
+                                <span className="text-xs text-gray-400 flex-shrink-0">ETH</span>
                             </div>
                         </div>
                     </div>
@@ -149,7 +149,7 @@ const WalletLogIn = ({
     };
 
     return (
-        <div className="border border-gray-700 rounded-xl shadow-lg bg-gray-900 min-w-[300px]">
+        <div className="border border-gray-700 rounded-xl shadow-lg bg-gray-900 min-w-[340px]">
             <div className="flex justify-between items-center p-4 border-b border-gray-800">
                 <h2 className='font-medium text-lg text-gray-200 flex items-center'>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-400" viewBox="0 0 20 20" fill="currentColor">

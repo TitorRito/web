@@ -54,7 +54,7 @@ const SendEthForm = ({ user, onSend, isSending, txHash }) => {
   };
 
   return (
-    <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+    <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden min-w-[340px]">
       <div className="bg-gradient-to-r from-blue-900/40 to-purple-900/40 px-4 py-3 border-b border-gray-700">
         <h3 className="font-medium text-blue-300">Quick Actions</h3>
       </div>
