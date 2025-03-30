@@ -1,14 +1,12 @@
 //this is imported for the hardhat console.
 //it implies we are on the hardhat 31337 ChainID network
-const cAddres = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-const cAbi = [
-  "function COOLDOWN() view returns (uint256)",
-  "function FLOWER() view returns (uint256)",
-  "function FRUIT() view returns (uint256)",
-  "function PLANT() view returns (uint256)",
-  "function SEED() view returns (uint256)",
-  "function SOIL() view returns (uint256)",
-  "function WATER() view returns (uint256)",
-];
 
-const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+const [owner, a1, a2, a3, a4] = await ethers.getSigners();
+
+const contract = await ethers.getContractFactory("Erik1155");
+const c = await contract.deploy();
+await c.waitForDeployment();
+
+const c1 = await c.connect(a1);
+const c2 = await c.connect(a2);
+const c3 = await c.connect(a3);
