@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState } from 'react';
 import ContractCreateCustomForm from './ContractCreateCustomForm';
 import ContractCreateImportList from './ContractCreateImportList';
 
@@ -31,25 +31,7 @@ interface ContractCreateProps {
 }
 
 export default function ContractCreate({ handleCreateContract }: ContractCreateProps) {
-    const [selectedOption, setSelectedOption] = useState<'custom' | 'import' | null>(null);
-    const [formData, setFormData] = useState({
-        address: '',
-        abi: '',
-        chainId: ''
-    });
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        console.log('Form Data:', formData);
-    };
+    const [selectedOption, setSelectedOption] = useState<'custom' | 'import' | null>('custom');
 
     return (
         <div className="border rounded-lg shadow-md min-w-[250px]">
@@ -59,11 +41,7 @@ export default function ContractCreate({ handleCreateContract }: ContractCreateP
                 setSelectedOption={setSelectedOption}
             />
             {selectedOption === 'custom' && (
-                <ContractCreateCustomForm
-                    formData={formData}
-                    handleInputChange={handleInputChange}
-                    handleSubmit={handleSubmit}
-                />
+                <ContractCreateCustomForm handleCreateContract={handleCreateContract} />
             )}
 
             {selectedOption === 'import' && (

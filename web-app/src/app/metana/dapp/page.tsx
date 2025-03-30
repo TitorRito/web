@@ -100,6 +100,7 @@ export default function Dapp() {
   }
 
   const handleCreateContract = async (arg: any) => {
+    console.log('call')
     if (!user) {
       setError('Please connect your wallet first');
       return;
