@@ -73,17 +73,16 @@ export async function GET(request) {
             headers: { "Content-Type": "application/json" },
         });
     }
-    // Handle getContract=Name
+    // Handle getContract=Name | name = Erik1155-27032025144412 => file from logs
     else if (params.has("getContract")) {
         const contractName = params.get("getContract");
         if (!contractName) {
-            return new Response(
-                JSON.stringify({ error: "getContract requires a name" }),
-                {
-                    status: 400,
-                    headers: { "Content-Type": "application/json" },
-                }
-            );
+            // If no name is provided, return all contracts
+            const contracts = await getAllJson();
+            return new Response(JSON.stringify({ data: contracts }), {
+                status: 200,
+                headers: { "Content-Type": "application/json" },
+            });
         }
         const contract = await getJsonByName(contractName);
         if (contract === null) {
@@ -123,9 +122,15 @@ export async function GET(request) {
     }
     // Default response
     else {
+        const baseUrl = `${request.url.split("?")[0]}`;
         return new Response(
             JSON.stringify({
                 error: "No valid query provided. Use getContracts, getContract=Name, or readContractFactory",
+                links: {
+                    getContracts: `${baseUrl}?getContracts`,
+                    getContract: `${baseUrl}?getContract=YourContractName`,
+                    readContractFactory: `${baseUrl}?readContractFactory`,
+                },
             }),
             {
                 status: 400,
