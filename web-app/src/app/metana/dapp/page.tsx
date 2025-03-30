@@ -37,9 +37,9 @@ const ErrorNotification = ({ error, visible, onClose }) => {
 // --- Component: Page Header ---
 const Header = () => (
   <div className="mb-10 text-center opacity-0 translate-y-[-20px] animate-[fadeSlideDown_0.6s_forwards]">
-    <h1 className="text-3xl font-bold text-blue-400 mb-2">Contract Wrangler</h1>
+    <h1 className="text-3xl font-bold text-blue-400 mb-2">Wallet to Contract Interaction</h1>
     <p className="text-gray-400 max-w-2xl mx-auto">
-      No BS interface for blockchain shenanigans. Just write code and ship it.
+      First blockchain shenanigans. Take 0xf7b89162
     </p>
   </div>
 );
@@ -218,12 +218,8 @@ const Footer = () => (
         <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
         Ship transactions
       </li>
-      <li className="flex items-center">
-        <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
-        Profit
-      </li>
     </ul>
-    <p>Get stuff done. No unnecessary abstractions.</p>
+    <p>My first implementation to web3…</p>
   </div>
 );
 
