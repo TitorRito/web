@@ -1,5 +1,24 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Bytesized';
+  src: url('/fonts/Bytesized-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+#logo {
+  font-family: 'Bytesized', sans-serif;
+  font-size: 28px;
+  letter-spacing: 4px;
+  transition: all 0.5s;
+
+  &:hover {
+    text-decoration: none !important;
+    color: grey;
+  }
+}
+
 :root {
   --background: #0b1c25;
   --foreground: #DDA853;
@@ -573,7 +592,7 @@ textarea:focus {
     flex-direction: column;
     gap: 0.8rem;
   }
-  
+
   .site-footer {
     padding: 1rem;
   }

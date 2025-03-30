@@ -21,11 +21,11 @@ export default function Navbar() {
     };
 
     return (
-        <nav className="sticky top-0 p-4 flex justify-between shadow-md backdrop-blur-sm">
+        <nav className="sticky top-0 p-4 flex justify-between shadow-md backdrop-blur-sm items-center h-[52px]">
             <div>
                 {!isHomePage && (
-                    <Link href="/" className="hover:underline">
-                        <span>TR</span>
+                    <Link href="/">
+                        <div id='logo'>TR</div>
                     </Link>
                 )}
             </div>
