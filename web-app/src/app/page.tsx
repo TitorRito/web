@@ -190,10 +190,10 @@ function Footer() {
         </div>
         <div className="footer-item">
           <FaWeb3 />
-          looking for cool projects. duh.
+          Looking for cool projects. duh.
         </div>
         <div className="footer-item">
-          I also teach kitesrufing, professionally. 
+          I also like to teach kitesurfing, professionally. 
         </div>
       </div>
     </footer>
