@@ -22,25 +22,25 @@ export default function Navbar() {
 
     return (
         <nav className="sticky top-0 p-4 flex justify-between shadow-md backdrop-blur-sm">
-                <div>
-                    {!isHomePage && (
-                        <Link href="/" className="hover:underline">
-                            🏠
+            <div>
+                {!isHomePage && (
+                    <Link href="/" className="hover:underline">
+                        <span>TR</span>
+                    </Link>
+                )}
+            </div>
+            <ul className="flex space-x-6">
+                {routes.map((route) => (
+                    <li key={route.name}>
+                        <Link
+                            href={route.path}
+                            className={`:underline ${isRouteActive(route.path) ? 'border-b-2 border-blue-500 pb-1' : ''}`}
+                        >
+                            {route.name}
                         </Link>
-                    )}
-                </div>
-                <ul className="flex space-x-6">
-                    {routes.map((route) => (
-                        <li key={route.name}>
-                            <Link
-                                href={route.path}
-                                className={`:underline ${isRouteActive(route.path) ? 'border-b-2 border-blue-500 pb-1' : ''}`}
-                            >
-                                {route.name}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
+                    </li>
+                ))}
+            </ul>
         </nav>
     );
 }
