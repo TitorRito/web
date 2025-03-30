@@ -28,7 +28,7 @@ function ContractOptions({ selectedOption, setSelectedOption }: ContractOptionsP
     );
 }
 
-export default function ContractCreate() {
+export default function ContractCreate(handleCreateContract: any) {
     const [selectedOption, setSelectedOption] = useState<'custom' | 'import' | null>(null);
     const [formData, setFormData] = useState({
         address: '',
@@ -49,13 +49,6 @@ export default function ContractCreate() {
         console.log('Form Data:', formData);
     };
 
-    // Mock data for import list
-    const importList = [
-        { id: 1, name: 'ERC20 Token', address: '0x1234...5678', chainId: 1 },
-        { id: 2, name: 'NFT Collection', address: '0xabcd...efgh', chainId: 137 },
-        { id: 3, name: 'DAO Contract', address: '0x9876...5432', chainId: 42161 }
-    ];
-
     return (
         <div className="border rounded-lg shadow-md min-w-[250px]">
             <h2 className='text-center text-lg p-2'>Create Contract</h2>
@@ -74,7 +67,7 @@ export default function ContractCreate() {
                 )}
 
                 {selectedOption === 'import' && (
-                    <ContractCreateImportList importList={importList} />
+                    <ContractCreateImportList handleCreateContract={handleCreateContract}/>
                 )}
             </div>
         </div>

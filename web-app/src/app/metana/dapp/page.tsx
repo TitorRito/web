@@ -102,8 +102,9 @@ export default function Dapp() {
     }
   }
 
-  const handleCreateContract = async () => {
-    console.log('handle: create contract');
+  const handleCreateContract = async (arg: any) => {
+
+    console.log('handle: create contract', arg);
 
     if (!user) {
       setError('Please connect your wallet first');
@@ -115,10 +116,10 @@ export default function Dapp() {
     }
   }
 
-  if (window) {
-    window.u = user;
-    window.c = contract;
-  }
+  // if (window) {
+  //   window.u = user;
+  //   window.c = contract;
+  // }
 
   return (
     <div className='flex flex-col items-center justify-start gap-4 h-screen py-8'>
@@ -126,9 +127,11 @@ export default function Dapp() {
         user={user}
         handleConnection={handleConnectWallet}
       />
-      {/* {user && ( */}
-        contract ? <div>Contract: {contract?.address}</div> : <ContractCreate />
-      {/* )} */}
+      {contract ? (
+        <div>Contract: {contract?.address}</div>
+      ) : (
+        <ContractCreate handleCreateContract={handleCreateContract} />
+      )}
     </div>
   );
 }
