@@ -96,4 +96,8 @@ contract Erik1155 is ERC1155 {
         }
         return balances;
     }
+
+    function hello() public view returns (string memory) {
+        return "Hello, Erik!";
+    }
 }

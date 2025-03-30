@@ -1,8 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ethers } from 'ethers';
 
+// Helper to parse human-readable ABI strings
+const parseAbiString = (abiString) => {
+    const parts = abiString.match(/(constructor|error|event|function)\s+(\w+)\s*\((.*?)\)(?:\s+(view|pure))?(?:\s+returns\s*\((.*?)\))?/i);
+    if (!parts) return null;
+
+    const [, type, name, inputsStr, stateMutability, outputsStr] = parts;
+
+    const parseParams = (str) => {
+        if (!str) return [];
+        return str.split(',').map((param, index) => {
+            const [type, name = `arg${index}`] = param.trim().split(/\s+/).reverse();
+            return { name, type };
+        });
+    };
+
+    return {
+        type,
+        name,
+        inputs: parseParams(inputsStr),
+        outputs: parseParams(outputsStr || ''),
+        stateMutability: stateMutability || 'nonpayable' // Default for non-view/pure
+    };
+};
+
 const ContractABI = ({ contract }) => {
-    const { address, chainId, abi } = contract;
+    const { address, chainId, abi, instance } = contract;
+    const [results, setResults] = useState({}); // Store results of read calls
 
     if (!abi) {
         return (
@@ -12,11 +37,10 @@ const ContractABI = ({ contract }) => {
         );
     }
 
-    // Convert InterfaceAbi to JSON ABI if needed (ethers can handle this)
-    const parsedAbi = abi instanceof ethers.Interface ? abi.format('json') : abi;
-    const abiJson = typeof parsedAbi === 'string' ? JSON.parse(parsedAbi) : parsedAbi;
+    // Parse the string ABI into objects
+    const abiJson = abi.map(parseAbiString).filter(Boolean);
 
-    // Filter 
+    // Filter into reads, writes, and events
     const reads = abiJson.filter(
         (item) => item.type === 'function' && (item.stateMutability === 'view' || item.stateMutability === 'pure')
     );
@@ -26,13 +50,29 @@ const ContractABI = ({ contract }) => {
     const events = abiJson.filter((item) => item.type === 'event');
 
     // Helper to render function/event params
-    const renderParams = (inputs) => {
-        return inputs.map((input, index) => (
+    const renderParams = (params) => {
+        return params.map((param, index) => (
             <span key={index} className="text-gray-600">
-                {input.name || `arg${index}`} ({input.type})
-                {index < inputs.length - 1 ? ', ' : ''}
+                {param.name} ({param.type})
+                {index < params.length - 1 ? ', ' : ''}
             </span>
         ));
+    };
+
+    // Call a read function and store the result
+    const callReadFunction = async (funcName) => {
+        if (!instance) {
+            setResults((prev) => ({ ...prev, [funcName]: 'No instance available' }));
+            return;
+        }
+        try {
+            console.log('Calling function from ContractAbi:', funcName);
+            const result = await instance[funcName]();
+            setResults((prev) => ({ ...prev, [funcName]: result.toString() }));
+            console.log('Result = ', result);
+        } catch (e) {
+            setResults((prev) => ({ ...prev, [funcName]: `Error: ${e.message}` }));
+        }
     };
 
     return (
@@ -50,10 +90,25 @@ const ContractABI = ({ contract }) => {
                 {reads.length > 0 ? (
                     <ul className="space-y-3">
                         {reads.map((func, idx) => (
-                            <li key={idx} className="p-3 rounded-md shadow-sm">
-                                <span className="font-mono text-blue-600">{func.name}</span>
-                                ({renderParams(func.inputs)}) →{' '}
-                                {func.outputs.length > 0 ? renderParams(func.outputs) : 'void'}
+                            <li key={idx} className="p-3 bg-white rounded-md shadow-sm flex flex-col">
+                                <div className="flex justify-between items-center">
+                                    <span>
+                                        <span className="font-mono text-blue-600">{func.name}</span>
+                                        ({renderParams(func.inputs)}) →{' '}
+                                        {func.outputs.length > 0 ? renderParams(func.outputs) : 'void'}
+                                    </span>
+                                    {instance && (
+                                        <button
+                                            onClick={() => callReadFunction(func.name)}
+                                            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                        >
+                                            Call
+                                        </button>
+                                    )}
+                                </div>
+                                {results[func.name] && (
+                                    <p className="mt-2 text-gray-700 text-sm">Result: {results[func.name]}</p>
+                                )}
                             </li>
                         ))}
                     </ul>
@@ -68,7 +123,7 @@ const ContractABI = ({ contract }) => {
                 {writes.length > 0 ? (
                     <ul className="space-y-3">
                         {writes.map((func, idx) => (
-                            <li key={idx} className="p-3 rounded-md shadow-sm">
+                            <li key={idx} className="p-3 bg-white rounded-md shadow-sm">
                                 <span className="font-mono text-green-600">{func.name}</span>
                                 ({renderParams(func.inputs)})
                             </li>
@@ -85,7 +140,7 @@ const ContractABI = ({ contract }) => {
                 {events.length > 0 ? (
                     <ul className="space-y-3">
                         {events.map((event, idx) => (
-                            <li key={idx} className="p-3 rounded-md shadow-sm">
+                            <li key={idx} className="p-3 bg-white rounded-md shadow-sm">
                                 <span className="font-mono text-purple-600">{event.name}</span>
                                 ({renderParams(event.inputs)})
                             </li>

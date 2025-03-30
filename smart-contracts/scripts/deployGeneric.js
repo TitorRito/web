@@ -12,12 +12,13 @@ const COLORS = {
     CYAN: "\x1b[36m"
 };
 
-const contractsToDeploy = ["Erik1155", "Erik20", "ErikGame"];
+// const contractsToDeploy = ["Erik1155", "Erik20", "ErikGame"];
+const contractsToDeploy = ["Erik1155"];
 
 function logToFile(contractObj) {
     const logsDir = path.join(__dirname, '../logs');
     if (!fs.existsSync(logsDir)) {
-        console.log(`${COLORS.CYAN}Log Dif not found... creating it...${COLORS.RESET}`);
+        console.log(`${COLORS.CYAN}Log Dir not found... creating it...${COLORS.RESET}`);
         fs.mkdirSync(logsDir);
     }
 
@@ -26,6 +27,7 @@ function logToFile(contractObj) {
 
     try {
         fs.writeFileSync(filePath, JSON.stringify(contractObj, null, 2));
+        console.log(`${COLORS.GREEN}Logged contract details to ${filePath}${COLORS.RESET}`);
     } catch (error) {
         console.error(error);
         throw new Error(`Failed to write to file: ${filename}`);
@@ -37,7 +39,7 @@ function getFormattedTimestamp(date) {
 }
 
 async function main() {
-    console.log(`\n${COLORS.MAGENTA}HARDHAT ${COLORS.RESET} to deploy ${COLORS.YELLOW}${contractsToDeploy.length}${COLORS.RESET} contracts: ${COLORS.YELLOW}${contractsToDeploy.join(', ')}${COLORS.YELLOW}${COLORS.RESET}\n`);
+    console.log(`\n${COLORS.MAGENTA}HARDHAT ${COLORS.RESET} to deploy ${COLORS.YELLOW}${contractsToDeploy.length}${COLORS.RESET} contracts: ${COLORS.YELLOW}${contractsToDeploy.join(', ')}${COLORS.RESET}\n`);
 
     for (const contractName of contractsToDeploy) {
         try {
@@ -47,21 +49,21 @@ async function main() {
             await contract.waitForDeployment();
 
             const providerNetwork = await ethers.provider.getNetwork();
-
             const formattedTimestamp = getFormattedTimestamp(new Date());
 
             const contractObj = {
                 name: contractName,
                 address: contract.target,
-                network: providerNetwork.name,
+                network: providerNetwork.name === 'unknown' ? 'localhost' : providerNetwork.name,
                 chainId: providerNetwork.chainId.toString(),
-                abi: JSON.stringify(Contract.interface.fragments),
+                abi: Contract.interface.format('json'), // Updated to use format('json')
                 timestamp: formattedTimestamp
             };
+
             logToFile(contractObj);
             console.log(`${COLORS.YELLOW}[${contractObj.timestamp}]${COLORS.RESET} Successfully deployed ${COLORS.GREEN}${contractName}${COLORS.RESET} at ${COLORS.GREEN}${contract.target}${COLORS.RESET} on chain ID ${COLORS.GREEN}${providerNetwork.chainId}${COLORS.RESET}`);
         } catch (error) {
-            console.error(`Failed to deploy ${COLORS.RED}${contractName}${COLORS.RESET}`);
+            console.error(`Failed to deploy ${COLORS.RED}${contractName}${COLORS.RESET}:`, error);
         }
     }
 }

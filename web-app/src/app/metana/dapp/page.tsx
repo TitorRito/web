@@ -149,6 +149,7 @@ export default function Dapp() {
     setContract(null);
   };
 
+  window.c = contract
   return (
     <div className='flex flex-col items-center justify-start gap-4 h-screen py-8'>
       {error && (
