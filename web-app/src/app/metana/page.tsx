@@ -9,9 +9,9 @@ export default function MetanaPage() {
       link: "metana/dapp",
       objectives: [
         "Interactive blockchain interface with wallet integration",
-        "Real-time contract function calls with parameter input",
+        "Real-time contract function calls with parameter input, and event listening",
         "Network switching across Ethereum, Sepolia, and Hardhat networks",
-        "Clean component architecture with optimized state management",
+        "Contract ABI retrieval and display for user friendly interaction",
         "Send transactions and interact with any smart contract"
       ],
       stack: [

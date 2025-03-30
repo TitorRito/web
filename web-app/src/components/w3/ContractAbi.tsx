@@ -93,11 +93,28 @@ const ContractABI = ({ contract }) => {
             
             // Call the function with parameters
             const result = await instance[func.name](...params);
+            
+            // Format result based on type (ethers v6 compatible)
+            let formattedResult;
+            if (result === null || result === undefined) {
+                formattedResult = String(result);
+            } else if (typeof result === 'bigint') {
+                formattedResult = result.toString();
+            } else if (ArrayBuffer.isView(result) || Array.isArray(result)) {
+                formattedResult = Array.from(result).toString();
+            } else if (typeof result === 'object') {
+                try {
+                    formattedResult = JSON.stringify(result);
+                } catch (e) {
+                    formattedResult = String(result);
+                }
+            } else {
+                formattedResult = String(result);
+            }
+            
             setResults((prev) => ({ 
                 ...prev, 
-                [func.name]: ethers.utils.isBytes(result) || 
-                            ethers.BigNumber.isBigNumber(result) ? 
-                            result.toString() : result 
+                [func.name]: formattedResult
             }));
             console.log('Result:', result);
         } catch (e) {
