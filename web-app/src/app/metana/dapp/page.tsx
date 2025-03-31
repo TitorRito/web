@@ -187,6 +187,34 @@ const ConnectPrompt = ({ onConnect }) => (
   </div>
 );
 
+// --- Component: 404 Wallet Not Found ---
+const WalletNotFound = () => (
+  <div className="min-h-screen bg-gray-900 text-gray-200 flex items-center justify-center">
+    <div className="text-center max-w-lg px-4">
+      <div className="inline-flex rounded-full bg-red-900/30 p-4 mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <h1 className="text-3xl font-bold text-red-400 mb-4">No Wallet Found</h1>
+      <p className="text-gray-400 mb-8">
+        To interact with this dApp, you need an Ethereum wallet like MetaMask installed in your browser.
+      </p>
+      <a 
+        href="https://metamask.io/download/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200 inline-flex items-center"
+      >
+        <span>Install MetaMask</span>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
+      </a>
+    </div>
+  </div>
+);
+
 // --- Component: Main Content ---
 const MainContent = ({ user, contract, handleCreateContract, handleResetContract, handleConnectWallet }) => (
   <div className="lg:col-span-9 opacity-0 animate-[fadeIn_0.8s_0.4s_forwards]">
@@ -231,6 +259,20 @@ export default function Dapp() {
   const [errorVisible, setErrorVisible] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [txHash, setTxHash] = useState('');
+  const [walletDetected, setWalletDetected] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    // Check for wallet on component mount
+    const checkForWallet = () => {
+      const hasWallet = typeof window !== 'undefined' && 
+        (window.ethereum !== undefined || 
+         window.web3 !== undefined);
+      
+      setWalletDetected(hasWallet);
+    };
+    
+    checkForWallet();
+  }, []);
 
   useEffect(() => {
     if (error) {
@@ -394,6 +436,21 @@ export default function Dapp() {
     }
   };
 
+  // If wallet detection check is still in progress, show a loading state
+  if (walletDetected === null) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  // If no wallet is detected, show the WalletNotFound component
+  if (walletDetected === false) {
+    return <WalletNotFound />;
+  }
+
+  // If wallet is detected, show the main dApp
   return (
     <div className='min-h-screen bg-gray-900 text-gray-200 py-10 px-4'>
       <div className='max-w-7xl mx-auto'>
