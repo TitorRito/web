@@ -1,7 +1,8 @@
 import { Network as NetworkType } from "@/lib/types";
-import React from "react";
+import React, { useState } from "react";
 import { NetworkIcon, BalanceIcon } from "@/lib/svgs";
 import { useUser } from "@/lib/UserContext";
+import { switchNetwork } from "@/lib/json-rpc";
 
 interface NetworkDisplayProps {
     title: string;
@@ -29,23 +30,35 @@ const NetworkDisplayComponent: React.FC<NetworkDisplayProps> = ({ title, icon, c
     );
 };
 
+const Hello = () => {
+    return (
+        <div style={{ width: '200px', height: '400px', backgroundColor: 'white', color: 'black' }}>
+            Hello
+        </div>
+    )
+}
+
 const NetworkComponent = () => {
     const { user, setUser } = useUser();
     const network = user.network;
+    const [isOpen, setIsOpen] = useState(false);
 
     const handleNetworkClick = () => {
         console.log('Network clicked: lets begin');
-        
-        // Update the network chainId to 100 for testing purposes
+        const response = switchNetwork('100');
         setUser({
             ...user,
             network: {
                 ...user.network,
-                id: '100'
+                id: 0,
             }
         });
-        
+
         console.log('Chain ID set to 100 for testing');
+    };
+
+    const handleBalanceClick = () => {
+        setIsOpen(!isOpen);
     };
 
     return (
@@ -63,7 +76,10 @@ const NetworkComponent = () => {
                 icon={<BalanceIcon />}
                 content={parseFloat(network.balance).toFixed(4)}
                 subtitle={network.currency}
+                onClick={handleBalanceClick}
             />
+
+            {isOpen && <Hello />}
         </div>
     );
 };
