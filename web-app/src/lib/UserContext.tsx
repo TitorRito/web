@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { User, Contract } from '@/lib/types';
 import { getWallet } from '@/lib/json-rpc';
+import { ethers } from 'ethers';
 
 interface UserContextType {
     user: User | null;
@@ -65,11 +66,29 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     }, [user]);
 
-    function updateContract() {
-        if (user) {
-            console.log("Contract instance updated");
-        } else {
-            console.error("User not connected, cannot update contract");
+    function updateContract(contract: Contract) {
+        if (!user || !user.address) {
+            console.log("Contract reverted...");
+        }
+        try {
+            console.log(`Updating contract for user ${user?.address}...`)
+            console.log("Contract data:", contract);
+
+            const ethersContract = new ethers.Contract(
+                contract?.address,
+                contract.abi,
+                user?.signer
+            )
+
+            setContract({
+                address: contract.address,
+                chainId: contract.chainId,
+                abi: contract.abi,
+                instance: ethersContract,
+            });
+
+        } catch (e) {
+            console.error("Error updating contract:", e);
         }
     }
 

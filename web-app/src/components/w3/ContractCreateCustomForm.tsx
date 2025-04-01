@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { Contract } from '@/lib/types';
 
 interface ContractCreateCustomFormProps {
-    handleCreateContract: (contract: any) => void;
+    handleCreateContract: (contract: Contract) => void;
 }
 
 export default function ContractCreateCustomForm({ handleCreateContract }: ContractCreateCustomFormProps) {
@@ -22,19 +23,17 @@ export default function ContractCreateCustomForm({ handleCreateContract }: Contr
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         try {
-            // Parse ABI from string format to JSON
             const abiLines = formData.abi.split('\n').filter(line => line.trim() !== '');
-            
-            // Handle contract creation
+
             handleCreateContract({
                 name: formData.name,
                 address: formData.address,
                 chainId: formData.chainId ? parseInt(formData.chainId) : undefined,
                 abi: abiLines
             });
-            
+
             // Reset form
             setFormData({
                 name: '',
@@ -56,7 +55,7 @@ export default function ContractCreateCustomForm({ handleCreateContract }: Contr
                     <span className="text-sm font-mono text-gray-400">Optional fields</span>
                     <span className="text-xs text-gray-500 ml-2 px-1.5 py-0.5 bg-gray-800 rounded border border-gray-700">optional</span>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
                         <label htmlFor="name" className="block text-sm font-mono text-gray-400">Contract Name</label>
@@ -85,7 +84,7 @@ export default function ContractCreateCustomForm({ handleCreateContract }: Contr
                     </div>
                 </div>
             </div>
-            
+
             {/* Required fields */}
             <div className="space-y-1">
                 <label htmlFor="address" className="block text-sm font-mono text-gray-400">Contract Address</label>
@@ -116,9 +115,9 @@ function ownerOf(uint256) view returns (address)`}
                 />
                 <div className="flex items-center justify-between mt-1">
                     <p className="text-xs text-gray-500 font-mono">Each function on a separate line</p>
-                    <a 
-                        href="https://docs.ethers.org/v5/getting-started/" 
-                        target="_blank" 
+                    <a
+                        href="https://docs.ethers.org/v5/getting-started/"
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs text-blue-400 hover:text-blue-300 font-mono"
                     >
