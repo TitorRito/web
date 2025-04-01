@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { networkChains, switchNetwork, ApiResponse } from '@/lib/json-rpc';
 import { useUser } from '@/lib/UserContext';
 import { ErrorIcon, WarningIcon } from '@/lib/svgs';
@@ -8,6 +8,22 @@ const NetworkContent = () => {
     const currentNetworkId = user?.network?.id;
     const [apiMsg, setApiMsg] = useState<ApiResponse | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
+
+    // Clear apiMsg after 3 seconds
+    useEffect(() => {
+        let timeoutId: NodeJS.Timeout;
+        
+        if (apiMsg) {
+            timeoutId = setTimeout(() => {
+                setApiMsg(null);
+            }, 3000);
+        }
+        
+        // Cleanup function to clear the timeout if the component unmounts or apiMsg changes
+        return () => {
+            if (timeoutId) clearTimeout(timeoutId);
+        };
+    }, [apiMsg]);
 
     const handleNetworkSwitch = async (chainId: string) => {
         if (!user) return;
@@ -61,10 +77,6 @@ const NetworkContent = () => {
                     );
                 })}
             </div>
-
-
-
-
 
             {/* API Response Message */}
             {apiMsg && (
