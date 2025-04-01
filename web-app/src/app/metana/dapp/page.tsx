@@ -5,6 +5,17 @@ import { User, Contract } from '@/lib/types';
 import LogInWallet from '@/components/w3/WalletLogIn';
 import ContractCreate from '@/components/w3/ContractCreate';
 import ContractABI from '@/components/w3/ContractAbi';
+import { 
+  ErrorIcon, 
+  CloseIcon, 
+  SendIcon, 
+  InfoIcon,
+  CheckShieldIcon,
+  RefreshIcon,
+  LightningIcon,
+  WarningIcon,
+  ExternalLinkIcon 
+} from '@/lib/svgs';
 
 // --- Component: Error Notification ---
 const ErrorNotification = ({ error, visible, onClose }) => {
@@ -13,9 +24,7 @@ const ErrorNotification = ({ error, visible, onClose }) => {
   return (
     <div className="fixed top-5 right-5 bg-red-900 border border-red-700 text-white px-4 py-3 rounded shadow-lg z-50 flex items-start max-w-md animate-[fadeIn_0.3s_ease-in-out]">
       <div className="mr-2 flex-shrink-0 pt-0.5">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-300" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zm-1 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-        </svg>
+        <ErrorIcon />
       </div>
       <div>
         <p className="font-medium">Error</p>
@@ -25,9 +34,7 @@ const ErrorNotification = ({ error, visible, onClose }) => {
         onClick={onClose}
         className="ml-auto flex-shrink-0 -mr-1 text-red-300 hover:text-white transition-colors"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-        </svg>
+        <CloseIcon />
       </button>
     </div>
   );
@@ -60,9 +67,7 @@ const SendEthForm = ({ user, onSend, isSending, txHash }) => {
 
       <div className="p-4 space-y-3">
         <h4 className="text-sm font-medium text-gray-300 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-          </svg>
+          <SendIcon />
           Send ETH
         </h4>
 
@@ -104,14 +109,11 @@ const SendEthForm = ({ user, onSend, isSending, txHash }) => {
 };
 
 // --- Component: Sidebar ---
-const Sidebar = ({ user, handleConnection, onSendEth, isSending, txHash, hasContract }) => (
+const Sidebar = ({ onSendEth, isSending, txHash, hasContract }) => (
   <div className="mx-auto grid grid-cols-1 lg:col-span-3 space-y-6 opacity-0 translate-x-[-20px] animate-[fadeSlideRight_0.6s_0.2s_forwards]">
-    <LogInWallet
-      user={user}
-      handleConnection={handleConnection}
-    />
+    <LogInWallet />
 
-    {user && (
+    {/* {user && (
       <>
         <SendEthForm
           user={user}
@@ -123,15 +125,14 @@ const Sidebar = ({ user, handleConnection, onSendEth, isSending, txHash, hasCont
         {!hasContract && (
           <div className="text-center mt-4 border-gray-700 pt-4 bg-gray-800/50 rounded-lg p-3">
             <p className="text-sm text-blue-400 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <InfoIcon />
               Create a contract to start hacking
             </p>
           </div>
         )}
       </>
-    )}
+    )} */}
+
   </div>
 );
 
@@ -139,9 +140,7 @@ const Sidebar = ({ user, handleConnection, onSendEth, isSending, txHash, hasCont
 const ContractView = ({ contract, onReset }) => (
   <div className="bg-gray-800/30 rounded-xl border border-gray-700/50 overflow-hidden shadow-xl">
     <div className="bg-gradient-to-r from-green-900/30 to-blue-900/30 px-4 py-3 border-b border-gray-700 flex items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-      </svg>
+      <CheckShieldIcon />
       <h3 className="font-medium text-green-300">Contract Locked and Loaded</h3>
     </div>
 
@@ -155,9 +154,7 @@ const ContractView = ({ contract, onReset }) => (
         onClick={onReset}
         className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-md transition-all duration-200 flex items-center space-x-1 text-sm"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
+        <RefreshIcon />
         <span>Change Contract</span>
       </button>
     </div>
@@ -168,9 +165,7 @@ const ContractView = ({ contract, onReset }) => (
 const ConnectPrompt = ({ onConnect }) => (
   <div className="bg-gray-800/30 rounded-xl border border-gray-700/50 p-8 text-center">
     <div className="inline-flex rounded-full bg-gray-800 p-3 mb-4">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
+      <LightningIcon />
     </div>
     <h3 className="text-xl font-semibold mb-2 text-gray-200">Ready to Hack the Chain?</h3>
     <p className="text-gray-400 mb-6 max-w-md mx-auto">
@@ -190,9 +185,7 @@ const WalletNotFound = () => (
   <div className="min-h-screen bg-gray-900 text-gray-200 flex items-center justify-center">
     <div className="text-center max-w-lg px-4">
       <div className="inline-flex rounded-full bg-red-900/30 p-4 mb-6">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-        </svg>
+        <WarningIcon />
       </div>
       <h1 className="text-3xl font-bold text-red-400 mb-4">No Wallet Found</h1>
       <p className="text-gray-400 mb-8">
@@ -205,9 +198,7 @@ const WalletNotFound = () => (
         className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200 inline-flex items-center"
       >
         <span>Install MetaMask</span>
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-        </svg>
+        <ExternalLinkIcon />
       </a>
     </div>
   </div>
@@ -251,10 +242,10 @@ const Footer = () => (
 
 
 import { getIsWeb3, getWallet } from '@/lib/json-rpc';
+import { UserProvider } from '@/lib/UserContext';
 
 // --- Main Dapp Component ---
 export default function Dapp() {
-  const [user, setUser] = useState<User | null>(null);
   const [contract, setContract] = useState<Contract | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [errorVisible, setErrorVisible] = useState(false);
@@ -264,11 +255,11 @@ export default function Dapp() {
 
   useEffect(() => {
     setWalletDetected(getIsWeb3());
-    async function fetchWallet() {
-      const data = await getWallet();
-      setUser(data);
-    } //for develiopment flow
-    fetchWallet();
+    // async function fetchWallet() {
+    //   const data = await getWallet();
+    //   setUser(data);
+    // } //for develiopment flow
+    // fetchWallet();
   }, []);
 
   useEffect(() => {
@@ -280,22 +271,6 @@ export default function Dapp() {
       return () => clearTimeout(timer);
     }
   }, [error]);
-
-
-  useEffect(() => {
-    console.dir('User:', user);
-  }, [user]);
-
-  const handleConnectWallet = async () => {
-    try {
-      setError(null);
-      const data = await getWallet();
-      setUser(data);
-    } catch (error: any) {
-      console.error("Failed to connect wallet:", error);
-      setError(error.message || "Failed to connect wallet");
-    }
-  };
 
   const handleCreateContract = async (arg: any) => {
     if (!user) {
@@ -397,37 +372,37 @@ export default function Dapp() {
 
   // If wallet is detected, show the main dApp
   return (
-    <div className='min-h-screen bg-gray-900 text-gray-200 py-10 px-4'>
-      <div className='max-w-7xl mx-auto'>
-        <Header />
+    <UserProvider>
 
-        <ErrorNotification
-          error={error}
-          visible={errorVisible}
-          onClose={() => setErrorVisible(false)}
-        />
+      <div className='min-h-screen bg-gray-900 text-gray-200 py-10 px-4'>
+        <div className='max-w-7xl mx-auto'>
+          <Header />
 
-        <div className='grid grid-cols-1 lg:grid-cols-12 gap-6'>
-          <Sidebar
-            user={user}
-            handleConnection={handleConnectWallet}
-            onSendEth={handleSendEth}
-            isSending={isSending}
-            txHash={txHash}
-            hasContract={!!contract}
+          <ErrorNotification
+            error={error}
+            visible={errorVisible}
+            onClose={() => setErrorVisible(false)}
           />
 
-          <MainContent
-            user={user}
-            contract={contract}
-            handleCreateContract={handleCreateContract}
-            handleResetContract={handleResetContract}
-            handleConnectWallet={handleConnectWallet}
-          />
+          <div className='grid grid-cols-1 lg:grid-cols-12 gap-6'>
+            <Sidebar
+              onSendEth={handleSendEth}
+              isSending={isSending}
+              txHash={txHash}
+              hasContract={!!contract}
+            />
+
+            {/* <MainContent
+              contract={contract}
+              handleCreateContract={handleCreateContract}
+              handleResetContract={handleResetContract}
+            /> */}
+          </div>
+
+          <Footer />
         </div>
-
-        <Footer />
       </div>
-    </div>
+    </UserProvider>
+
   );
 }

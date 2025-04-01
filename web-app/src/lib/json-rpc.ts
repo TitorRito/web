@@ -20,7 +20,7 @@ async function getWalletCredentials(provider: ethers.BrowserProvider) {
             id: network.chainId.toString(),
             name: network.name,
             balance: ethers.formatEther(balance),
-            curreny: currency
+            currency: currency
         }
     };
 }

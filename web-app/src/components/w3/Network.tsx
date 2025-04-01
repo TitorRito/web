@@ -1,6 +1,7 @@
 import { Network as NetworkType } from "@/lib/types";
 import React from "react";
 import { NetworkIcon, BalanceIcon } from "@/lib/svgs";
+import { useUser } from "@/lib/UserContext";
 
 interface NetworkDisplayProps {
     title: string;
@@ -28,12 +29,23 @@ const NetworkDisplayComponent: React.FC<NetworkDisplayProps> = ({ title, icon, c
     );
 };
 
-const NetworkComponent: React.FC<NetworkType> = (network) => {
-    const currencySymbol = network.currency || 'ETH';
+const NetworkComponent = () => {
+    const { user, setUser } = useUser();
+    const network = user.network;
 
     const handleNetworkClick = () => {
         console.log('Network clicked: lets begin');
-        network.id = 200;
+        
+        // Update the network chainId to 100 for testing purposes
+        setUser({
+            ...user,
+            network: {
+                ...user.network,
+                id: '100'
+            }
+        });
+        
+        console.log('Chain ID set to 100 for testing');
     };
 
     return (
@@ -50,7 +62,7 @@ const NetworkComponent: React.FC<NetworkType> = (network) => {
                 title="BALANCE"
                 icon={<BalanceIcon />}
                 content={parseFloat(network.balance).toFixed(4)}
-                subtitle={currencySymbol}
+                subtitle={network.currency}
             />
         </div>
     );
