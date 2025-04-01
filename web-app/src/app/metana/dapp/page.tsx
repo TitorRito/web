@@ -178,12 +178,12 @@ const ConnectPrompt = ({ onConnect }) => (
     <p className="text-gray-400 mb-6 max-w-md mx-auto">
       Connect your wallet to start messing with contracts. No fluff, just code.
     </p>
-    <button
+    {/* <button
       onClick={onConnect}
       className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200"
     >
       Connect Wallet
-    </button>
+    </button> */}
   </div>
 );
 
@@ -251,6 +251,9 @@ const Footer = () => (
   </div>
 );
 
+
+import { getIsWeb3, getWallet } from '@/lib/json-rpc';
+
 // --- Main Dapp Component ---
 export default function Dapp() {
   const [user, setUser] = useState<User | null>(null);
@@ -262,16 +265,7 @@ export default function Dapp() {
   const [walletDetected, setWalletDetected] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Check for wallet on component mount
-    const checkForWallet = () => {
-      const hasWallet = typeof window !== 'undefined' &&
-        (window.ethereum !== undefined ||
-          window.web3 !== undefined);
-
-      setWalletDetected(hasWallet);
-    };
-
-    checkForWallet();
+    setWalletDetected(getIsWeb3());
   }, []);
 
   useEffect(() => {
@@ -287,8 +281,8 @@ export default function Dapp() {
   const handleConnectWallet = async () => {
     try {
       setError(null);
-      const userData = await getUserProvider();
-      setUser(userData);
+      const data = await getWallet();
+      setUser(data);
     } catch (error: any) {
       console.error("Failed to connect wallet:", error);
       setError(error.message || "Failed to connect wallet");
@@ -343,6 +337,11 @@ export default function Dapp() {
     setContract(null);
   };
 
+
+  const handleSwitchNetwork = async (networkConfig: NetworkConfig) => {
+    console.log('click: handleSwitchNetwork');
+  };
+
   const handleSendEth = async (recipient: string, amount: string) => {
     if (!user?.signer) {
       setError('Please connect your wallet first');
@@ -376,63 +375,6 @@ export default function Dapp() {
       setError(e.message || 'Failed to send ETH');
     } finally {
       setIsSending(false);
-    }
-  };
-
-  const handleSwitchNetwork = async (networkConfig: NetworkConfig) => {
-    if (!window.ethereum) {
-      setError("No Ethereum provider found. Please install MetaMask.");
-      return;
-    }
-
-    try {
-      await window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: `0x${networkConfig.chainId.toString(16)}` }],
-      });
-
-      setTimeout(async () => {
-        try {
-          const userData = await getUserProvider();
-          setUser(userData);
-
-          if (contract) {
-            handleResetContract();
-          }
-        } catch (error) {
-          console.error("Failed to refresh user data after network switch:", error);
-        }
-      }, 1000);
-    } catch (switchError: any) {
-      if (switchError.code === 4902) {
-        try {
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [
-              {
-                chainId: `0x${networkConfig.chainId.toString(16)}`,
-                chainName: networkConfig.name,
-                rpcUrls: [networkConfig.rpcUrl],
-                nativeCurrency: networkConfig.currency,
-                blockExplorerUrls: networkConfig.blockExplorer ? [networkConfig.blockExplorer] : undefined,
-              },
-            ],
-          });
-
-          setTimeout(async () => {
-            try {
-              const userData = await getUserProvider();
-              setUser(userData);
-            } catch (error) {
-              console.error("Failed to refresh user data after adding network:", error);
-            }
-          }, 1000);
-        } catch (addError) {
-          setError(`Failed to add the ${networkConfig.name} network to your wallet.`);
-        }
-      } else {
-        setError(`Failed to switch to the ${networkConfig.name} network.`);
-      }
     }
   };
 
