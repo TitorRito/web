@@ -9,7 +9,7 @@ interface UserContextType {
     login: () => void;
     contract: Contract | null;
     setContract: React.Dispatch<React.SetStateAction<Contract | null>>;
-    updateContract: () => void;
+    updateContract: (contract?: Contract) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -38,7 +38,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         initializeUser();
     }, []);
 
-    // Evnet Listening for onChanged
+    // Event Listening for onChanged
     useEffect(() => {
         if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
             const handleChainChanged = () => {
@@ -66,19 +66,26 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     }, [user]);
 
-    function updateContract(contract: Contract) {
+    function updateContract(contract?: Contract) {
         if (!user || !user.address) {
             console.log("Contract reverted...");
+            return;
         }
+
+        if (!contract || !contract.address || !contract.abi) {
+            console.log("Invalid contract data");
+            return;
+        }
+
         try {
-            console.log(`Updating contract for user ${user?.address}...`)
+            console.log(`Updating contract for user ${user.address}...`);
             console.log("Contract data:", contract);
 
             const ethersContract = new ethers.Contract(
-                contract?.address,
+                contract.address,
                 contract.abi,
-                user?.signer
-            )
+                user.signer
+            );
 
             setContract({
                 address: contract.address,
@@ -91,6 +98,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             console.error("Error updating contract:", e);
         }
     }
+
+    window.uu = user;
+    window.cc = contract;
+    window.nn = user?.network;
 
     return (
         <UserContext.Provider value={{
