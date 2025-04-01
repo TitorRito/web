@@ -16,6 +16,14 @@ const NetworkContent = () => {
         }
     };
 
+    const getNetworkClassName = (isCurrentNetwork: boolean) => {
+        const baseClasses = "rounded-lg p-3 transition-colors cursor-pointer border";
+        const activeClasses = "bg-purple-900/30 border-purple-500/70 shadow-lg shadow-purple-900/20";
+        const inactiveClasses = "bg-gray-800/70 border-gray-700/50 hover:bg-gray-700/50";
+        
+        return `${baseClasses} ${isCurrentNetwork ? activeClasses : inactiveClasses}`;
+    };
+
     return (
         <div className="text-gray-200">
             <div className="grid grid-cols-1 gap-3">
@@ -24,13 +32,7 @@ const NetworkContent = () => {
                     return (
                         <div
                             key={chain.id}
-                            className={`
-                rounded-lg p-3 transition-colors cursor-pointer border
-                ${isCurrentNetwork
-                                    ? 'bg-purple-900/30 border-purple-500/70 shadow-lg shadow-purple-900/20'
-                                    : 'bg-gray-800/70 border-gray-700/50 hover:bg-gray-700/50'
-                                }
-              `}
+                            className={getNetworkClassName(isCurrentNetwork)}
                             onClick={() => handleNetworkSwitch(chain.id)}
                         >
                             <div className="flex flex-col items-center justify-center text-center">

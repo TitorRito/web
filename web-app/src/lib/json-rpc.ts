@@ -72,8 +72,16 @@ export const networkChains = [
 
 //switch network function
 export async function switchNetwork(chainId: string) {
-    const chain = networkChains.find((chain) => chain.id === chainId);
-    return chain ? 'chain saw' : 'chain hidden';
+    console.log('hex chainId:', `0x${parseInt(chainId).toString(16)}`);
+    try {
+        await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: `0x${parseInt(chainId).toString(16)}` }]
+        });
+        console.log("Network switched successfully");
+    } catch (error) {
+        console.error("Error switching network:", error);
+    }
 }
 
 

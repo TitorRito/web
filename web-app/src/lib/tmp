@@ -1,0 +1,60 @@
+  const handleCreateContract = async (arg: any) => {
+    if (!user) {
+      setError('Please connect your wallet first');
+      return;
+    }
+    if (!user.signer) {
+      setError('Error: no user signer instance from ethers provided');
+      return;
+    }
+
+    try {
+      const contractAddress = arg.address;
+      const contractABI = arg.abi;
+
+      if (!contractAddress || !ethers.isAddress(contractAddress)) {
+        setError('Invalid contract address');
+        return;
+      }
+
+      if (!contractABI) {
+        setError('Missing contract ABI');
+        return;
+      }
+
+      const contractInstance = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        user.signer
+      );
+
+      setContract({
+        address: contractAddress,
+        chainId: Number(user.chainId),
+        abi: contractABI,
+        instance: contractInstance
+      });
+
+      setError(null);
+    } catch (e: any) {
+      console.error('Error creating contract instance:', e);
+      setError(e.message || 'Failed to create contract instance');
+    }
+  };
+
+
+  const MainContent = ({ user, contract, handleCreateContract, handleResetContract, handleConnectWallet }) => (
+    <div className="lg:col-span-9 opacity-0 animate-[fadeIn_0.8s_0.4s_forwards]">
+      {contract ? (
+        <ContractView contract={contract} onReset={handleResetContract} />
+      ) : (
+        user ? (
+          <ContractCreate handleCreateContract={handleCreateContract} />
+        ) : (
+          <ConnectPrompt onConnect={handleConnectWallet} />
+        )
+      )}
+    </div>
+  );
+  
+  
