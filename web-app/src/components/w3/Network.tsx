@@ -1,15 +1,12 @@
-import { Network as NetworkType } from "@/lib/types";
-import React, { useState } from "react";
+import React from "react";
 import { NetworkIcon, BalanceIcon } from "@/lib/svgs";
 import { useUser } from "@/lib/UserContext";
-import { switchNetwork } from "@/lib/json-rpc";
 
 interface NetworkDisplayProps {
     title: string;
     icon: React.ReactNode;
     content: React.ReactNode;
     subtitle?: React.ReactNode;
-    onClick?: () => void;
 }
 
 const NetworkDisplayComponent: React.FC<NetworkDisplayProps> = ({ title, icon, content, subtitle, onClick }) => {
@@ -30,56 +27,28 @@ const NetworkDisplayComponent: React.FC<NetworkDisplayProps> = ({ title, icon, c
     );
 };
 
-const Hello = () => {
-    return (
-        <div style={{ width: '200px', height: '400px', backgroundColor: 'white', color: 'black' }}>
-            Hello
-        </div>
-    )
-}
-
 const NetworkComponent = () => {
-    const { user, setUser } = useUser();
-    const network = user.network;
-    const [isOpen, setIsOpen] = useState(false);
-
-    const handleNetworkClick = () => {
-        console.log('Network clicked: lets begin');
-        const response = switchNetwork('100');
-        setUser({
-            ...user,
-            network: {
-                ...user.network,
-                id: 0,
-            }
-        });
-
-        console.log('Chain ID set to 100 for testing');
-    };
-
-    const handleBalanceClick = () => {
-        setIsOpen(!isOpen);
-    };
+    const { user } = useUser();
+    const network = user?.network;
 
     return (
         <div className="grid grid-cols-2 gap-4">
-            <NetworkDisplayComponent
-                title="NETWORK"
-                icon={<NetworkIcon />}
-                content={network.name}
-                subtitle={network.id}
-                onClick={handleNetworkClick}
-            />
+            <div className="relative">
+                <NetworkDisplayComponent
+                    title="NETWORK"
+                    icon={<NetworkIcon />}
+                    content={network.name}
+                    subtitle={network.id}
+                />
+            </div>
 
             <NetworkDisplayComponent
                 title="BALANCE"
                 icon={<BalanceIcon />}
                 content={parseFloat(network.balance).toFixed(4)}
                 subtitle={network.currency}
-                onClick={handleBalanceClick}
             />
 
-            {isOpen && <Hello />}
         </div>
     );
 };

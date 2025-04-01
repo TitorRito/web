@@ -4,6 +4,7 @@ import { WalletLoader, WalletAddressIcon, CopyIcon, WalletIcon } from '@/lib/svg
 import Network from './Network';
 import { useUser } from '@/lib/UserContext';
 import { getWallet } from '@/lib/json-rpc';
+import CardCrypto from './CardCrypto';
 
 const Login = ({ handleConnection, isConnecting }: { handleConnection: () => Promise<void>, isConnecting: boolean }) => {
     return (
@@ -32,12 +33,9 @@ const UserUI = ({ user }: { user: User }) => {
     return (
         <div className="p-4">
             <div className="bg-gradient-to-br from-gray-800 to-black rounded-xl overflow-hidden shadow-lg border border-gray-700/30">
-                {/* Card header with subtle accent */}
                 <div className="relative h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"></div>
 
-                {/* Card contents */}
                 <div className="p-5 space-y-4">
-                    {/* Address section with improved styling */}
                     <div className="space-y-1.5">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center text-xs text-gray-400 font-medium">
@@ -79,22 +77,18 @@ const WalletLogIn = () => {
     };
 
     return (
-        <div className="border border-gray-700 rounded-xl shadow-lg bg-gray-900 min-w-[340px]">
-            <div className="flex justify-between items-center p-4 border-b border-gray-800">
-                <h2 className='font-medium text-lg text-gray-200 flex items-center'>
-                    <WalletIcon />
-                    Wallet
-                </h2>
-                <div>
-                    {!user && isConnecting && <WalletLoader />}
-                </div>
-            </div>
+        <CardCrypto 
+            title="Wallet" 
+            icon={<WalletIcon />} 
+            isLoading={!user && isConnecting}
+            loadingIcon={<WalletLoader />}
+        >
             {user ? (
                 <UserUI user={user} />
             ) : (
                 <Login handleConnection={handleConnectionWithLoading} isConnecting={isConnecting} />
             )}
-        </div>
+        </CardCrypto>
     );
 };
 

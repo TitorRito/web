@@ -124,3 +124,13 @@ export const WalletIcon = () => {
         </svg>
     );
 };
+
+export const NetworkCardIcon = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-purple-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M12 4a4 4 0 100 8 4 4 0 000-8zm-2 4a2 2 0 114 0 2 2 0 01-4 0z" clipRule="evenodd" />
+            <path d="M13 10.5a5 5 0 00-10 0V14h3v-3.5a2 2 0 114 0V14h3v-3.5z" />
+            <path d="M5 9.5a5 5 0 0110 0V13a1 1 0 11-2 0v-3.5a3 3 0 00-6 0V13a1 1 0 11-2 0V9.5z" />
+        </svg>
+    );
+};
