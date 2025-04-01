@@ -1,11 +1,14 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { User } from '@/lib/types';
+import { User, Contract } from '@/lib/types';
 import { getWallet } from '@/lib/json-rpc';
 
 interface UserContextType {
     user: User | null;
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
     login: () => void;
+    contract: Contract | null;
+    setContract: React.Dispatch<React.SetStateAction<Contract | null>>;
+    updateContract: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -13,6 +16,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isInitializing, setIsInitializing] = useState(true);
+    const [contract, setContract] = useState<Contract | null>(null);
 
     // Initialize user on mount
     useEffect(() => {
@@ -36,21 +40,17 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Evnet Listening for onChanged
     useEffect(() => {
         if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
-            // Handle network changes
             const handleChainChanged = () => {
                 console.log("Network changed, refreshing data...");
                 getWallet().then(setUser);
             };
 
-            // Handle account changes
             const handleAccountsChanged = (accounts: string[]) => {
                 console.log("Accounts changed:", accounts);
                 if (accounts.length === 0) {
-                    // User disconnected their wallet
                     console.log("User disconnected wallet");
                     setUser(null);
                 } else {
-                    // User switched accounts, refresh data
                     getWallet().then(setUser);
                 }
             };
@@ -65,11 +65,22 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     }, [user]);
 
+    function updateContract() {
+        if (user) {
+            console.log("Contract instance updated");
+        } else {
+            console.error("User not connected, cannot update contract");
+        }
+    }
+
     return (
         <UserContext.Provider value={{
             user,
             setUser,
             login: () => getWallet().then(setUser),
+            contract,
+            setContract,
+            updateContract,
         }}>
             {children}
         </UserContext.Provider>

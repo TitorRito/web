@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react';
 import { ethers, Network } from 'ethers';
 import { User, Contract } from '@/lib/types';
 import LogInWallet from '@/components/w3/WalletLogIn';
-import NetworkLogin from '@/components/w3/NetworkLogin';
+import LoginNetwork from '@/components/w3/NetworkLogin';
+import LoginContract from '@/components/w3/ContractLogin';
 import ContractCreate from '@/components/w3/ContractCreate';
 import ContractABI from '@/components/w3/ContractAbi';
 import { ErrorNotification } from '@/components/ErrorComponent';
 import { getIsWeb3, getWallet } from '@/lib/json-rpc';
-import { UserProvider } from '@/lib/UserContext';
+import { UserProvider, useUser } from '@/lib/UserContext';
 
 import {
   ErrorIcon,
@@ -103,7 +104,7 @@ export default function Dapp() {
   const [error, setError] = useState<string | null>(null);
   const [errorVisible, setErrorVisible] = useState(false);
   const [walletDetected, setWalletDetected] = useState<boolean | null>(null);
-
+  
   useEffect(() => {
     setWalletDetected(getIsWeb3());
   }, []);
@@ -144,8 +145,9 @@ export default function Dapp() {
           />
 
           <div className='flex flex-col gap-8'>
+            <LoginContract />
             <LogInWallet />
-            <NetworkLogin />
+            <LoginNetwork />
           </div>
         </div>
       </div>
