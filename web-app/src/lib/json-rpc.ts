@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { User } from "./types";
+import { networkChains, isLocalNetwork, NetworkChain } from "./network-rpc";
 
 export interface ApiResponse {
     success: boolean;
@@ -52,68 +53,11 @@ export async function getWallet(): Promise<User | null> {
     }
 }
 
-const INFURA_PROJECT_ID = process.env.NEXT_PUBLIC_INFURA_PROJECT_ID;
-
-export const networkChains = [
-    {
-        id: "1",
-        name: "Ethereum Mainnet",
-        rpcUrl: `https://mainnet.infura.io/v3/${INFURA_PROJECT_ID}`
-    },
-    {
-        id: "11155111",
-        name: "Sepolia Testnet",
-        rpcUrl: `https://sepolia.infura.io/v3/${INFURA_PROJECT_ID}`
-    },
-    {
-        id: "31337",
-        name: "Localhost (Hardhat)",
-        rpcUrl: "http://127.0.0.1:8545"
-    },
-    {
-        id: "59144",
-        name: "Linea Mainnet",
-        rpcUrl: `https://linea-mainnet.infura.io/v3/${INFURA_PROJECT_ID}`
-    },
-    {
-        id: "1337",
-        name: "Localhost (Ganache)",
-        rpcUrl: "http://127.0.0.1:8545"
-    },
-    {
-        id: "137",
-        name: "Polygon Mainnet",
-        rpcUrl: `https://polygon-mainnet.infura.io/v3/${INFURA_PROJECT_ID}`
-    },
-    {
-        id: "10",
-        name: "Optimism Mainnet",
-        rpcUrl: `https://optimism-mainnet.infura.io/v3/${INFURA_PROJECT_ID}`
-    },
-    {
-        id: "42161",
-        name: "Arbitrum One",
-        rpcUrl: `https://arbitrum-mainnet.infura.io/v3/${INFURA_PROJECT_ID}`
-    },
-    {
-        id: "100",
-        name: "Gnosis Chain",
-        rpcUrl: "https://rpc.gnosischain.com"
-    },
-    {
-        id: "43114",
-        name: "Avalanche C-Chain",
-        rpcUrl: "https://api.avax.network/ext/bc/C/rpc"
-    },
-    {
-        id: "56",
-        name: "BNB Smart Chain",
-        rpcUrl: "https://bsc-dataseed.binance.org"
-    }
-];
+// Re-export networkChains for backward compatibility
+export { networkChains, isLocalNetwork };
 
 // Function to add a network to the wallet with improved error handling
-export async function addNetwork(chain: typeof networkChains[0]): Promise<ApiResponse> {
+export async function addNetwork(chain: NetworkChain): Promise<ApiResponse> {
     if (typeof window.ethereum === 'undefined') {
         return {
             success: false,
@@ -123,25 +67,25 @@ export async function addNetwork(chain: typeof networkChains[0]): Promise<ApiRes
     }
 
     try {
+        const params = {
+            chainId: `0x${parseInt(chain.id).toString(16)}`,
+            chainName: chain.name,
+            rpcUrls: [chain.rpcUrl],
+            nativeCurrency: chain.currency || {
+                name: 'Ether',
+                symbol: 'ETH',
+                decimals: 18,
+            },
+        };
+        
+        // Only add blockExplorer if it exists
+        if (chain.blockExplorer) {
+            Object.assign(params, { blockExplorerUrls: [chain.blockExplorer] });
+        }
+        
         await window.ethereum.request({
             method: 'wallet_addEthereumChain',
-            params: [
-                {
-                    chainId: `0x${parseInt(chain.id).toString(16)}`,
-                    chainName: chain.name,
-                    rpcUrls: [chain.rpcUrl],
-                    nativeCurrency: {
-                        name: 'Ether',
-                        symbol: 'ETH',
-                        decimals: 18,
-                    },
-                    blockExplorerUrls: chain.id === '1'
-                        ? ['https://etherscan.io']
-                        : chain.id === '59144'
-                            ? ['https://lineascan.build']
-                            : undefined,
-                },
-            ],
+            params: [params],
         });
 
         return {
@@ -151,6 +95,19 @@ export async function addNetwork(chain: typeof networkChains[0]): Promise<ApiRes
         };
     } catch (error: any) {
         console.error("Error adding network:", error);
+        
+        // Specific error handling for local networks
+        if (isLocalNetwork(chain.id)) {
+            if (error.message?.includes('resolve host')) {
+                return {
+                    success: false,
+                    message: `Failed to connect to ${chain.name}. Make sure your local node is running.`,
+                    code: error.code,
+                    type: 'error'
+                };
+            }
+        }
+        
         return {
             success: false,
             message: error.message || "Failed to add network",

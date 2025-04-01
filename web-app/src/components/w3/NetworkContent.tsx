@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { networkChains, switchNetwork, ApiResponse } from '@/lib/json-rpc';
+import { networkChains, switchNetwork, ApiResponse, isLocalNetwork } from '@/lib/json-rpc';
 import { useUser } from '@/lib/UserContext';
 import { ErrorIcon, WarningIcon } from '@/lib/svgs';
 
@@ -12,13 +12,13 @@ const NetworkContent = () => {
     // Clear apiMsg after 3 seconds
     useEffect(() => {
         let timeoutId: NodeJS.Timeout;
-        
+
         if (apiMsg) {
             timeoutId = setTimeout(() => {
                 setApiMsg(null);
             }, 3000);
         }
-        
+
         // Cleanup function to clear the timeout if the component unmounts or apiMsg changes
         return () => {
             if (timeoutId) clearTimeout(timeoutId);
@@ -33,6 +33,17 @@ const NetworkContent = () => {
         setIsProcessing(true);
 
         try {
+            // For local networks, show a helpful message first
+            const network = networkChains.find(chain => chain.id === chainId);
+            if (isLocalNetwork(chainId) && network) {
+                setApiMsg({
+                    success: false,
+                    message: `Attempting to connect to ${network.name}. Make sure your local node is running on ${network.rpcUrl}.`,
+                    type: 'warning'
+                });
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Give user time to read the message
+            }
+
             const response = await switchNetwork(chainId);
             setApiMsg(response);
 
@@ -61,17 +72,22 @@ const NetworkContent = () => {
             <div className="grid grid-cols-1 gap-3">
                 {networkChains.map((chain) => {
                     const isCurrentNetwork = chain.id === currentNetworkId;
+                    const localNet = isLocalNetwork(chain.id);
+
                     return (
                         <div
                             key={chain.id}
-                            className={getNetworkClassName(isCurrentNetwork)}
+                            className={`${getNetworkClassName(isCurrentNetwork)} ${localNet ? 'border-yellow-700/30' : ''}`}
                             onClick={() => handleNetworkSwitch(chain.id)}
                         >
                             <div className="flex flex-col items-center justify-center text-center">
-                                <span className={`font-medium text-sm ${isCurrentNetwork ? 'text-purple-300' : 'text-gray-200'}`}>
+                                <span className={`font-medium text-sm ${isCurrentNetwork ? 'text-purple-300' : localNet ? 'text-yellow-200' : 'text-gray-200'}`}>
                                     {chain.name}
                                 </span>
-                                <span className="text-xs text-gray-400 mt-1">Chain ID: {chain.id}</span>
+                                <span className="text-xs text-gray-400 mt-1">
+                                    Chain ID: {chain.id}
+                                    {localNet && <span className="ml-2 text-yellow-400">(Local)</span>}
+                                </span>
                             </div>
                         </div>
                     );
