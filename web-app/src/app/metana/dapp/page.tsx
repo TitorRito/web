@@ -200,7 +200,7 @@ const WalletNotFound = () => (
       <p className="text-gray-400 mb-8">
         To interact with this dApp, you need an Ethereum wallet like MetaMask installed in your browser.
       </p>
-      <a 
+      <a
         href="https://metamask.io/download/"
         target="_blank"
         rel="noopener noreferrer"
@@ -264,13 +264,13 @@ export default function Dapp() {
   useEffect(() => {
     // Check for wallet on component mount
     const checkForWallet = () => {
-      const hasWallet = typeof window !== 'undefined' && 
-        (window.ethereum !== undefined || 
-         window.web3 !== undefined);
-      
+      const hasWallet = typeof window !== 'undefined' &&
+        (window.ethereum !== undefined ||
+          window.web3 !== undefined);
+
       setWalletDetected(hasWallet);
     };
-    
+
     checkForWallet();
   }, []);
 

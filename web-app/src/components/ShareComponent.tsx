@@ -7,6 +7,7 @@ interface ShareComponentProps {
   title: string;
 }
 
+//Tries to use navigator.share() first to trigger native OS sharing
 export const ShareComponent: React.FC<ShareComponentProps> = ({ url, title }) => {
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
