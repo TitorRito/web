@@ -3,15 +3,16 @@ import ContractCreate from './ContractCreate';
 
 
 export const ContractContent = () => {
-    const { contract, setContract } = useUser();
+    const { contract } = useUser();
 
-    function handleCreateContract(newContract: any) {
-        console.log("Contract created from here:", newContract);
-    }
 
     return (
-        <ContractCreate
-            handleCreateContract={handleCreateContract}
-        />
+        <>
+            {contract ? (
+                <div>Contract View</div>
+            ) : (
+                <ContractCreate />
+            )}
+        </>
     )
 }

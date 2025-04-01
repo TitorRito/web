@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ContractCreateCustomForm from './ContractCreateCustomForm';
 import ContractCreateImportList from './ContractCreateImportList';
-
+import { useUser } from '@/lib/UserContext';
 interface ContractOptionsProps {
     selectedOption: 'custom' | 'import' | null;
     setSelectedOption: (option: 'custom' | 'import') => void;
@@ -26,11 +26,10 @@ function ContractOptions({ selectedOption, setSelectedOption }: ContractOptionsP
     );
 }
 
-interface ContractCreateProps {
-    handleCreateContract: (contract: any) => void;
-}
 
-export default function ContractCreate({ handleCreateContract }: ContractCreateProps) {
+
+export default function ContractCreate() {
+    const { updateContract } = useUser();
     const [selectedOption, setSelectedOption] = useState<'custom' | 'import' | null>('custom');
 
     return (
@@ -42,11 +41,11 @@ export default function ContractCreate({ handleCreateContract }: ContractCreateP
             />
             <div className="p-4">
                 {selectedOption === 'custom' && (
-                    <ContractCreateCustomForm handleCreateContract={handleCreateContract} />
+                    <ContractCreateCustomForm handleCreateContract={updateContract} />
                 )}
 
                 {selectedOption === 'import' && (
-                    <ContractCreateImportList handleCreateContract={handleCreateContract} />
+                    <ContractCreateImportList handleCreateContract={updateContract} />
                 )}
             </div>
         </div>
