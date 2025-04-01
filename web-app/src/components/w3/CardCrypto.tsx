@@ -5,10 +5,18 @@ interface CardCryptoProps {
   icon: ReactNode;
   isLoading?: boolean;
   loadingIcon?: ReactNode;
+  actionIcon?: ReactNode;
   children: ReactNode;
 }
 
-const CardCrypto = ({ title, icon, isLoading = false, loadingIcon, children }: CardCryptoProps) => {
+const CardCrypto = ({ 
+  title, 
+  icon, 
+  isLoading = false, 
+  loadingIcon,
+  actionIcon,
+  children 
+}: CardCryptoProps) => {
   return (
     <div className="border border-gray-700 rounded-xl shadow-lg bg-gray-900 min-w-[340px]">
       <div className="flex justify-between items-center p-4 border-b border-gray-800">
@@ -16,8 +24,9 @@ const CardCrypto = ({ title, icon, isLoading = false, loadingIcon, children }: C
           {icon}
           {title}
         </h2>
-        <div>
+        <div className="flex items-center">
           {isLoading && loadingIcon}
+          {actionIcon}
         </div>
       </div>
       {children}

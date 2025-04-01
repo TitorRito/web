@@ -1,26 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { User } from '@/lib/types';
-import { WalletLoader, WalletAddressIcon, CopyIcon, WalletIcon } from '@/lib/svgs';
+import { WalletLoader, WalletAddressIcon, CopyIcon, WalletIcon, LoginIcon } from '@/lib/svgs';
 import Network from './Network';
 import { useUser } from '@/lib/UserContext';
 import { getWallet } from '@/lib/json-rpc';
 import CardCrypto from './CardCrypto';
 
-const Login = ({ handleConnection, isConnecting }: { handleConnection: () => Promise<void>, isConnecting: boolean }) => {
-    return (
-        <div className="p-4">
-            <button
-                onClick={handleConnection}
-                className="w-full py-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 text-white font-medium shadow-lg hover:from-blue-600 hover:to-blue-800 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-            >
-                {isConnecting ? 'Connecting...' : 'Connect Wallet'}
-            </button>
-        </div>
-    )
-};
-
 const UserUI = ({ user }: { user: User }) => {
-
     const shortenAddress = (address: string) => {
         return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
     };
@@ -77,16 +63,31 @@ const WalletLogIn = () => {
     };
 
     return (
-        <CardCrypto 
-            title="Wallet" 
-            icon={<WalletIcon />} 
-            isLoading={!user && isConnecting}
-            loadingIcon={<WalletLoader />}
+        <CardCrypto
+            title="Wallet"
+            icon={<WalletIcon />}
+            isLoading={false}
+            actionIcon={
+                !user ? (
+                    isConnecting ? (
+                        <WalletLoader />
+                    ) : (
+                        <div
+                            onClick={handleConnectionWithLoading}
+                            className="cursor-pointer p-1 rounded-md hover:bg-blue-500/20 transition-colors"
+                            title="Connect Wallet"
+                        >
+                            <LoginIcon />
+                        </div>
+                    )
+                ) : null
+            }
         >
             {user ? (
                 <UserUI user={user} />
             ) : (
-                <Login handleConnection={handleConnectionWithLoading} isConnecting={isConnecting} />
+
+                <>div</>
             )}
         </CardCrypto>
     );
