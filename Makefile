@@ -1,25 +1,25 @@
+# Parent directory Makefile to forward commands to smart-contracts directory
+
+# Smart contracts directory path
+CONTRACTS_DIR = smart-contracts
+
+# Help command
+.PHONY: help
 help:
-	@echo "\nThis is a front-end and back-end directory focused on DApp development."
-	@echo "The back-end (smart contracts) is located under the 'smart-contracts' directory."
-	@echo "The front-end is located in the 'web-app' directory and is written in Next.js."
-	@echo ""
 	@echo "Available commands:"
-	@echo "  make init   - Initialize the project by installing dependencies."
-	@echo "  make run    - Deploy smart contracts and start the front-end development server."
-	@echo "  make front  - Run only the front-end development server.\n"
+	@echo "  make serve           - Start a local Hardhat node"
+	@echo "  make sc-command      - Run any command in smart-contracts directory (e.g., make sc-command command=test)"
 
+# Start a local Hardhat node
+.PHONY: serve
+serve:
+	@echo "Passing MakeServe to the children..."
+	@$(MAKE) -C $(CONTRACTS_DIR) serve
 
-front:
-	cd web-app && npm run dev
+# Generic command forwarding to smart-contracts directory
+.PHONY: sc-command
+sc-command:
+	@$(MAKE) -C $(CONTRACTS_DIR) $(command)
 
-run:
-	make -C smart-contracts dep
-	cd web-app && npm install && npm run dev
-
-init:
-	@if ! command -v npm >/dev/null 2>&1; then \
-		echo "Error: npm is not installed. Please install npm and try again."; \
-		exit 1; \
-	fi
-	@echo "Running npm install..."
-	npm install
+# Default target
+.DEFAULT_GOAL := help

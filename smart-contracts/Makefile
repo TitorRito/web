@@ -17,6 +17,7 @@ help:
 	@echo "  make deploy-erik     - Deploy Erik1155 to localhost"
 	@echo "  make dep CONTRACTS=\"Contract1 Contract2 ...\" - Deploy specified contracts (generic deployment)"
 	@echo "  make deploy-NETWORK=<network> - Deploy to specific network"
+	@echo "  make serve           - Start a local Hardhat node"
 
 # Compile contracts
 .PHONY: compile
@@ -72,6 +73,12 @@ ganache:
 coverage:
 	@echo "Running test coverage..."
 	npx hardhat coverage
+
+# Start a local Hardhat node
+.PHONY: serve
+serve:
+	@echo "Starting local Hardhat node..."
+	npx hardhat node
 
 # Default target
 .DEFAULT_GOAL := help
