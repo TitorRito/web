@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { User, Contract } from '@/lib/types';
-import { NetworkConfig } from '@/lib/networks';
 import LogInWallet from '@/components/w3/WalletLogIn';
 import ContractCreate from '@/components/w3/ContractCreate';
 import ContractABI from '@/components/w3/ContractAbi';
@@ -105,12 +104,11 @@ const SendEthForm = ({ user, onSend, isSending, txHash }) => {
 };
 
 // --- Component: Sidebar ---
-const Sidebar = ({ user, handleConnection, onSwitchNetwork, onSendEth, isSending, txHash, hasContract }) => (
-  <div className="lg:col-span-3 space-y-6 opacity-0 translate-x-[-20px] animate-[fadeSlideRight_0.6s_0.2s_forwards]">
+const Sidebar = ({ user, handleConnection, onSendEth, isSending, txHash, hasContract }) => (
+  <div className="mx-auto grid grid-cols-1 lg:col-span-3 space-y-6 opacity-0 translate-x-[-20px] animate-[fadeSlideRight_0.6s_0.2s_forwards]">
     <LogInWallet
       user={user}
       handleConnection={handleConnection}
-      onSwitchNetwork={onSwitchNetwork}
     />
 
     {user && (
@@ -266,6 +264,11 @@ export default function Dapp() {
 
   useEffect(() => {
     setWalletDetected(getIsWeb3());
+    async function fetchWallet() {
+      const data = await getWallet();
+      setUser(data);
+    } //for develiopment flow
+    fetchWallet();
   }, []);
 
   useEffect(() => {
@@ -277,6 +280,11 @@ export default function Dapp() {
       return () => clearTimeout(timer);
     }
   }, [error]);
+
+
+  useEffect(() => {
+    console.dir('User:', user);
+  }, [user]);
 
   const handleConnectWallet = async () => {
     try {
@@ -335,11 +343,6 @@ export default function Dapp() {
 
   const handleResetContract = () => {
     setContract(null);
-  };
-
-
-  const handleSwitchNetwork = async (networkConfig: NetworkConfig) => {
-    console.log('click: handleSwitchNetwork');
   };
 
   const handleSendEth = async (recipient: string, amount: string) => {
@@ -408,7 +411,6 @@ export default function Dapp() {
           <Sidebar
             user={user}
             handleConnection={handleConnectWallet}
-            onSwitchNetwork={handleSwitchNetwork}
             onSendEth={handleSendEth}
             isSending={isSending}
             txHash={txHash}
@@ -428,45 +430,4 @@ export default function Dapp() {
       </div>
     </div>
   );
-}
-
-// --- Helper function ---
-async function getUserProvider(): Promise<User> {
-  if (!window.ethereum) {
-    throw new Error("No Ethereum provider found. Please install MetaMask or another wallet extension.");
-  }
-
-  try {
-    if (typeof window.ethereum.request !== 'function') {
-      if (typeof window.ethereum.enable === 'function') {
-        await window.ethereum.enable();
-      } else {
-        throw new Error("Ethereum provider doesn't have request or enable method");
-      }
-    } else {
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-    }
-
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const signer = await provider.getSigner();
-    const address = await signer.getAddress();
-
-    const network = await provider.getNetwork();
-    const chainId = network.chainId.toString();
-
-    const balanceWei = await provider.getBalance(address);
-    const balance = ethers.formatEther(balanceWei);
-
-    return {
-      address,
-      network: network.name,
-      chainId,
-      balance,
-      signer,
-      provider
-    };
-  } catch (error) {
-    console.error("Error connecting to wallet:", error);
-    throw error;
-  }
 }

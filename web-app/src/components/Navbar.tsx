@@ -21,25 +21,25 @@ export default function Navbar() {
     };
 
     return (
-        <nav className="sticky top-0 p-4 flex justify-between shadow-md backdrop-blur-sm items-center h-[52px]">
+        <nav className="sticky top-0 p-4 flex justify-between shadow-md backdrop-blur-sm items-center h-[52px] z-10">
             <div>
-                {!isHomePage && (
-                    <Link href="/">
-                        <div id='logo'>TR</div>
-                    </Link>
-                )}
+            {!isHomePage && (
+                <Link href="/">
+                <div id='logo'>TR</div>
+                </Link>
+            )}
             </div>
             <ul className="flex space-x-6">
-                {routes.map((route) => (
-                    <li key={route.name}>
-                        <Link
-                            href={route.path}
-                            className={`:underline ${isRouteActive(route.path) ? 'border-b-2 border-blue-500 pb-1' : ''}`}
-                        >
-                            {route.name}
-                        </Link>
-                    </li>
-                ))}
+            {routes.map((route) => (
+                <li key={route.name}>
+                <Link
+                    href={route.path}
+                    className={`:underline ${isRouteActive(route.path) ? 'border-b-2 border-blue-500 pb-1' : ''}`}
+                >
+                    {route.name}
+                </Link>
+                </li>
+            ))}
             </ul>
         </nav>
     );

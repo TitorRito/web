@@ -1,10 +1,16 @@
 import { ethers } from 'ethers';
 
+
+export type Network = {
+    name: string;
+    id: string;
+    balance: string;
+    currency: string;
+}
+
 export type User = {
     address: string;
-    network: string;
-    chainId: string;
-    balance: string;
+    network: Network;
     signer: ethers.JsonRpcSigner;
     provider: ethers.BrowserProvider;
 }
