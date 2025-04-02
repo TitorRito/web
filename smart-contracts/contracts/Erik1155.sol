@@ -22,7 +22,7 @@ contract Erik1155 is ERC1155 {
     constructor() ERC1155("https://myapi.com/metadata/{id}.json") {}
 
     // Mint basic tokens (0-2) with cooldown
-    function mintTee(uint256 id) public {
+    function mint(uint256 id) public {
         require(id <= 2, "Invalid basic token ID");
         require(
             block.timestamp >= lastMintTime[msg.sender] + COOLDOWN,
@@ -34,7 +34,7 @@ contract Erik1155 is ERC1155 {
     }
 
     // Forge tokens 3-6 by burning combos of 0-2
-    function forgeToken(uint256 toId) public {
+    function forge(uint256 toId) public {
         if (toId == PLANT) {
             require(
                 balanceOf(msg.sender, SEED) >= 1 &&
@@ -76,7 +76,7 @@ contract Erik1155 is ERC1155 {
     }
 
     // Burn tokens 3-6 (get nothing back)
-    function burnToken(uint256 id) public {
+    function burn(uint256 id) public {
         require(id >= 3 && id <= 6, "Can only burn tokens 3-6");
         require(balanceOf(msg.sender, id) >= 1, "Not enough tokens");
 
@@ -95,9 +95,5 @@ contract Erik1155 is ERC1155 {
             balances[i] = balanceOf(msg.sender, i);
         }
         return balances;
-    }
-
-    function hello() public view returns (string memory) {
-        return "Hello, Erik!";
     }
 }

@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { SolItem, SolItemType } from '@/lib/abi-rpc';
+import React from 'react';
 
 export interface SearchFilters {
     searchText: string;
