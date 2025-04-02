@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Contract } from '@/lib/types';
 import { parseAndCategorizeAbi, SolItem, SolParam, SolItemType, formatContractResponse } from '@/lib/abi-rpc';
 import ContractSearch, { SearchFilters } from './ContractSearch';
+import { OpenSeaIcon, EtherscanIcon, WarningIcon } from '@/lib/svgs';
 
 interface ContractState {
   [functionName: string]: {
@@ -465,12 +466,36 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
 const ContractHeader: React.FC<{ contract: Contract }> = ({ contract }) => (
   <div className="mb-6 border-b border-gray-700 pb-4">
     <h1 className="text-3xl font-bold text-blue-400">Contract Details</h1>
-    <p className="text-gray-400">
-      Address: <span className="font-mono text-green-400">{contract.address || 'Not provided'}</span>
-    </p>
-    <p className="text-gray-400">
-      Chain ID: <span className="font-mono text-green-400">{contract.chainId || 'Not provided'}</span>
-    </p>
+    <div className="flex flex-col space-y-2">
+      <p className="text-gray-400">
+        Address: <span className="font-mono text-green-400">{contract.address || 'Not provided'}</span>
+      </p>
+      <p className="text-gray-400">
+        Chain ID: <span className="font-mono text-green-400">{contract.chainId || 'Not provided'}</span>
+      </p>
+      {contract.address && (
+        <div className="flex space-x-4 mt-2">
+          <a
+            href={`https://testnets.opensea.io/assets/sepolia/${contract.address}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 transition-colors font-medium flex items-center"
+          >
+            <OpenSeaIcon />
+            View on OpenSea
+          </a>
+          <a
+            href={`https://sepolia.etherscan.io/address/${contract.address}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 transition-colors font-medium flex items-center"
+          >
+            <EtherscanIcon />
+            View on Etherscan
+          </a>
+        </div>
+      )}
+    </div>
   </div>
 );
 
@@ -489,20 +514,7 @@ const ContractSection: React.FC<{
 const NoAbiProvided: React.FC = () => (
   <div className="max-w-4xl mx-auto p-6 bg-gray-900 rounded-lg shadow-lg text-gray-200">
     <div className="flex flex-col items-center justify-center py-8">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-16 w-16 text-red-400 mb-4"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-        />
-      </svg>
+      <WarningIcon className="h-16 w-16 text-red-400 mb-4" />
       <h2 className="text-2xl font-bold text-red-400 mb-2">No ABI Provided</h2>
       <p className="text-gray-400 text-center">
         Contract ABI is required to display functions and events.
