@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Contract } from '@/lib/types';
-import { parseAndCategorizeAbi, SolItem, SolParam, SolItemType } from '@/lib/abi-rpc';
+import { parseAndCategorizeAbi, SolItem, SolParam, SolItemType, formatContractResponse } from '@/lib/abi-rpc';
 
 interface ContractState {
   [functionName: string]: {
     functionSol: SolItem;
+    args?: Record<string, string>;
     loading: boolean;
     response?: string;
-    args?: Record<string, string>;
     trigger?: boolean;
   };
 }
@@ -50,8 +50,8 @@ const ExecuteComponent: React.FC<{
     });
 
     if (missingArgs.length > 0) {
-      const missingNames = missingArgs.map((input, idx) =>
-        input.name || `Parameter ${idx}`
+      const missingNames = missingArgs.map((input) =>
+        input.name
       ).join(', ');
 
       setContractState(prev => {
@@ -66,7 +66,6 @@ const ExecuteComponent: React.FC<{
       return;
     }
 
-    // Check if all pareams 
     // Set trigger to true -> runExecute from Parent : ContractABI
     setContractState(prev => {
       const newState = { ...prev };
@@ -208,8 +207,6 @@ const ContractFunction: React.FC<{
 }> = ({ functionName, contractState, setContractState }) => {
   const funcState = contractState[functionName];
   const solItem = funcState.functionSol;
-
-  const isRead = solItem.itemType === SolItemType.READ;
   const isFunction = solItem.type === 'function';
 
   const getTypeStyles = () => {
@@ -244,13 +241,14 @@ const ContractFunction: React.FC<{
       <div className="flex flex-col">
         <FunctionSignature functionSol={solItem} color={getColor()} />
 
-        {isRead && isFunction && setContractState && (
-          <FunctionTerminal
-            functionName={functionName}
-            contractState={contractState}
-            setContractState={setContractState}
-          />
-        )}
+        {isFunction && setContractState &&
+          (solItem.itemType === SolItemType.READ || solItem.itemType === SolItemType.WRITE) && (
+            <FunctionTerminal
+              functionName={functionName}
+              contractState={contractState}
+              setContractState={setContractState}
+            />
+          )}
       </div>
     </li>
   );
@@ -295,18 +293,48 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
   const runExecute = async (triggeredContract: [string, ContractState[string]]) => {
     const [functionName, funcState] = triggeredContract;
 
-    console.log('Hello, executing function:', triggeredContract);
-    console.log('Function name:', functionName);
-    console.log('Function details:', funcState.functionSol);
+    console.log('Executing function:', functionName);
+    console.log('Function type:', funcState.functionSol.itemType);
     console.log('Arguments:', funcState.args);
 
     try {
-      const args = funcState.functionSol.inputs.map((input) => {
-        const paramKey = input.name;
+      const args = funcState.functionSol.inputs.map((input, idx) => {
+        const paramKey = input.name || `param${idx}`;
         return funcState.args?.[paramKey] || '';
       });
 
-      const result = await contract.instance?.[functionName](...args);
+      if (!contract.instance) {
+        throw new Error("Contract instance not available");
+      }
+
+      let result;
+
+      // Write has to await tx, read is direct
+      if (funcState.functionSol.itemType === SolItemType.WRITE) {
+        const tx = await contract.instance[functionName](...args);
+
+        const receipt = await tx.wait();
+        result = receipt;
+        console.log('Transaction receipt:', receipt);
+      } else {
+        result = await contract.instance[functionName](...args);
+      }
+
+      const safeResult = formatContractResponse(result);
+      let formattedResult;
+
+      if (safeResult === null) {
+        formattedResult = "null";
+      } else if (typeof safeResult === 'string') {
+        formattedResult = safeResult;
+      } else {
+        try {
+          formattedResult = JSON.stringify(safeResult, null, 2);
+        } catch (jsonError) {
+          console.error('Error stringifying result:', jsonError);
+          formattedResult = 'Error displaying JSON result...';
+        }
+      }
 
       setContractState(prev => {
         const newState = { ...prev };
@@ -314,12 +342,13 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
           ...funcState,
           loading: false,
           trigger: false,
-          response: `${result}`
+          response: `Result: ${formattedResult}`
         };
         return newState;
       });
     } catch (e) {
       console.error('Error executing function:', e);
+
       setContractState(prev => {
         const newState = { ...prev };
         newState[functionName] = {
@@ -360,6 +389,7 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
               key={idx}
               functionName={solItem.name}
               contractState={contractState}
+              setContractState={setContractState}  // Pass setContractState for write functions too
             />
           ))}
         </ul>

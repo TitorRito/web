@@ -69,3 +69,45 @@ export const parseAndCategorizeAbi = (abi: any) => {
 
   return { reads, writes, events };
 };
+
+// Format contract response values to handle BigInt and other special types
+export const formatContractResponse = (value: any): any => {
+  // Handle null/undefined
+  if (value === null || value === undefined) {
+    return null;
+  }
+  
+  // Handle BigInt values
+  if (typeof value === 'bigint') {
+    return value.toString();
+  }
+  
+  // Handle arrays - recursively convert each item
+  if (Array.isArray(value)) {
+    return value.map(formatContractResponse);
+  }
+  
+  // Handle objects with toString method (like BigNumber)
+  if (value && typeof value === 'object') {
+    // Special case for objects that have toString method, like ethers BigNumber
+    if (typeof value.toString === 'function' && 
+        // Avoid calling toString on objects where it just returns the default [object Object]
+        value.toString !== Object.prototype.toString) {
+      return value.toString();
+    }
+    
+    // Handle regular objects - recursively process their properties
+    if (value.constructor === Object) {
+      const result: Record<string, any> = {};
+      for (const key in value) {
+        if (Object.prototype.hasOwnProperty.call(value, key)) {
+          result[key] = formatContractResponse(value[key]);
+        }
+      }
+      return result;
+    }
+  }
+  
+  // Return other primitive values as-is
+  return value;
+};
