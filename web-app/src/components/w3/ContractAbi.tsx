@@ -6,7 +6,6 @@ interface ContractState {
   [functionName: string]: {
     functionSol: SolItem;
     loading: boolean;
-    status?: number;
     response?: string;
     args?: Record<string, string>;
     trigger?: boolean;
@@ -41,13 +40,41 @@ const ExecuteComponent: React.FC<{
   const handleExecute = () => {
     if (isLoading) return;
 
+    // Check if all required arguments are provided
+    const requiredInputs = func.inputs;
+    const currentArgs = funcState.args || {};
+
+    const missingArgs = requiredInputs.filter((input, idx) => {
+      const paramKey = input.name || `param${idx}`;
+      return !currentArgs[paramKey] || currentArgs[paramKey].trim() === '';
+    });
+
+    if (missingArgs.length > 0) {
+      const missingNames = missingArgs.map((input, idx) =>
+        input.name || `Parameter ${idx}`
+      ).join(', ');
+
+      setContractState(prev => {
+        const newState = { ...prev };
+        newState[functionName] = {
+          ...funcState,
+          response: `Error: Missing required arguments: ${missingNames}`
+        };
+        return newState;
+      });
+
+      return;
+    }
+
+    // Check if all pareams 
     // Set trigger to true -> runExecute from Parent : ContractABI
     setContractState(prev => {
       const newState = { ...prev };
       newState[functionName] = {
         ...funcState,
         loading: true,
-        trigger: true
+        trigger: true,
+        response: undefined // Clear any previous error messages
       };
       return newState;
     });
@@ -275,18 +302,33 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
     console.log('Arguments:', funcState.args);
 
     try {
+      // Convert arguments from the state to an array in the correct order
+      const args = funcState.functionSol.inputs.map((input) => {
+        const paramKey = input.name;
+        return funcState.args?.[paramKey] || '';
+      });
 
-    } catch (e) {
-      console.error('Error executing function:', e);
+      const result = contract.instance?.[functionName](...args);
 
-    } finally {
-      // Reset the trigger state
       setContractState(prev => {
         const newState = { ...prev };
         newState[functionName] = {
           ...funcState,
           loading: false,
-          trigger: false
+          trigger: false,
+          response: `Result: ${JSON.stringify(result)}`
+        };
+        return newState;
+      });
+    } catch (e) {
+      console.error('Error executing function:', e);
+      setContractState(prev => {
+        const newState = { ...prev };
+        newState[functionName] = {
+          ...funcState,
+          loading: false,
+          trigger: false,
+          response: `Error: ${e.message || 'Unknown error occurred'}`
         };
         return newState;
       });
