@@ -38,70 +38,59 @@ const NoAbiProvided: React.FC = () => (
   </div>
 );
 
-// Function Arguments Component - Updated props
-const FunctionArguments: React.FC<{
+// Clickable terminal header component for execution - Updated styling and removed Run button
+const ExecuteComponent: React.FC<{
   func: SolItem;
   isLoading: boolean;
-  onChange?: (index: number, value: string) => void;
-}> = ({ func, isLoading, onChange }) => {
-  if (func.inputs.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className="mt-2 mb-2">
-      <div className="flex flex-wrap gap-2">
-        {func.inputs.map((input, idx) => (
-          <div key={idx} className="flex-grow-0 min-w-[120px] relative">
-            <input
-              type="text"
-              disabled={isLoading}
-              placeholder={input.name || `${idx}: ${input.type}`}
-              className="w-full px-3 py-1 bg-gray-700 text-white rounded border border-gray-600 font-mono text-sm focus:border-blue-500 focus:outline-none disabled:opacity-50"
-              onChange={(e) => onChange && onChange(idx, e.target.value)}
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// Clickable terminal header component for execution - Updated props
-const ExecuteComponent: React.FC<{
-  funcName: string;
-  isLoading: boolean;
   onExecute: () => void;
-}> = ({ funcName, isLoading, onExecute }) => {
+  onChange?: (index: number, value: string) => void;
+}> = ({ func, isLoading, onExecute, onChange }) => {
   const [isHover, setIsHover] = useState(false);
 
   return (
     <div
-      className={`px-3 py-2 font-mono text-sm border-b border-gray-800 flex justify-between items-center cursor-pointer transition-colors ${isHover && !isLoading ? 'bg-gray-900' : ''}`}
+      className={`px-3 py-2 font-mono text-sm border-b border-gray-800 flex items-center cursor-pointer transition-colors ${isHover && !isLoading ? 'bg-gray-900' : ''}`}
       onClick={() => !isLoading && onExecute()}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
       aria-disabled={isLoading}
     >
-      <span className="text-gray-400">
-        $ ./{funcName}
-      </span>
+      {/* Command prefix and function name with hover effect */}
+      <div
+        className={`whitespace-nowrap ${isHover && !isLoading ? 'text-green-400' : 'text-gray-400'} transition-colors`}
+      >
+        $ ./{func.name}
+      </div>
 
-      {isLoading && (
-        <span className="flex items-center text-blue-400">
-          <span className="w-4 h-4 border-2 border-blue-300 border-t-transparent rounded-full animate-spin mr-2"></span>
-          Processing...
-        </span>
+      {/* Function arguments */}
+      {func.inputs.length > 0 && (
+        <div className="flex flex-nowrap gap-2 px-2 flex-grow overflow-x-auto">
+          {func.inputs.map((input, idx) => (
+            <input
+              key={idx}
+              type="text"
+              disabled={isLoading}
+              placeholder={input.name || `${idx}: ${input.type}`}
+              className="max-w-[100px] min-w-[60px] px-2 py-0.5 bg-gray-800 text-white rounded border border-gray-700 font-mono text-xs focus:border-blue-500 focus:outline-none disabled:opacity-50"
+              onChange={(e) => onChange && onChange(idx, e.target.value)}
+              onClick={(e) => e.stopPropagation()} // Prevent terminal click when clicking input
+            />
+          ))}
+        </div>
       )}
 
-      {!isLoading && isHover && (
-        <span className="text-blue-400 text-xs">Click to execute</span>
+      {/* Loading indicator */}
+      {isLoading && (
+        <div className="ml-auto flex items-center text-blue-400 text-xs">
+          <span className="w-3 h-3 border-2 border-blue-300 border-t-transparent rounded-full animate-spin mr-2"></span>
+          Processing...
+        </div>
       )}
     </div>
   );
 };
 
-// Simplified Terminal Component - Remove background color
+// Simplified Terminal Component with integrated arguments
 const FunctionTerminal: React.FC<{
   func: SolItem;
   runFunction?: (funcName: string) => void;
@@ -109,22 +98,29 @@ const FunctionTerminal: React.FC<{
 }> = ({ func, runFunction, contractState }) => {
   const funcState = contractState[func.name] || { loading: false };
   const isLoading = funcState.loading;
+  const [args, setArgs] = useState<{ [key: number]: string }>({});
 
   const handleExecute = () => {
     runFunction && runFunction(func.name);
   };
 
+  const handleArgChange = (index: number, value: string) => {
+    setArgs(prev => ({
+      ...prev,
+      [index]: value
+    }));
+  };
+
   return (
     <div className="mt-2">
-      {/* Terminal with clickable execute header */}
       <div className="bg-black rounded border border-gray-800">
         <ExecuteComponent
-          funcName={func.name}
+          func={func}
           isLoading={isLoading}
           onExecute={handleExecute}
+          onChange={handleArgChange}
         />
 
-        {/* Terminal output - only shown when there's a result or loading */}
         {(funcState.message || isLoading) && (
           <div className="px-3 py-2">
             <pre className="text-xs overflow-x-auto whitespace-pre-wrap text-gray-300 font-mono">
@@ -137,7 +133,6 @@ const FunctionTerminal: React.FC<{
   );
 };
 
-// Function Signature Component using unified SolItem interface
 const FunctionSignature: React.FC<{
   item: SolItem;
   color: string;
@@ -149,11 +144,11 @@ const FunctionSignature: React.FC<{
       <span className={`text-${isEvent ? 'red' : 'purple'}-400`}>{item.type} </span>
       <span className={`text-${color}-400`}>{item.name}</span>
       <span className="text-gray-400">(</span>
-      {item.inputs.map((input, paramIdx) => (
-        <span key={paramIdx}>
+      {item.inputs.map((input, inputIndex) => (
+        <span key={inputIndex}>
           <span className="text-blue-400">{input.type}</span>
           <span className="text-gray-400"> {input.name}</span>
-          {paramIdx < item.inputs.length - 1 && <span className="text-gray-400">, </span>}
+          {inputIndex < item.inputs.length - 1 && <span className="text-gray-400">, </span>}
         </span>
       ))}
       <span className="text-gray-400">)</span>
@@ -163,7 +158,18 @@ const FunctionSignature: React.FC<{
         <>
           <span className="text-purple-400"> {item.stateMutability}</span>
           {item.outputs && item.outputs.length > 0 && (
-            <FunctionOutputs outputs={item.outputs} />
+            <>
+              <span className="text-purple-400"> returns </span>
+              <span className="text-gray-400">(</span>
+              {item.outputs.map((output, outputIndex) => (
+                <span key={outputIndex}>
+                  <span className="text-blue-400">{output.type}</span>
+                  <span className="text-gray-400"> {output.name}</span>
+                  {outputIndex < item.outputs.length - 1 && <span className="text-gray-400">, </span>}
+                </span>
+              ))}
+              <span className="text-gray-400">)</span>
+            </>
           )}
         </>
       )}
@@ -171,7 +177,7 @@ const FunctionSignature: React.FC<{
   );
 };
 
-// Generalized Function Component - Updated to use contractState
+// Generalized Function Component
 const ContractFunction: React.FC<{
   item: SolItem;
   contractState: ContractState;
@@ -179,10 +185,7 @@ const ContractFunction: React.FC<{
 }> = ({ item, contractState, runFunction }) => {
   const isRead = item.itemType === SolItemType.READ;
   const isFunction = item.type === 'function';
-  const funcState = contractState[item.name] || { loading: false };
-  const isLoading = funcState.loading;
 
-  // Use subtle border accents but keep original component colors
   const getTypeStyles = () => {
     switch (item.itemType) {
       case SolItemType.READ: return 'border-l-4 border-blue-700';
@@ -192,7 +195,6 @@ const ContractFunction: React.FC<{
     }
   };
 
-  // Determine color based on item type
   const getColor = () => {
     switch (item.itemType) {
       case SolItemType.READ: return 'yellow';
@@ -205,43 +207,24 @@ const ContractFunction: React.FC<{
   return (
     <li className={`p-3 bg-gray-800 rounded-md shadow-sm ${getTypeStyles()}`}>
       <div className="flex flex-col">
-        {/* Function Signature */}
+
         <FunctionSignature
           item={item}
           color={getColor()}
         />
 
-        {/* Only show arguments and terminal for read functions */}
         {isRead && isFunction && (
-          <>
-            <FunctionArguments func={item} isLoading={isLoading} />
-            <FunctionTerminal
-              func={item}
-              runFunction={runFunction}
-              contractState={contractState}
-            />
-          </>
+          <FunctionTerminal
+            func={item}
+            runFunction={runFunction}
+            contractState={contractState}
+          />
         )}
       </div>
     </li>
   );
 };
 
-// Function Outputs - updated to use SolParam
-const FunctionOutputs: React.FC<{ outputs: SolParam[] }> = ({ outputs }) => (
-  <>
-    <span className="text-purple-400"> returns </span>
-    <span className="text-gray-400">(</span>
-    {outputs.map((output, outIdx) => (
-      <span key={outIdx}>
-        <span className="text-blue-400">{output.type}</span>
-        <span className="text-gray-400"> {output.name}</span>
-        {outIdx < outputs.length - 1 && <span className="text-gray-400">, </span>}
-      </span>
-    ))}
-    <span className="text-gray-400">)</span>
-  </>
-);
 
 const ContractHeader: React.FC<{ contract: Contract }> = ({ contract }) => (
   <div className="mb-6 border-b border-gray-700 pb-4">
@@ -263,7 +246,6 @@ const ContractSection: React.FC<{
   </div>
 );
 
-// Main component - Updated to use contractState with simplified structure
 const ContractABI = ({ contract }: { contract: Contract }) => {
   const [contractState, setContractState] = useState<ContractState>({});
 
@@ -273,12 +255,11 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
 
   const { reads, writes, events } = parseAndCategorizeAbi(contract.abi);
 
-  // Run function with simplified state management
   const runFunction = (funcName: string) => {
-    // Set loading state
+
     setContractState(prev => {
       const newState = { ...prev };
-      newState[funcName] = { 
+      newState[funcName] = {
         loading: true,
         message: "Loading..."
       };
@@ -286,32 +267,12 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
     });
 
     setTimeout(() => {
-      // Simulate random success/error responses
-      const random = Math.random();
-      let updatedState;
-
-      if (random > 0.8) {
-        // Error
-        updatedState = {
-          loading: false,
-          status: 400,
-          message: JSON.stringify({ error: "Execution failed", code: 400, reason: "Invalid parameters or contract error" }, null, 2)
-        };
-      } else {
-        // Success
-        updatedState = {
-          loading: false,
-          status: 200,
-          message: JSON.stringify({
-            success: true,
-            data: {
-              result: "0x" + Math.floor(Math.random() * 1000000).toString(16),
-              gasUsed: Math.floor(Math.random() * 50000),
-              blockNumber: 12345678
-            }
-          }, null, 2)
-        };
-      }
+      // Error
+      const updatedState = {
+        loading: false,
+        status: 400,
+        message: JSON.stringify({ error: "Execution failed", code: 400, reason: "Invalid parameters or contract error" }, null, 2)
+      };
 
       setContractState(prev => {
         const newState = { ...prev };
