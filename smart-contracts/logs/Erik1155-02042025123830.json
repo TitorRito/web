@@ -1,6 +1,6 @@
 {
   "name": "Erik1155",
-  "address": "0x9A676e781A523b5d0C0e43731313A708CB607508",
+  "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
   "network": "localhost",
   "chainId": "31337",
   "abi": [
@@ -29,6 +29,7 @@
     "function burnToken(uint256)",
     "function forgeToken(uint256)",
     "function getAllTokens() view returns (uint256[7])",
+    "function hello() view returns (string)",
     "function isApprovedForAll(address,address) view returns (bool)",
     "function lastMintTime(address) view returns (uint256)",
     "function mintTee(uint256)",
@@ -39,5 +40,5 @@
     "function timeUntilNextMint(address) view returns (uint256)",
     "function uri(uint256) view returns (string)"
   ],
-  "timestamp": "30-03-2025 16:43:34"
+  "timestamp": "02-04-2025 12:38:30"
 }

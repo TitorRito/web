@@ -104,7 +104,7 @@ export default function Dapp() {
   const [error, setError] = useState<string | null>(null);
   const [errorVisible, setErrorVisible] = useState(false);
   const [walletDetected, setWalletDetected] = useState<boolean | null>(null);
-  
+
   useEffect(() => {
     setWalletDetected(getIsWeb3());
   }, []);
