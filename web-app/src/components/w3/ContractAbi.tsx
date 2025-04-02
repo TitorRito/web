@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Contract } from '@/lib/types';
 import { parseAndCategorizeAbi, SolItem, SolParam, SolItemType, formatContractResponse } from '@/lib/abi-rpc';
+import ContractSearch, { SearchFilters } from './ContractSearch';
 
 interface ContractState {
   [functionName: string]: {
@@ -40,7 +41,6 @@ const ExecuteComponent: React.FC<{
   const handleExecute = () => {
     if (isLoading) return;
 
-    // Check if all required arguments are provided
     const requiredInputs = func.inputs;
     const currentArgs = funcState.args || {};
 
@@ -66,14 +66,13 @@ const ExecuteComponent: React.FC<{
       return;
     }
 
-    // Set trigger to true -> runExecute from Parent : ContractABI
     setContractState(prev => {
       const newState = { ...prev };
       newState[functionName] = {
         ...funcState,
         loading: true,
         trigger: true,
-        response: undefined // Clear any previous error messages
+        response: undefined
       };
       return newState;
     });
@@ -98,7 +97,6 @@ const ExecuteComponent: React.FC<{
         $ ./{func.name}
       </div>
 
-      {/* Function arguments - Using inputs that directly update contractState */}
       {func.inputs.length > 0 && (
         <div className="flex flex-nowrap gap-2 px-2 flex-grow overflow-x-auto">
           {func.inputs.map((input: SolParam, idx: number) => {
@@ -113,7 +111,7 @@ const ExecuteComponent: React.FC<{
                 value={(funcState.args && funcState.args[paramKey]) || ''}
                 onChange={(e) => handleInputChange(paramKey, e.target.value)}
                 onKeyDown={handleKeyDown}
-                onClick={(e) => e.stopPropagation()} // Prevent terminal click when clicking input
+                onClick={(e) => e.stopPropagation()}
               />
             );
           })}
@@ -176,7 +174,6 @@ const FunctionSignature: React.FC<{
       ))}
       <span className="text-gray-400">)</span>
 
-      {/* Only show stateMutability and outputs for functions */}
       {functionSol.type === 'function' && (
         <>
           <span className="text-purple-400"> {functionSol.stateMutability}</span>
@@ -273,8 +270,20 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
     return initialState;
   });
 
+  const [searchFilters, setSearchFilters] = useState<SearchFilters>({
+    searchText: '',
+    includeRead: true,
+    includeWrite: true,
+    includeEvents: true,
+    stateMutability: {
+      view: true,
+      pure: true,
+      nonpayable: true,
+      payable: true
+    }
+  });
+
   useEffect(() => {
-    // Find any function with trigger and execute it
     const triggeredContract = Object.entries(contractState).find(
       ([_, state]) => state.trigger === true
     );
@@ -289,6 +298,43 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
   }
 
   const { reads, writes, events } = parseAndCategorizeAbi(contract.abi);
+
+  // Generic function to filter items based on search filters
+  const filterItems = (items: SolItem[], itemType: SolItemType): SolItem[] => {
+    if (
+      (itemType === SolItemType.READ && !searchFilters.includeRead) ||
+      (itemType === SolItemType.WRITE && !searchFilters.includeWrite) ||
+      (itemType === SolItemType.EVENT && !searchFilters.includeEvents)
+    ) {
+      return [];
+    }
+
+    return items.filter(item => {
+      const nameMatches = item.name.toLowerCase().includes(searchFilters.searchText.toLowerCase());
+
+      if (itemType === SolItemType.EVENT) {
+        return nameMatches;
+      }
+
+      let mutabilityMatches = false;
+
+      if (itemType === SolItemType.READ) {
+        mutabilityMatches =
+          (item.stateMutability === 'view' && searchFilters.stateMutability.view) ||
+          (item.stateMutability === 'pure' && searchFilters.stateMutability.pure);
+      } else if (itemType === SolItemType.WRITE) {
+        mutabilityMatches =
+          (item.stateMutability === 'nonpayable' && searchFilters.stateMutability.nonpayable) ||
+          (item.stateMutability === 'payable' && searchFilters.stateMutability.payable);
+      }
+
+      return nameMatches && mutabilityMatches;
+    });
+  };
+
+  const filteredReads = useMemo(() => filterItems(reads, SolItemType.READ), [reads, searchFilters]);
+  const filteredWrites = useMemo(() => filterItems(writes, SolItemType.WRITE), [writes, searchFilters]);
+  const filteredEvents = useMemo(() => filterItems(events, SolItemType.EVENT), [events, searchFilters]);
 
   const runExecute = async (triggeredContract: [string, ContractState[string]]) => {
     const [functionName, funcState] = triggeredContract;
@@ -309,7 +355,6 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
 
       let result;
 
-      // Write has to await tx, read is direct
       if (funcState.functionSol.itemType === SolItemType.WRITE) {
         const tx = await contract.instance[functionName](...args);
 
@@ -362,16 +407,23 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
     }
   };
 
-  // DEBUGS
   window.state = contractState;
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-900 rounded-lg shadow-lg text-gray-200">
       <ContractHeader contract={contract} />
 
-      <ContractSection title="Read Functions" titleColor="text-blue-400" isEmpty={reads.length === 0}>
+      <ContractSearch
+        filters={searchFilters}
+        onFiltersChange={setSearchFilters}
+        readCount={reads.length}
+        writeCount={writes.length}
+        eventsCount={events.length}
+      />
+
+      <ContractSection title="Read Functions" titleColor="text-blue-400" isEmpty={filteredReads.length === 0}>
         <ul className="space-y-3">
-          {reads.map((solItem, idx) => (
+          {filteredReads.map((solItem, idx) => (
             <ContractFunction
               key={idx}
               functionName={solItem.name}
@@ -382,22 +434,22 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
         </ul>
       </ContractSection>
 
-      <ContractSection title="Write Functions" titleColor="text-green-400" isEmpty={writes.length === 0}>
+      <ContractSection title="Write Functions" titleColor="text-green-400" isEmpty={filteredWrites.length === 0}>
         <ul className="space-y-3">
-          {writes.map((solItem, idx) => (
+          {filteredWrites.map((solItem, idx) => (
             <ContractFunction
               key={idx}
               functionName={solItem.name}
               contractState={contractState}
-              setContractState={setContractState}  // Pass setContractState for write functions too
+              setContractState={setContractState}
             />
           ))}
         </ul>
       </ContractSection>
 
-      <ContractSection title="Events" titleColor="text-purple-400" isEmpty={events.length === 0}>
+      <ContractSection title="Events" titleColor="text-purple-400" isEmpty={filteredEvents.length === 0}>
         <ul className="space-y-3">
-          {events.map((solItem, idx) => (
+          {filteredEvents.map((solItem, idx) => (
             <ContractFunction
               key={idx}
               functionName={solItem.name}
@@ -410,7 +462,6 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
   );
 };
 
-//basic UI
 const ContractHeader: React.FC<{ contract: Contract }> = ({ contract }) => (
   <div className="mb-6 border-b border-gray-700 pb-4">
     <h1 className="text-3xl font-bold text-blue-400">Contract Details</h1>
