@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Contract } from '@/lib/types';
 import { parseAndCategorizeAbi, SolItem, SolParam, SolItemType } from '@/lib/abi-rpc';
 
@@ -9,6 +9,7 @@ interface ContractState {
     status?: number;
     response?: string;
     args?: Record<string, string>;
+    trigger?: boolean;
   };
 }
 
@@ -40,42 +41,22 @@ const ExecuteComponent: React.FC<{
   const handleExecute = () => {
     if (isLoading) return;
 
+    // Set trigger to true -> runExecute from Parent : ContractABI
     setContractState(prev => {
       const newState = { ...prev };
-      newState[func.name] = {
+      newState[functionName] = {
         ...funcState,
         loading: true,
+        trigger: true
       };
       return newState;
     });
+  };
 
-    try {
-      console.log('Function execution:');
-      console.log(JSON.stringify(func, null, 2));
-      console.log('Arguments:');
-      console.log(JSON.stringify(funcState.args, null, 2));
-
-      setContractState(prev => {
-        const newState = { ...prev };
-        newState[func.name] = {
-          ...newState[func.name], // Use the current state with loading=true
-          loading: false,
-          response: `Function "${func.name}" logged to console with arguments: ${JSON.stringify(funcState.args)}`
-        };
-        return newState;
-      });
-
-    } catch (e) {
-      setContractState(prev => {
-        const newState = { ...prev };
-        newState[func.name] = {
-          ...newState[func.name], // Use the current state
-          loading: false,
-          response: `Error: ${e.message}`
-        };
-        return newState;
-      });
-      console.log('Error executing function:', e);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleExecute();
     }
   };
 
@@ -105,6 +86,7 @@ const ExecuteComponent: React.FC<{
                 className="max-w-[100px] min-w-[60px] px-2 py-0.5 bg-gray-800 text-white rounded border border-gray-700 font-mono text-xs focus:border-blue-500 focus:outline-none disabled:opacity-50"
                 value={(funcState.args && funcState.args[paramKey]) || ''}
                 onChange={(e) => handleInputChange(paramKey, e.target.value)}
+                onKeyDown={handleKeyDown}
                 onClick={(e) => e.stopPropagation()} // Prevent terminal click when clicking input
               />
             );
@@ -258,18 +240,58 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
       initialState[solItem.name] = {
         functionSol: solItem,
         loading: false,
-        args: {} // Initialize empty args object for each function
+        args: {},
+        trigger: false
       };
     });
 
     return initialState;
   });
 
+  useEffect(() => {
+    // Find any function with trigger=true
+    const triggeredContract = Object.entries(contractState).find(
+      ([_, state]) => state.trigger === true
+    );
+
+    if (triggeredContract) {
+      runExecute(triggeredContract);
+    }
+  }, [contractState]);
+
   if (!contract.abi) {
     return <NoAbiProvided />;
   }
 
   const { reads, writes, events } = parseAndCategorizeAbi(contract.abi);
+
+  const runExecute = (triggeredContract: [string, ContractState[string]]) => {
+    const [functionName, funcState] = triggeredContract;
+
+    console.log('Hello, executing function:', triggeredContract);
+    console.log('Function name:', functionName);
+    console.log('Loading state:', funcState.loading);
+    console.log('Function details:', funcState.functionSol);
+    console.log('Arguments:', funcState.args);
+
+    try {
+
+    } catch (e) {
+      console.error('Error executing function:', e);
+
+    } finally {
+      // Reset the trigger state
+      setContractState(prev => {
+        const newState = { ...prev };
+        newState[functionName] = {
+          ...funcState,
+          loading: false,
+          trigger: false
+        };
+        return newState;
+      });
+    }
+  };
 
   // DEBUGS
   window.state = contractState;
