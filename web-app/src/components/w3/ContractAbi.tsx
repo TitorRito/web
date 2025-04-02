@@ -276,7 +276,7 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
   });
 
   useEffect(() => {
-    // Find any function with trigger=true
+    // Find any function with trigger and execute it
     const triggeredContract = Object.entries(contractState).find(
       ([_, state]) => state.trigger === true
     );
@@ -292,23 +292,21 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
 
   const { reads, writes, events } = parseAndCategorizeAbi(contract.abi);
 
-  const runExecute = (triggeredContract: [string, ContractState[string]]) => {
+  const runExecute = async (triggeredContract: [string, ContractState[string]]) => {
     const [functionName, funcState] = triggeredContract;
 
     console.log('Hello, executing function:', triggeredContract);
     console.log('Function name:', functionName);
-    console.log('Loading state:', funcState.loading);
     console.log('Function details:', funcState.functionSol);
     console.log('Arguments:', funcState.args);
 
     try {
-      // Convert arguments from the state to an array in the correct order
       const args = funcState.functionSol.inputs.map((input) => {
         const paramKey = input.name;
         return funcState.args?.[paramKey] || '';
       });
 
-      const result = contract.instance?.[functionName](...args);
+      const result = await contract.instance?.[functionName](...args);
 
       setContractState(prev => {
         const newState = { ...prev };
@@ -316,7 +314,7 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
           ...funcState,
           loading: false,
           trigger: false,
-          response: `Result: ${JSON.stringify(result)}`
+          response: `${result}`
         };
         return newState;
       });
