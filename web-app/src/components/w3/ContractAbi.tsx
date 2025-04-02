@@ -1,59 +1,56 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Contract } from '@/lib/types';
 import { parseAndCategorizeAbi, SolItem, SolParam, SolItemType } from '@/lib/abi-rpc';
 
-// Updated interface for contract state to include the SolItem reference
 interface ContractState {
   [functionName: string]: {
     functionSol: SolItem;
     loading: boolean;
     status?: number;
     response?: string;
-    args?: { [key: number]: string };
+    args?: Record<string, string>;
   };
 }
 
-// Simplified ExecuteComponent with integrated runFunction
 const ExecuteComponent: React.FC<{
-  func: SolItem;
-  funcState: {
-    loading: boolean;
-    args?: { [key: number]: string };
-  };
+  functionName: string;
+  contractState: ContractState;
   setContractState: React.Dispatch<React.SetStateAction<ContractState>>;
-}> = ({ func, funcState, setContractState }) => {
+}> = ({ functionName, contractState, setContractState }) => {
   const [isHover, setIsHover] = useState(false);
-  const inputRefs = useRef<{ [key: number]: HTMLInputElement | null }>({});
+
+  const funcState = contractState[functionName];
+  const func = funcState.functionSol;
   const isLoading = funcState.loading;
 
-  // Integrated runFunction directly into ExecuteComponent
+  const [inputValues, setInputValues] = useState<Record<string, string>>(() => {
+    // Initialize with existing args or empty object
+    return funcState.args || {};
+  });
+
+  const handleInputChange = (paramName: string, value: string) => {
+    setInputValues(prev => ({
+      ...prev,
+      [paramName]: value
+    }));
+  };
+
+
   const handleExecute = () => {
     if (isLoading) return;
 
-    // Collect current input values
-    const currentArgs: { [key: number]: string } = {};
-    Object.keys(inputRefs.current).forEach(key => {
-      const index = parseInt(key);
-      const inputEl = inputRefs.current[index];
-      if (inputEl && inputEl.value) {
-        currentArgs[index] = inputEl.value;
-      }
-    });
-
-    // Log the function details for debugging
     console.log('Function execution:');
     console.log(JSON.stringify(func, null, 2));
     console.log('Arguments:');
-    console.log(JSON.stringify(currentArgs, null, 2));
+    console.log(JSON.stringify(inputValues, null, 2));
 
-    // Update the state to show we're handling the function
     setContractState(prev => {
       const newState = { ...prev };
       newState[func.name] = {
-        functionSol: func,
-        loading: false, // No loading state needed as we're just logging
-        response: `Function "${func.name}" logged to console with arguments: ${JSON.stringify(currentArgs)}`,
-        args: currentArgs
+        ...funcState,
+        loading: false,
+        response: `Function "${func.name}" logged to console with arguments: ${JSON.stringify(inputValues)}`,
+        args: inputValues
       };
       return newState;
     });
@@ -67,28 +64,28 @@ const ExecuteComponent: React.FC<{
       onMouseLeave={() => setIsHover(false)}
       aria-disabled={isLoading}
     >
-      {/* Command prefix and function name with hover effect */}
-      <div
-        className={`whitespace-nowrap ${isHover && !isLoading ? 'text-green-400' : 'text-gray-400'} transition-colors`}
-      >
+      <div className={`whitespace-nowrap ${isHover && !isLoading ? 'text-green-400' : 'text-gray-400'} transition-colors`}>
         $ ./{func.name}
       </div>
 
-      {/* Function arguments - Using refs instead of state */}
+      {/* Function arguments - Using controlled inputs with param names */}
       {func.inputs.length > 0 && (
         <div className="flex flex-nowrap gap-2 px-2 flex-grow overflow-x-auto">
-          {func.inputs.map((input, idx) => (
-            <input
-              key={idx}
-              type="text"
-              disabled={isLoading}
-              placeholder={input.name || `${idx}: ${input.type}`}
-              className="max-w-[100px] min-w-[60px] px-2 py-0.5 bg-gray-800 text-white rounded border border-gray-700 font-mono text-xs focus:border-blue-500 focus:outline-none disabled:opacity-50"
-              ref={el => (inputRefs.current[idx] = el)}
-              onClick={(e) => e.stopPropagation()} // Prevent terminal click when clicking input
-              defaultValue={funcState.args?.[idx] || ''} // Use defaultValue with refs
-            />
-          ))}
+          {func.inputs.map((input: SolParam, idx: number) => {
+            const paramKey = input.name || `param${idx}`;
+            return (
+              <input
+                key={paramKey}
+                type="text"
+                disabled={isLoading}
+                placeholder={input.name || `${idx}: ${input.type}`}
+                className="max-w-[100px] min-w-[60px] px-2 py-0.5 bg-gray-800 text-white rounded border border-gray-700 font-mono text-xs focus:border-blue-500 focus:outline-none disabled:opacity-50"
+                value={inputValues[paramKey] || ''}
+                onChange={(e) => handleInputChange(paramKey, e.target.value)}
+                onClick={(e) => e.stopPropagation()} // Prevent terminal click when clicking input
+              />
+            );
+          })}
         </div>
       )}
 
@@ -103,23 +100,19 @@ const ExecuteComponent: React.FC<{
   );
 };
 
-// Updated Terminal Component
 const FunctionTerminal: React.FC<{
-  func: SolItem;
+  functionName: string;
   contractState: ContractState;
   setContractState: React.Dispatch<React.SetStateAction<ContractState>>;
-}> = ({ func, contractState, setContractState }) => {
-  const funcState = contractState[func.name] || {
-    functionSol: func,
-    loading: false
-  };
+}> = ({ functionName, contractState, setContractState }) => {
+  const funcState = contractState[functionName];
 
   return (
     <div className="mt-2">
       <div className="bg-black rounded border border-gray-800">
         <ExecuteComponent
-          func={func}
-          funcState={funcState}
+          functionName={functionName}
+          contractState={contractState}
           setContractState={setContractState}
         />
 
@@ -136,38 +129,38 @@ const FunctionTerminal: React.FC<{
 };
 
 const FunctionSignature: React.FC<{
-  item: SolItem;
+  functionSol: SolItem;
   color: string;
-}> = ({ item, color }) => {
-  const isEvent = item.type === 'event';
+}> = ({ functionSol, color }) => {
+  const isEvent = functionSol.type === 'event';
 
   return (
     <div className="font-mono">
-      <span className={`text-${isEvent ? 'red' : 'purple'}-400`}>{item.type} </span>
-      <span className={`text-${color}-400`}>{item.name}</span>
+      <span className={`text-${isEvent ? 'red' : 'purple'}-400`}>{functionSol.type} </span>
+      <span className={`text-${color}-400`}>{functionSol.name}</span>
       <span className="text-gray-400">(</span>
-      {item.inputs.map((input, inputIndex) => (
+      {functionSol.inputs.map((input, inputIndex) => (
         <span key={inputIndex}>
           <span className="text-blue-400">{input.type}</span>
           <span className="text-gray-400"> {input.name}</span>
-          {inputIndex < item.inputs.length - 1 && <span className="text-gray-400">, </span>}
+          {inputIndex < functionSol.inputs.length - 1 && <span className="text-gray-400">, </span>}
         </span>
       ))}
       <span className="text-gray-400">)</span>
 
       {/* Only show stateMutability and outputs for functions */}
-      {item.type === 'function' && (
+      {functionSol.type === 'function' && (
         <>
-          <span className="text-purple-400"> {item.stateMutability}</span>
-          {item.outputs && item.outputs.length > 0 && (
+          <span className="text-purple-400"> {functionSol.stateMutability}</span>
+          {functionSol.outputs && functionSol.outputs.length > 0 && (
             <>
               <span className="text-purple-400"> returns </span>
               <span className="text-gray-400">(</span>
-              {item.outputs.map((output, outputIndex) => (
+              {functionSol.outputs.map((output, outputIndex) => (
                 <span key={outputIndex}>
                   <span className="text-blue-400">{output.type}</span>
                   <span className="text-gray-400"> {output.name}</span>
-                  {outputIndex < item.outputs.length - 1 && <span className="text-gray-400">, </span>}
+                  {outputIndex < functionSol.outputs.length - 1 && <span className="text-gray-400">, </span>}
                 </span>
               ))}
               <span className="text-gray-400">)</span>
@@ -179,18 +172,20 @@ const FunctionSignature: React.FC<{
   );
 };
 
-// Updated ContractFunction Component
 const ContractFunction: React.FC<{
-  item: SolItem;
+  functionName: string;
   contractState: ContractState;
   setContractState?: React.Dispatch<React.SetStateAction<ContractState>>;
-}> = ({ item, contractState, setContractState }) => {
-  const isRead = item.itemType === SolItemType.READ;
-  const isFunction = item.type === 'function';
+}> = ({ functionName, contractState, setContractState }) => {
+  const funcState = contractState[functionName];
+  const solItem = funcState.functionSol;
+
+  const isRead = solItem.itemType === SolItemType.READ;
+  const isFunction = solItem.type === 'function';
 
   const getTypeStyles = () => {
     const border = 'border-l-4 ';
-    switch (item.itemType) {
+    switch (solItem.itemType) {
       case SolItemType.READ:
         return border + 'border-blue-700';
       case SolItemType.WRITE:
@@ -203,7 +198,7 @@ const ContractFunction: React.FC<{
   };
 
   const getColor = () => {
-    switch (item.itemType) {
+    switch (solItem.itemType) {
       case SolItemType.READ:
         return 'yellow';
       case SolItemType.WRITE:
@@ -218,11 +213,11 @@ const ContractFunction: React.FC<{
   return (
     <li className={`p-3 bg-gray-800 rounded-md shadow-sm ${getTypeStyles()}`}>
       <div className="flex flex-col">
-        <FunctionSignature item={item} color={getColor()} />
+        <FunctionSignature functionSol={solItem} color={getColor()} />
 
         {isRead && isFunction && setContractState && (
           <FunctionTerminal
-            func={item}
+            functionName={functionName}
             contractState={contractState}
             setContractState={setContractState}
           />
@@ -232,9 +227,22 @@ const ContractFunction: React.FC<{
   );
 };
 
-
 const ContractABI = ({ contract }: { contract: Contract }) => {
-  const [contractState, setContractState] = useState<ContractState>({});
+  const [contractState, setContractState] = useState<ContractState>(() => {
+    if (!contract.abi) return {};
+
+    const { reads, writes, events } = parseAndCategorizeAbi(contract.abi);
+    const initialState: ContractState = {};
+
+    [...reads, ...writes, ...events].forEach(solItem => {
+      initialState[solItem.name] = {
+        functionSol: solItem,
+        loading: false
+      };
+    });
+
+    return initialState;
+  });
 
   if (!contract.abi) {
     return <NoAbiProvided />;
@@ -242,17 +250,19 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
 
   const { reads, writes, events } = parseAndCategorizeAbi(contract.abi);
 
-  window.state = contractState
+  // DEBUGS
+  window.state = contractState;
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-900 rounded-lg shadow-lg text-gray-200">
       <ContractHeader contract={contract} />
 
       <ContractSection title="Read Functions" titleColor="text-blue-400" isEmpty={reads.length === 0}>
         <ul className="space-y-3">
-          {reads.map((item, idx) => (
+          {reads.map((solItem, idx) => (
             <ContractFunction
               key={idx}
-              item={item}
+              functionName={solItem.name}
               contractState={contractState}
               setContractState={setContractState}
             />
@@ -262,16 +272,24 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
 
       <ContractSection title="Write Functions" titleColor="text-green-400" isEmpty={writes.length === 0}>
         <ul className="space-y-3">
-          {writes.map((item, idx) => (
-            <ContractFunction key={idx} item={item} contractState={contractState} />
+          {writes.map((solItem, idx) => (
+            <ContractFunction
+              key={idx}
+              functionName={solItem.name}
+              contractState={contractState}
+            />
           ))}
         </ul>
       </ContractSection>
 
       <ContractSection title="Events" titleColor="text-purple-400" isEmpty={events.length === 0}>
         <ul className="space-y-3">
-          {events.map((item, idx) => (
-            <ContractFunction key={idx} item={item} contractState={contractState} />
+          {events.map((solItem, idx) => (
+            <ContractFunction
+              key={idx}
+              functionName={solItem.name}
+              contractState={contractState}
+            />
           ))}
         </ul>
       </ContractSection>
