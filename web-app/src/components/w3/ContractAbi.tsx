@@ -23,37 +23,60 @@ const ExecuteComponent: React.FC<{
   const func = funcState.functionSol;
   const isLoading = funcState.loading;
 
-  const [inputValues, setInputValues] = useState<Record<string, string>>(() => {
-    // Initialize with existing args or empty object
-    return funcState.args || {};
-  });
-
   const handleInputChange = (paramName: string, value: string) => {
-    setInputValues(prev => ({
-      ...prev,
-      [paramName]: value
-    }));
+    setContractState(prev => {
+      const newState = { ...prev };
+      newState[functionName] = {
+        ...funcState,
+        args: {
+          ...(funcState.args || {}),
+          [paramName]: value
+        }
+      };
+      return newState;
+    });
   };
-
 
   const handleExecute = () => {
     if (isLoading) return;
-
-    console.log('Function execution:');
-    console.log(JSON.stringify(func, null, 2));
-    console.log('Arguments:');
-    console.log(JSON.stringify(inputValues, null, 2));
 
     setContractState(prev => {
       const newState = { ...prev };
       newState[func.name] = {
         ...funcState,
-        loading: false,
-        response: `Function "${func.name}" logged to console with arguments: ${JSON.stringify(inputValues)}`,
-        args: inputValues
+        loading: true,
       };
       return newState;
     });
+
+    try {
+      console.log('Function execution:');
+      console.log(JSON.stringify(func, null, 2));
+      console.log('Arguments:');
+      console.log(JSON.stringify(funcState.args, null, 2));
+
+      setContractState(prev => {
+        const newState = { ...prev };
+        newState[func.name] = {
+          ...newState[func.name], // Use the current state with loading=true
+          loading: false,
+          response: `Function "${func.name}" logged to console with arguments: ${JSON.stringify(funcState.args)}`
+        };
+        return newState;
+      });
+
+    } catch (e) {
+      setContractState(prev => {
+        const newState = { ...prev };
+        newState[func.name] = {
+          ...newState[func.name], // Use the current state
+          loading: false,
+          response: `Error: ${e.message}`
+        };
+        return newState;
+      });
+      console.log('Error executing function:', e);
+    }
   };
 
   return (
@@ -68,7 +91,7 @@ const ExecuteComponent: React.FC<{
         $ ./{func.name}
       </div>
 
-      {/* Function arguments - Using controlled inputs with param names */}
+      {/* Function arguments - Using inputs that directly update contractState */}
       {func.inputs.length > 0 && (
         <div className="flex flex-nowrap gap-2 px-2 flex-grow overflow-x-auto">
           {func.inputs.map((input: SolParam, idx: number) => {
@@ -80,7 +103,7 @@ const ExecuteComponent: React.FC<{
                 disabled={isLoading}
                 placeholder={input.name || `${idx}: ${input.type}`}
                 className="max-w-[100px] min-w-[60px] px-2 py-0.5 bg-gray-800 text-white rounded border border-gray-700 font-mono text-xs focus:border-blue-500 focus:outline-none disabled:opacity-50"
-                value={inputValues[paramKey] || ''}
+                value={(funcState.args && funcState.args[paramKey]) || ''}
                 onChange={(e) => handleInputChange(paramKey, e.target.value)}
                 onClick={(e) => e.stopPropagation()} // Prevent terminal click when clicking input
               />
@@ -89,7 +112,6 @@ const ExecuteComponent: React.FC<{
         </div>
       )}
 
-      {/* Loading indicator */}
       {isLoading && (
         <div className="ml-auto flex items-center text-blue-400 text-xs">
           <span className="w-3 h-3 border-2 border-blue-300 border-t-transparent rounded-full animate-spin mr-2"></span>
@@ -116,13 +138,11 @@ const FunctionTerminal: React.FC<{
           setContractState={setContractState}
         />
 
-        {(funcState.response || funcState.loading) && (
-          <div className="px-3 py-2">
-            <pre className="text-xs overflow-x-auto whitespace-pre-wrap text-gray-300 font-mono">
-              {funcState.loading ? 'Loading...' : funcState.response}
-            </pre>
-          </div>
-        )}
+        <div className="px-3 py-2">
+          {funcState.response && (
+            <pre className="text-xs overflow-x-auto whitespace-pre-wrap text-gray-300 font-mono">{funcState.response}</pre>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -237,7 +257,8 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
     [...reads, ...writes, ...events].forEach(solItem => {
       initialState[solItem.name] = {
         functionSol: solItem,
-        loading: false
+        loading: false,
+        args: {} // Initialize empty args object for each function
       };
     });
 
