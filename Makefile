@@ -21,5 +21,8 @@ serve:
 sc-command:
 	@$(MAKE) -C $(CONTRACTS_DIR) $(command)
 
+front:
+	cd web-app && npm run dev
+
 # Default target
 .DEFAULT_GOAL := help
