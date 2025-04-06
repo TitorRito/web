@@ -35,6 +35,19 @@ const gameItems: GameItem[] = [
   { id: 6, color: '#383838', title: 'BASKET', address: ['0xMetal1', '0xMetal2', '0xMetal3'] },
 ];
 
+
+/* todos
+get user wallet, ethers
+get contract automatically load from localhost -> later from sepolia...
+interacrt with contract
+  - click on box to mint, see updated address inside block
+  - click on box to burn, see updated address inside block
+do we need events then? for .on...?
+wait for transaction ...?
+switch wallet and see if it still works?
+
+*/
+
 export default function Gamify() {
   const inputRef = useRef<HTMLInputElement>(null);
 
