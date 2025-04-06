@@ -35,6 +35,10 @@ contract Erik is ERC1155, IErik {
         require(id >= 0 && id <= 6, "Invalid token ID");
         _burn(from, id, amount);
     }
+
+    function balanceOf(address account, uint256 id) public view virtual override(ERC1155, IErik) returns (uint256) {
+        return super.balanceOf(account, id);
+    }
     
     function getAllBalanceOf(address user) external view override returns (uint256[] memory) {
         uint256[] memory balances = new uint256[](7);
