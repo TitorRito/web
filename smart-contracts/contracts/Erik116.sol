@@ -10,6 +10,7 @@ interface IErik {
         address account,
         uint256 id
     ) external view returns (uint256);
+    function getAllBalanceOf(address user) external view returns (uint256[] memory);
 }
 
 contract Erik is ERC1155, IErik {
@@ -33,6 +34,16 @@ contract Erik is ERC1155, IErik {
     function burn(address from, uint256 id, uint256 amount) external override {
         require(id >= 0 && id <= 6, "Invalid token ID");
         _burn(from, id, amount);
+    }
+    
+    function getAllBalanceOf(address user) external view override returns (uint256[] memory) {
+        uint256[] memory balances = new uint256[](7);
+        
+        for (uint256 i = 0; i < 7; i++) {
+            balances[i] = balanceOf(user, i);
+        }
+        
+        return balances;
     }
 }
 
@@ -122,5 +133,21 @@ contract ErikForge {
         token.burn(msg.sender, tokenIn, 1);
         token.mint(msg.sender, tokenOut, 1);
         lastMintTime[msg.sender] = block.timestamp;
+    }
+    
+    // Returns a user-friendly representation of all token balances for an address
+    function prettyPrintTokens(address user) public view returns (string[] memory, uint256[] memory) {
+        string[] memory tokenNames = new string[](7);
+        tokenNames[0] = "SEED";
+        tokenNames[1] = "WATER";
+        tokenNames[2] = "SOIL";
+        tokenNames[3] = "PLANT";
+        tokenNames[4] = "FRUIT";
+        tokenNames[5] = "FLOWER";
+        tokenNames[6] = "BASKET";
+        
+        uint256[] memory balances = token.getAllBalanceOf(user);
+        
+        return (tokenNames, balances);
     }
 }
