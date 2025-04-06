@@ -1,6 +1,16 @@
 const fs = require('fs');
 const path = require('path');
 
+const COLORS = {
+    RESET: "\x1b[0m",
+    RED: "\x1b[31m",
+    GREEN: "\x1b[32m",
+    YELLOW: "\x1b[33m",
+    BLUE: "\x1b[34m",
+    MAGENTA: "\x1b[35m",
+    CYAN: "\x1b[36m",
+};
+
 /**
  * @dev Helper function to format function/event signatures for ABI.
  * @param {string} name - Function or event name.
@@ -54,137 +64,101 @@ function formatABI(abi) {
 }
 
 /**
- * @dev Ensures the logs directory exists.
+ * @dev Logs contract details to a JSON file.
+ * @param {Object} contractObj - Object containing contract details.
+ * @returns {string} - Path to the created log file.
  */
-function ensureLogDir() {
-    const logDir = path.join(__dirname, '..', 'logs');
-    if (!fs.existsSync(logDir)) {
-        fs.mkdirSync(logDir, {recursive: true});
+function logToFile(contractObj) {
+    const logsDir = path.join(__dirname, "../logs");
+    if (!fs.existsSync(logsDir)) {
+        console.log(
+            `${COLORS.CYAN}Log Dir not found... creating it...${COLORS.RESET}`
+        );
+        fs.mkdirSync(logsDir);
     }
-    return logDir;
-}
 
-/**
- * @dev Generate timestamp for log file names.
- * @returns {string} - Timestamp string.
- */
-function generateTimestamp() {
-    const now = new Date();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const filename = `${contractObj.name}-${contractObj.timestamp.replace(
+        /[:\s-]/g,
+        ""
+    )}.json`;
+    const filePath = path.join(logsDir, filename);
 
-    return `${month}-${day}_${hours}-${minutes}-${seconds}`;
-}
-
-/**
- * @dev Write log to a file.
- * @param {string} message - Log message to write.
- * @param {string} contractName - Optional contract name for the log file.
- */
-function writeLogToFile(message, contractName = null) {
     try {
-        const logDir = ensureLogDir();
-        const timeStamp = generateTimestamp();
-        const baseName = contractName || 'deployment';
-        const fileName = `${baseName}-${timeStamp}.log`;
-        const filePath = path.join(logDir, fileName);
-
-        fs.writeFileSync(filePath, message);
+        fs.writeFileSync(filePath, JSON.stringify(contractObj, null, 2));
+        console.log(
+            `${COLORS.GREEN}Logged contract details to ${filePath}${COLORS.RESET}`
+        );
         return filePath;
     } catch (error) {
-        console.error('Failed to write log to file:', error);
-        return null;
+        console.error(error);
+        throw new Error(`Failed to write to file: ${filename}`);
     }
 }
 
-/**
- * @dev Builds the contract details section of the log message.
- * @param {Object} contractDetails - Object containing details about the contract.
- * @returns {string} - Formatted contract details string.
- */
-function buildContractDetails(contractDetails) {
-    let details = '\nContract Details:';
-
-    if (contractDetails.name) {
-        details += `\n  - Name: ${contractDetails.name}`;
-    }
-
-    if (contractDetails.address) {
-        details += `\n  - Address: ${contractDetails.address}`;
-    }
-
-    if (contractDetails.network) {
-        details += `\n  - Network: ${contractDetails.network}`;
-    }
-
-    if (contractDetails.chainId) {
-        details += `\n  - Chain ID: ${contractDetails.chainId}`;
-    }
-
-    if (contractDetails.abi) {
-        const humanReadableABI = formatABI(contractDetails.abi);
-        details += '\n  - Human-Readable ABI:';
-        details += `\n${JSON.stringify(humanReadableABI, null, 2)}`;  // Format as JSON
-    }
-
-    if (contractDetails.notes) {
-        details += `\n  - Notes: ${contractDetails.notes}`;
-    }
-
-    return details;
+function getFormattedTimestamp(date) {
+    return `${String(date.getDate()).padStart(2, "0")}-${String(
+        date.getMonth() + 1
+    ).padStart(2, "0")}-${date.getFullYear()} ${String(date.getHours()).padStart(
+        2,
+        "0"
+    )}:${String(date.getMinutes()).padStart(2, "0")}:${String(
+        date.getSeconds()
+    ).padStart(2, "0")}`;
 }
 
 /**
- * @dev Log function to control logging across scripts.
- * Only logs once with complete contract details.
- * @param {string} message - The message to log.
- * @param {Object} options - Additional options for logging.
+ * @dev Deploys a contract and logs its details
+ * @param {string} contractName - Name of the contract to deploy
+ * @param {Array} constructorArgs - Arguments to pass to the constructor (optional)
+ * @returns {Object} - Deployed contract object
  */
-function log(message, options = {}) {
-    const {type = 'info', contractDetails = null, writeToFile = true} = options;
+async function deployMaintenance(contractName, constructorArgs = []) {
+    try {
+        console.log(
+            `${COLORS.CYAN}--- Deploying ${contractName} ---${COLORS.RESET}`
+        );
+        const Contract = await ethers.getContractFactory(contractName);
+        const contract = await Contract.deploy(...constructorArgs);
+        await contract.waitForDeployment();
+        const contractAddress = await contract.getAddress();
 
-    // Format timestamp
-    const timestamp = new Date().toISOString();
+        // Get network information
+        const providerNetwork = await ethers.provider.getNetwork();
+        const formattedTimestamp = getFormattedTimestamp(new Date());
+        const networkName = providerNetwork.name === "unknown" ? "localhost" : providerNetwork.name;
 
-    // Base log message
-    let logMessage = `[${timestamp}] [${type.toUpperCase()}] ${message}`;
+        const contractObj = {
+            name: contractName,
+            address: contractAddress,
+            network: networkName,
+            chainId: providerNetwork.chainId.toString(),
+            abi: Contract.interface.format("json"),
+            timestamp: formattedTimestamp,
+        };
 
-    // Extract contract name for file naming
-    let contractName = contractDetails?.name || null;
-
-    // Add contract details if provided
-    if (contractDetails) {
-        logMessage += buildContractDetails(contractDetails);
-    }
-
-    // Log with appropriate method based on type
-    switch (type.toLowerCase()) {
-        case 'error':
-            console.error(logMessage);
-            break;
-        case 'warning':
-            console.warn(logMessage);
-            break;
-        default:
-            console.log(logMessage);
-    }
-
-    // Write log to file if specified - only do this for the main completion log
-    if (writeToFile) {
-        const filePath = writeLogToFile(logMessage, contractName);
-        if (filePath) {
-            console.log(`Deployment details logged to: ${filePath}`);
+        if (constructorArgs.length > 0) {
+            contractObj.constructorArgs = constructorArgs;
         }
-    }
 
-    return logMessage;
+        logToFile(contractObj);
+        console.log(
+            `${COLORS.YELLOW}[${contractObj.timestamp}]${COLORS.RESET} Successfully deployed ${COLORS.GREEN}${contractName}${COLORS.RESET} at ${COLORS.GREEN}${contractAddress}${COLORS.RESET} on chain ID ${COLORS.GREEN}${providerNetwork.chainId}${COLORS.RESET}`
+        );
+
+        // Return just the contract instance
+        return contract;
+    } catch (error) {
+        console.error(
+            `Failed to deploy ${COLORS.RED}${contractName}${COLORS.RESET}:`,
+            error
+        );
+        throw error;
+    }
 }
 
 module.exports = {
-    log,
+    COLORS,
+    logToFile,
     formatABI,
-    writeLogToFile,
+    deployMaintenance
 };

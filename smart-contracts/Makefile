@@ -16,6 +16,7 @@ help:
 	@echo "  make deploy-lv2      - Deploy ErikGameLv2 to localhost"
 	@echo "  make deploy-erik     - Deploy Erik1155 to localhost"
 	@echo "  make dep CONTRACTS=\"Contract1 Contract2 ...\" - Deploy specified contracts (generic deployment)"
+	@echo "  make dep20           - Deploy Erik token and ErikForge contracts"
 	@echo "  make deploy-NETWORK=<network> - Deploy to specific network"
 	@echo "  make serve           - Start a local Hardhat node"
 
@@ -61,6 +62,12 @@ deploy-erik: compile
 dep: compile
 	@echo "Deploying specified contracts to $(NETWORK)..."
 	npx hardhat run scripts/deployGeneric.js --network $(NETWORK)
+
+# Deploy Erik token and ErikForge contracts
+.PHONY: dep20
+dep20: compile
+	@echo "Deploying Erik token and ErikForge contracts to $(NETWORK)..."
+	npx hardhat run scripts/deploy20.js --network $(NETWORK)
 
 # Start a local Ganache instance
 .PHONY: ganache

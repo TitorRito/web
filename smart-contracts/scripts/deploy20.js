@@ -1,38 +1,31 @@
 const { ethers } = require("hardhat");
-const { log } = require("./utils");
+const { deployMaintenance, COLORS, logToFile } = require("./utils");
 
 async function main() {
-  const Contract = await ethers.getContractFactory("Erik20");
-  
-  console.log("Deploying contract...");
-  const contract = await Contract.deploy();
-  
-  await contract.waitForDeployment();
-  const contractAddress = await contract.getAddress();
-  
-  // Get the network information
-  const network = await ethers.provider.getNetwork();
-  const networkName = network.name === 'unknown' ? 'localhost' : network.name;
-  const chainId = network.chainId.toString();
-  
-  // Log with detailed information including chainId
-  log("Erik20 deployment completed successfully", {
-    type: 'success',
-    contractDetails: {
-      name: "Erik20",
-      address: contractAddress,
-      network: networkName,
-      chainId: chainId,
-      abi: Contract.interface.fragments,
-      notes: "ERC20 token contract deployed"
-    }
-  });
+  console.log(`${COLORS.MAGENTA}Deploying contracts...${COLORS.RESET}`);
+
+  try {
+    // Deploy Erik token contract first
+    const erik = await deployMaintenance("Erik");
+    const erikAddress = await erik.getAddress();
+
+    // Deploy ErikForge contract and pass the Erik token address
+    const erikForge = await deployMaintenance("ErikForge", [erikAddress]);
+
+    console.log(`${COLORS.GREEN}Deployment complete!${COLORS.RESET}`);
+
+    // Optional: Log contract relationships separately if needed
+    console.log(`${COLORS.BLUE}ErikForge is linked to Erik token at ${erikAddress}${COLORS.RESET}`);
+  } catch (error) {
+    console.error(`${COLORS.RED}Deployment failed:${COLORS.RESET}`, error);
+    throw error;
+  }
 }
 
 // Execute deployment
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    log("Deployment failed", { type: 'error', contractDetails: { notes: error.message } });
+    console.error(error);
     process.exit(1);
   });

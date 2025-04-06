@@ -1,0 +1,20 @@
+{
+  "name": "ErikForge",
+  "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+  "network": "localhost",
+  "chainId": "31337",
+  "abi": [
+    "constructor(address)",
+    "function COOLDOWN() view returns (uint256)",
+    "function burn(uint256)",
+    "function lastMintTime(address) view returns (uint256)",
+    "function mint(uint256)",
+    "function prettyPrintTokens(address) view returns (uint256[])",
+    "function token() view returns (address)",
+    "function trade(uint256,uint256)"
+  ],
+  "timestamp": "07-04-2025 00:06:56",
+  "constructorArgs": [
+    "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+  ]
+}
