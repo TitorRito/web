@@ -10,7 +10,9 @@ interface IErik {
         address account,
         uint256 id
     ) external view returns (uint256);
-    function getAllBalanceOf(address user) external view returns (uint256[] memory);
+    function getAllBalanceOf(
+        address user
+    ) external view returns (uint256[] memory);
 }
 
 contract Erik is ERC1155, IErik {
@@ -36,17 +38,22 @@ contract Erik is ERC1155, IErik {
         _burn(from, id, amount);
     }
 
-    function balanceOf(address account, uint256 id) public view virtual override(ERC1155, IErik) returns (uint256) {
+    function balanceOf(
+        address account,
+        uint256 id
+    ) public view virtual override(ERC1155, IErik) returns (uint256) {
         return super.balanceOf(account, id);
     }
-    
-    function getAllBalanceOf(address user) external view override returns (uint256[] memory) {
+
+    function getAllBalanceOf(
+        address user
+    ) external view override returns (uint256[] memory) {
         uint256[] memory balances = new uint256[](7);
-        
+
         for (uint256 i = 0; i < 7; i++) {
             balances[i] = balanceOf(user, i);
         }
-        
+
         return balances;
     }
 }
@@ -138,20 +145,13 @@ contract ErikForge {
         token.mint(msg.sender, tokenOut, 1);
         lastMintTime[msg.sender] = block.timestamp;
     }
-    
-    // Returns a user-friendly representation of all token balances for an address
-    function prettyPrintTokens(address user) public view returns (string[] memory, uint256[] memory) {
-        string[] memory tokenNames = new string[](7);
-        tokenNames[0] = "SEED";
-        tokenNames[1] = "WATER";
-        tokenNames[2] = "SOIL";
-        tokenNames[3] = "PLANT";
-        tokenNames[4] = "FRUIT";
-        tokenNames[5] = "FLOWER";
-        tokenNames[6] = "BASKET";
-        
+
+    function prettyPrintTokens(
+        address user
+    ) public view returns (uint256[] memory) {
         uint256[] memory balances = token.getAllBalanceOf(user);
-        
-        return (tokenNames, balances);
+        return (balances);
     }
 }
+
+//todos is adding events
