@@ -61,7 +61,7 @@ contract Erik is ERC1155, IErik {
 contract ErikForge {
     IErik public token;
     uint256 public constant COOLDOWN = 5 seconds;
-    mapping(address => uint256) public lastMintTime;
+    mapping(address => uint256) private lastMintTime;
 
     constructor(IErik _token) {
         token = _token;

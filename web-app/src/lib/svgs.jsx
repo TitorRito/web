@@ -175,3 +175,24 @@ export const EtherscanIcon = () => {
         </svg>
     );
 };
+
+export const MiningIcon = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+            <path d="M12 1a1 1 0 011 1v1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2v1h3a2 2 0 012 2v3a2 2 0 01-2 2h-1v1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2v1a1 1 0 01-1 1h-2a1 1 0 01-1-1v-1H8v1a1 1 0 01-1 1H5a1 1 0 01-1-1v-2a1 1 0 011-1h2v-1H4a2 2 0 01-2-2v-3a2 2 0 012-2h3V7H5a1 1 0 01-1-1V4a1 1 0 011-1h2V2a1 1 0 011-1h4z" />
+            <path d="M9 7v4M12 7v2M15 7v4M9 15v2M12 15v4M15 15v2" stroke="currentColor" strokeWidth="1" />
+            <path d="M7 11h10v2H7z" fill="#4ade80" />
+        </svg>
+    );
+};
+
+export const PitIcon = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+            <path d="M8 8c0-1.5 1.36-3 4-3s4 1.5 4 3c0 1.5-1 2-2 3l-2 2-2-2C9 10 8 9.5 8 8z" fill="#f87171" />
+            <path d="M12 18c-1.5 0-3-1.36-3-3s1.5-2 3-2 3 .5 3 2-1.5 3-3 3z" fill="#f87171" />
+            <path d="M12 9v6" stroke="#333" strokeWidth="0.5" />
+        </svg>
+    );
+};
