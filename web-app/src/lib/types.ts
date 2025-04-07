@@ -1,6 +1,5 @@
 import { ethers } from 'ethers';
 
-
 export type Network = {
     name: string;
     id: string;

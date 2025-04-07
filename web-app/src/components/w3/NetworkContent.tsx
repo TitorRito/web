@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { networkChains, switchNetwork, ApiResponse, isLocalNetwork } from '@/lib/json-rpc';
+import { networkChains, switchNetwork, ApiResponse, isLocalNetwork } from '@/lib/rpc-json';
 import { useUser } from '@/lib/UserContext';
 import { ErrorIcon, WarningIcon } from '@/lib/svgs';
 

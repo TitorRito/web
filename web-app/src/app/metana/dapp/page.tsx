@@ -4,8 +4,7 @@ import LogInWallet from '@/components/w3/WalletLogIn';
 import LoginNetwork from '@/components/w3/NetworkLogin';
 import LoginContract from '@/components/w3/ContractLogin';
 import { ErrorNotification } from '@/components/ErrorComponent';
-import { getIsWeb3 } from '@/lib/json-rpc';
-import { UserProvider } from '@/lib/UserContext';
+import { getIsWeb3 } from '@/lib/rpc-json';
 
 import {
   WarningIcon,
@@ -63,7 +62,6 @@ export default function Dapp() {
     }
   }, [error]);
 
-
   if (walletDetected === null) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -77,24 +75,22 @@ export default function Dapp() {
   }
 
   return (
-    <UserProvider>
-      <div className='min-h-screen bg-gray-900 text-gray-200 py-10 px-4'>
-        <div className='max-w-7xl mx-auto'>
-          <Header />
+    <div className='min-h-screen bg-gray-900 text-gray-200 py-10 px-4'>
+      <div className='max-w-7xl mx-auto'>
+        <Header />
 
-          <ErrorNotification
-            error={error}
-            visible={errorVisible}
-            onClose={() => setErrorVisible(false)}
-          />
+        <ErrorNotification
+          error={error}
+          visible={errorVisible}
+          onClose={() => setErrorVisible(false)}
+        />
 
-          <div className='flex flex-col gap-8'>
-            <LoginContract />
-            <LogInWallet />
-            <LoginNetwork />
-          </div>
+        <div className='flex flex-col gap-8'>
+          <LoginContract />
+          <LogInWallet />
+          <LoginNetwork />
         </div>
       </div>
-    </UserProvider>
+    </div>
   );
 }

@@ -20,6 +20,9 @@ help:
 	@echo "  make deploy-NETWORK=<network> - Deploy to specific network"
 	@echo "  make serve           - Start a local Hardhat node"
 
+sepolia:
+	npx hardhat console --network sepolia
+
 # Compile contracts
 .PHONY: compile
 compile:

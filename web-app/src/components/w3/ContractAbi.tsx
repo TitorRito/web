@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Contract } from '@/lib/types';
-import { parseAndCategorizeAbi, SolItem, SolParam, SolItemType, formatContractResponse } from '@/lib/abi-rpc';
+import { parseAndCategorizeAbi, SolItem, SolParam, SolItemType, formatContractResponse } from '@/lib/rpc-abi';
 import ContractSearch, { SearchFilters } from './ContractSearch';
 import { OpenSeaIcon, EtherscanIcon, WarningIcon } from '@/lib/svgs';
 

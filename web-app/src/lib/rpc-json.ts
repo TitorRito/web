@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { User } from "./types";
-import { networkChains, isLocalNetwork, NetworkChain } from "./network-rpc";
+import { networkChains, isLocalNetwork, NetworkChain } from "./rpc-network";
 
 export interface ApiResponse {
     success: boolean;

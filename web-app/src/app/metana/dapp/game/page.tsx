@@ -17,7 +17,7 @@ export default function GamePage() {
 
     return (
         <div className="w-full my-8 flex flex-col items-center justify-center gap-4 [&>*]:border [&>*]:border-gray-700 [&>*]:rounded-lg [&>*]:p-4 [&>*]:w-full [&>*]:max-w-2xl">
-            <Description />
+            {/* <Description /> */}
             <Gamify />
         </div>
     );

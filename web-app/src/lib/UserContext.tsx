@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { User, Contract } from '@/lib/types';
-import { getWallet } from '@/lib/json-rpc';
+import { getWallet } from '@/lib/rpc-json';
 import { ethers } from 'ethers';
 
 interface UserContextType {
@@ -68,7 +68,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     function updateContract(contract?: Contract) {
         if (!user || !user.address) {
-            console.log("Contract reverted...");
+            console.log("Contract reverted... no user found...");
             return;
         }
 
@@ -99,9 +99,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     }
 
-    window.uu = user;
-    window.cc = contract;
-    window.nn = user?.network;
+    // window.uu = user;
+    // window.cc = contract;
+    // window.nn = user?.network;
 
     return (
         <UserContext.Provider value={{
