@@ -15,7 +15,9 @@ async function main() {
     console.log(`${COLORS.GREEN}Deployment complete!${COLORS.RESET}`);
 
     // Optional: Log contract relationships separately if needed
-    console.log(`${COLORS.BLUE}ErikForge is linked to Erik token at ${erikAddress}${COLORS.RESET}`);
+    console.log(
+      `${COLORS.BLUE}ErikForge is linked to Erik token at ${erikAddress}${COLORS.RESET}`
+    );
   } catch (error) {
     console.error(`${COLORS.RED}Deployment failed:${COLORS.RESET}`, error);
     throw error;

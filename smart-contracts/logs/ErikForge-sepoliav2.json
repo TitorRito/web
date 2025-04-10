@@ -1,0 +1,19 @@
+{
+  "name": "ErikForge",
+  "address": "0xFB16c053e9Cb7a517e76d53BC0BC66F6498d7D15",
+  "network": "sepolia",
+  "chainId": "11155111",
+  "abi": [
+    "constructor(address)",
+    "function COOLDOWN() view returns (uint256)",
+    "function burn(uint256)",
+    "function mint(uint256)",
+    "function prettyPrintTokens(address) view returns (uint256[])",
+    "function token() view returns (address)",
+    "function trade(uint256,uint256)"
+  ],
+  "timestamp": "10-04-2025 22:25:25",
+  "constructorArgs": [
+    "0xBEE543c7154226E1a5be42cd92848FF44f9a3c7e"
+  ]
+}
