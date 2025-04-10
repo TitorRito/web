@@ -5,11 +5,14 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
 interface IErik {
     function mint(address to, uint256 id, uint256 amount) external;
+
     function burn(address from, uint256 id, uint256 amount) external;
+
     function balanceOf(
         address account,
         uint256 id
     ) external view returns (uint256);
+
     function getAllBalanceOf(
         address user
     ) external view returns (uint256[] memory);
@@ -28,14 +31,19 @@ contract Erik is ERC1155, IErik {
     //todo: create assets
     constructor() ERC1155("https://myapi.com/metadata/{id}.json") {}
 
+    event Mint(address indexed to, uint256 id, uint256 amount);
+    event Burn(address indexed from, uint256 id, uint256 amount);
+
     function mint(address to, uint256 id, uint256 amount) external override {
         require(id >= 0 && id <= 6, "Invalid token ID");
         _mint(to, id, amount, "");
+        emit Mint(to, id, amount);
     }
 
     function burn(address from, uint256 id, uint256 amount) external override {
         require(id >= 0 && id <= 6, "Invalid token ID");
         _burn(from, id, amount);
+        emit Burn(from, id, amount);
     }
 
     function balanceOf(
@@ -153,5 +161,3 @@ contract ErikForge {
         return (balances);
     }
 }
-
-//todos is adding events
