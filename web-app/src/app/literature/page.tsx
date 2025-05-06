@@ -16,7 +16,7 @@ const librarySections = [
     title: 'readings',
     children: [
       { name: 'How the Web3 Reinvents the Internet', link: 'https://dokumen.pub/token-economy-how-the-web3-reinvents-the-internet-9783982103839-9783982103815-9783982103846.html' },
-      { name: 'Learn Ethereumd', link: 'https://www.amazon.com/Learn-Ethereum-decentralized-applications-contracts/dp/1789954118' },
+      { name: 'Learn Ethereum', link: 'https://www.amazon.com/Learn-Ethereum-decentralized-applications-contracts/dp/1789954118' },
       { name: 'Leaving the Rat Race with Python', link: 'https://pdfcoffee.com/leavingtheratracewithpythonv1-pdf-free.html' },
       { name: 'Python Tricks Book', link: 'https://archive.org/details/pythontricks/page/n1/mode/2up' },
       { name: 'A Philosophy of Software Design', link: 'https://www.pdfdrive.com/a-philosophy-of-software-design-e195285924.html' },
