@@ -26,6 +26,27 @@ const librarySections = [
     ],
   },
   {
+    title: 'subscription',
+    children: [
+      { name: 'Morning Brew', link: 'https://www.morningbrew.com/' },
+      { name: 'Moby', link: 'https://www.moby.co/' },
+      { name: 'Bankless', link: 'https://www.bankless.com/daily-brief' },
+      { name: 'Interview Cake', link: 'https://www.interviewcake.com/' },
+      { name: 'Pragmatic Engineer', link: 'https://substack.com/@pragmaticengineer' },
+      { name: '8020 AI', link: 'https://www.8020ai.co/' },
+      { name: 'Horizon AI', link: 'https://www.joinhorizon.ai/' },
+      { name: 'Finxter Blog', link: 'https://blog.finxter.com/' },
+      { name: 'Superhuman AI', link: 'https://www.superhuman.ai' },
+      { name: 'Neuron Daily', link: 'https://www.theneurondaily.com/' },
+      { name: 'Bay Area Times', link: 'https://www.bayareatimes.com/' },
+      { name: 'Indie Hackers', link: 'https://www.indiehackers.com/' },
+      { name: 'Milk Road', link: 'https://milkroad.com/' },
+      { name: 'Alchemy', link: 'https://www.alchemy.com/newsletter' },
+      { name: 'The Average Joe', link: 'https://readthejoe.com/' },
+      { name: 'Engineering Leadership (Gregor Ojstersek)', link: 'https://newsletter.eng-leadership.com/' },
+    ],
+  },
+  {
     title: 'optimal env',
     children: [
       { name: '.vimrc', link: 'https://www.google.com/search?q=vimrc' },
@@ -36,6 +57,7 @@ const librarySections = [
       { name: 'fzf', link: 'https://github.com/junegunn/fzf' },
     ],
   },
+
 ];
 
 const quotesSections = [
@@ -72,11 +94,11 @@ function Quote() {
           <div className="flex-1 flex flex-col space-y-4 w-full">
             {quotesSections.map((item, idx) => (
               <div
-          key={idx}
-          className={`rounded px-4 py-3 text-base cursor-pointer transition-all duration-300 shadow-md hover:scale-105 border ${selectedIdx === idx ? 'border-cyan-400 bg-indigo-900/20' : 'border-transparent bg-white/5 text-cyan-500'}`}
-          onClick={() => setSelectedIdx(idx)}
+                key={idx}
+                className={`rounded px-4 py-3 text-base cursor-pointer transition-all duration-300 shadow-md hover:scale-105 border ${selectedIdx === idx ? 'border-cyan-400 bg-indigo-900/20' : 'border-transparent bg-white/5 text-cyan-500'}`}
+                onClick={() => setSelectedIdx(idx)}
               >
-          {item.quote}
+                {item.quote}
               </div>
             ))}
           </div>
@@ -111,7 +133,7 @@ function MyLibrary({ items }: { items: { title: string, children: { name: string
             <div className="text-lg font-semibold text-indigo-200 mb-3">
               {item.title === 'optimal env' ? (
                 <span
-                  className="cursor-pointer underline hover:text-indigo-400"
+                  className="cursor-pointer hover:text-indigo-400"
                   onClick={() => router.push('/literature/file?from=optimal-env')}
                 >
                   {item.title}
