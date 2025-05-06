@@ -26,7 +26,7 @@ const librarySections = [
     ],
   },
   {
-    title: 'subscription',
+    title: 'subscriptions',
     children: [
       { name: 'Morning Brew', link: 'https://www.morningbrew.com/' },
       { name: 'Moby', link: 'https://www.moby.co/' },
@@ -108,9 +108,10 @@ function Quote() {
   );
 }
 
-function MyLibrary({ items }: { items: { title: string, children: { name: string, link: string }[] }[] }) {
+function MyLibrary() {
   const [isEven, setIsEven] = useState(true);
   const router = useRouter();
+  const items = librarySections;
 
   useEffect(() => {
     const randomInt = Math.floor(Math.random() * 1000);
@@ -118,13 +119,13 @@ function MyLibrary({ items }: { items: { title: string, children: { name: string
   }, []);
 
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-center snap-center">
+    <div className="w-full py-32">
       <h2
         className={`text-4xl p-4 font-bold mb-8 transition-transform duration-500 animate-fade-in ${isEven ? 'scale-105' : 'scale-95'} text-transparent bg-clip-text bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 opacity-90 text-center`}
       >
         {isEven ? 'My turn' : 'My Try'}
       </h2>
-      <div className="space-y-6 w-full animate-fade-in flex flex-col items-center">
+      <div className="space-y-6 animate-fade-in flex flex-col items-center">
         {items.map((item, idx) => (
           <div
             key={idx}
@@ -178,15 +179,10 @@ function MyLibrary({ items }: { items: { title: string, children: { name: string
 }
 
 export default function LiteraturePage() {
-  // Remove flex-col and justify-center from the wrapper, use block and full height for snapping
   return (
-    <div className="w-screen min-h-screen h-screen overflow-y-scroll snap-y snap-mandatory">
-      <div className="h-screen snap-start">
-        <Quote />
-      </div>
-      <div className="h-screen snap-start">
-        <MyLibrary items={librarySections} />
-      </div>
+    <div className='flex  flex-col items-center justify-center [&>*]:scroll-smooth [&>*]:border'>
+      <Quote />
+      <MyLibrary />
     </div>
   );
 }
