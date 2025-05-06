@@ -31,7 +31,8 @@ export default function ContractCreateCustomForm({ handleCreateContract }: Contr
                 name: formData.name,
                 address: formData.address,
                 chainId: formData.chainId ? parseInt(formData.chainId) : undefined,
-                abi: abiLines
+                abi: abiLines,
+                instance: null, //maybe error bug
             });
 
             // Reset form

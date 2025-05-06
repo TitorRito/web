@@ -82,7 +82,7 @@ function WelcomeMsg({ onComplete }: { onComplete: () => void }) {
   return (
     <div className="welcome-message">
       <p>if anyone can build nowadays.</p>
-      <p>i guess it's the mind that counts.</p>
+      <p>i guess its the mind that counts.</p>
     </div>
   );
 }
