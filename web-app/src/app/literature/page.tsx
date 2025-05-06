@@ -15,8 +15,13 @@ const librarySections = [
   {
     title: 'readings',
     children: [
-      { name: 'Atomic Habits', link: 'https://jamesclear.com/atomic-habits' },
-      { name: 'Deep Work', link: 'https://www.calnewport.com/books/deep-work/' },
+      { name: 'How the Web3 Reinvents the Internet', link: 'https://dokumen.pub/token-economy-how-the-web3-reinvents-the-internet-9783982103839-9783982103815-9783982103846.html' },
+      { name: 'Learn Ethereumd', link: 'https://www.amazon.com/Learn-Ethereum-decentralized-applications-contracts/dp/1789954118' },
+      { name: 'Leaving the Rat Race with Python', link: 'https://pdfcoffee.com/leavingtheratracewithpythonv1-pdf-free.html' },
+      { name: 'Python Tricks Book', link: 'https://archive.org/details/pythontricks/page/n1/mode/2up' },
+      { name: 'A Philosophy of Software Design', link: 'https://www.pdfdrive.com/a-philosophy-of-software-design-e195285924.html' },
+      { name: 'Unix Power Tools (3rd Edition)', link: 'https://altair.pw/pub/doc/unix/Unix%20Power%20Tools%20(3rd%20Edition)/' },
+      { name: 'The One-Straw Revolution', link: 'https://archive.org/details/TheOne-strawRevolution' },
     ],
   },
   {
@@ -50,7 +55,7 @@ function Quote() {
   return (
     <div className="flex flex-col gap-8 w-full max-w-4xl h-screen items-center justify-center snap-center">
       <div className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-700 tracking-wide mb-2 opacity-80 select-none">
-        <span className="italic">Quotes around the internet</span>
+        <span className="italic">"Quotes around the internet</span>
       </div>
       <div className="flex gap-12 w-full items-center justify-center">
         {/* Left Column: Highlighted Author */}
@@ -90,11 +95,11 @@ function MyLibrary({ items }: { items: { title: string, children: { name: string
       >
         {isEven ? 'My turn' : 'My Try'}
       </h2>
-      <div className="space-y-6 w-full max-w-lg animate-fade-in">
+      <div className="space-y-6 w-full animate-fade-in flex flex-col items-center">
         {items.map((item, idx) => (
           <div
             key={idx}
-            className="p-4 rounded shadow border border-indigo-900 bg-gradient-to-r from-gray-900/70 via-gray-800/80 to-indigo-950/70"
+            className="p-4 rounded shadow border border-indigo-900 bg-gradient-to-r from-gray-900/70 via-gray-800/80 to-indigo-950/70 max-w-2xl w-full"
           >
             <div className="text-lg font-semibold text-indigo-200 mb-3">{item.title}</div>
             <div className="flex flex-wrap gap-3">
@@ -123,7 +128,7 @@ function MyLibrary({ items }: { items: { title: string, children: { name: string
 
 export default function LiteraturePage() {
   return (
-    <div className="w-screen min-h-screen flex flex-col overflow-y-scroll snap-y snap-mandatory">
+    <div className="w-screen min-h-screen flex flex-col justify-center overflow-y-scroll snap-y snap-mandatory border">
       <Quote />
       <MyLibrary items={librarySections} />
     </div>
