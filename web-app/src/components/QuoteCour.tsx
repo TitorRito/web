@@ -86,7 +86,7 @@ export function QuoteCarousel() {
                             onMouseLeave={() => setIsHovering(false)}
                         >
                             <blockquote>
-                                <p>"{quote.text}"</p>
+                                <p>--git{quote.text}--</p>
                             </blockquote>
                             {isHovering && (
                                 <button

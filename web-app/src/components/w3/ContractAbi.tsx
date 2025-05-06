@@ -408,7 +408,7 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
     }
   };
 
-  window.state = contractState;
+  // window.state = contractState;
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-900 rounded-lg shadow-lg text-gray-200">
