@@ -1,28 +1,67 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { IconType } from 'react-icons';
-import { 
-  FaGithub, FaLinkedin, FaInstagram, FaFileAlt, 
+import {
+  FaGithub, FaLinkedin, FaInstagram, FaFileAlt,
   FaCalendar, FaWhatsapp, FaEnvelope, FaTwitter,
   FaCode, FaTerminal, FaEdit, FaEthereum,
   FaDatabase, FaPython, FaJsSquare, FaReact,
   FaMapMarkerAlt, FaLaptop, FaEthereum as FaWeb3, FaWind
 } from 'react-icons/fa';
+import Image from 'next/image';
+import { FiWind } from "react-icons/fi";
 
-// Define LogoItem type (renamed from MenuItem)
+// Define LogoItem type with group identity
+type LogoGroup = 'social' | 'communication' | 'devtools' | 'tech';
+
 interface LogoItem {
   name: string;
-  icon: IconType;
-  onClick: () => void;
+  icon: IconType | string;
+  linkUrl: string;
+  group: LogoGroup;
 }
 
-// Updated LogoChild component to accept logo items
-function LogoChild({ items }: { items: LogoItem[] }) {
+// All logo items in a single array with group identity
+const logoItems: LogoItem[] = [
+  // Social
+  { name: 'GitHub', icon: FaGithub, linkUrl: 'https://github.com/', group: 'social' },
+  { name: 'LinkedIn', icon: FaLinkedin, linkUrl: 'https://linkedin.com/', group: 'social' },
+  { name: 'Call', icon: FiWind, linkUrl: 'tel:+123456789', group: 'social' },
+  { name: 'Email', icon: FaEnvelope, linkUrl: 'mailto:someone@example.com', group: 'social' },
+  // Communication
+  { name: 'Postgres', icon: () => <Image src="/postgres.svg" alt="Postgres" width={24} height={24} />, linkUrl: 'https://www.postgresql.org/', group: 'communication' },
+  { name: 'HTTP', icon: FiWind, linkUrl: 'https://developer.mozilla.org/en-US/docs/Web/HTTP', group: 'communication' },
+  { name: 'API', icon: FiWind, linkUrl: 'https://en.wikipedia.org/wiki/API', group: 'communication' },
+  { name: 'Node.js', icon: () => <Image src="/nodejs.svg" alt="Node.js" width={24} height={24} />, linkUrl: 'https://nodejs.org/', group: 'communication' },
+  // Devtools
+  { name: 'Bash', icon: () => <Image src="/bash.svg" alt="Bash" width={24} height={24} />, linkUrl: 'https://www.gnu.org/software/bash/', group: 'devtools' },
+  { name: 'C', icon: () => <Image src="/c.svg" alt="C" width={24} height={24} />, linkUrl: 'https://en.wikipedia.org/wiki/C_(programming_language)', group: 'devtools' },
+  { name: 'Vim', icon: () => <Image src="/vim.svg" alt="Vim" width={24} height={24} />, linkUrl: 'https://www.vim.org/', group: 'devtools' },
+  { name: 'Docker', icon: () => <Image src="/docker.svg" alt="Docker" width={24} height={24} />, linkUrl: 'https://www.docker.com/', group: 'devtools' },
+  // Tech
+  { name: 'Python', icon: FaPython, linkUrl: 'https://www.python.org/', group: 'tech' },
+  { name: 'JavaScript', icon: FaJsSquare, linkUrl: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript', group: 'tech' },
+  { name: 'React', icon: FaReact, linkUrl: 'https://react.dev/', group: 'tech' },
+  { name: 'Solidity', icon: FaEthereum, linkUrl: 'https://docs.soliditylang.org/', group: 'tech' },
+];
+
+// Helper to get items by group
+const getLogoItemsByGroup = (group: LogoGroup) => logoItems.filter(item => item.group === group);
+
+// Updated LogoChild to support grid position and tooltip placement
+function LogoChild({ items, gridPositions }: { items: LogoItem[], gridPositions?: [number, number][] }) {
+  // Tooltip logic removed, only icon and click remain
   return (
     <div className="logo-child">
       {items.map((item, index) => (
-        <div key={index} onClick={item.onClick} title={item.name}>
-          <item.icon />
+        <div key={index} className="logo-item-with-tooltip" style={{ position: 'relative', display: 'inline-block' }}>
+          <div onClick={() => window.open(item.linkUrl, '_blank')} title={item.name}>
+            {typeof item.icon === 'string' ? (
+              <Image src={item.icon} alt={item.name} width={24} height={24} />
+            ) : (
+              <item.icon />
+            )}
+          </div>
         </div>
       ))}
     </div>
@@ -167,16 +206,16 @@ function WelcomeMsg({ onComplete }: { onComplete: () => void }) {
 // Footer component
 function Footer() {
   const [isVisible, setIsVisible] = useState(false);
-  
+
   useEffect(() => {
     // Slight delay for subtle appearance after main content loads
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, []);
-  
+
   return (
     <footer className={`site-footer ${isVisible ? 'footer-visible' : ''}`}>
       <div className="footer-content">
@@ -193,7 +232,7 @@ function Footer() {
           Looking for cool projects. duh.
         </div>
         <div className="footer-item">
-          I also like to teach kitesurfing, professionally. 
+          I also like to teach kitesurfing, professionally.
         </div>
       </div>
     </footer>
@@ -201,38 +240,6 @@ function Footer() {
 }
 
 export default function Home() {
-  // Group 1: Social
-  const group1: LogoItem[] = [
-    { name: 'GitHub', icon: FaGithub, onClick: () => console.log('GitHub clicked') },
-    { name: 'LinkedIn', icon: FaLinkedin, onClick: () => console.log('LinkedIn clicked') },
-    { name: 'Instagram', icon: FaInstagram, onClick: () => console.log('Instagram clicked') },
-    { name: 'CV', icon: FaFileAlt, onClick: () => console.log('CV clicked') },
-  ];
-
-  // Group 2: Communication
-  const group2: LogoItem[] = [
-    { name: 'Calendly', icon: FaCalendar, onClick: () => console.log('Calendly clicked') },
-    { name: 'WhatsApp', icon: FaWhatsapp, onClick: () => console.log('WhatsApp clicked') },
-    { name: 'Email', icon: FaEnvelope, onClick: () => console.log('Email clicked') },
-    { name: 'X', icon: FaTwitter, onClick: () => console.log('X clicked') },
-  ];
-
-  // Group 3: Development Tools
-  const group3: LogoItem[] = [
-    { name: 'C', icon: FaCode, onClick: () => console.log('C clicked') },
-    { name: 'Bash', icon: FaTerminal, onClick: () => console.log('Bash clicked') },
-    { name: 'Vim', icon: FaEdit, onClick: () => console.log('Vim clicked') },
-    { name: 'Solidity', icon: FaEthereum, onClick: () => console.log('Solidity clicked') },
-  ];
-
-  // Group 4: Additional Tech
-  const group4: LogoItem[] = [
-    { name: 'Python', icon: FaPython, onClick: () => console.log('Python clicked') },
-    { name: 'JavaScript', icon: FaJsSquare, onClick: () => console.log('JavaScript clicked') },
-    { name: 'React', icon: FaReact, onClick: () => console.log('React clicked') },
-    { name: 'Database', icon: FaDatabase, onClick: () => console.log('Database clicked') },
-  ];
-
   const navItems = [
     { color: "#ff6b6b", name: "dynamic language" },
     { color: "#4dabf7", name: "school and projects" },
@@ -302,10 +309,10 @@ export default function Home() {
               <div className="icon-b"></div>
             </div>
             <div className="logo">
-              <LogoChild items={group1} />
-              <LogoChild items={group2} />
-              <LogoChild items={group3} />
-              <LogoChild items={group4} />
+              <LogoChild items={getLogoItemsByGroup('social')} />
+              <LogoChild items={getLogoItemsByGroup('communication')} />
+              <LogoChild items={getLogoItemsByGroup('devtools')} />
+              <LogoChild items={getLogoItemsByGroup('tech')} />
             </div>
             {/* <QuoteCarousel /> */}
           </div>
