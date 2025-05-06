@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: 'Bytesized';
-  src: url('/fonts/Bytesized-Regular.ttf') format('truetype');
+  font-family: "Bytesized";
+  src: url("/fonts/Bytesized-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
 #logo {
-  font-family: 'Bytesized', sans-serif;
+  font-family: "Bytesized", sans-serif;
   font-size: 28px;
   letter-spacing: 4px;
   transition: all 0.5s;
@@ -21,7 +21,7 @@
 
 :root {
   --background: #0b1c25;
-  --foreground: #DDA853;
+  --foreground: #dda853;
 }
 
 /* @theme inline {
@@ -39,7 +39,8 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   font-size: 16px;
 }
 
@@ -71,7 +72,6 @@ textarea:focus {
   background: var(--foreground);
   color: var(--background);
 }
-
 
 /* -- landing page styles -- */
 .full-container {
@@ -151,7 +151,7 @@ textarea:focus {
 }
 
 .nav-item::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -293,34 +293,63 @@ textarea:focus {
 .icon-a {
   position: absolute;
   top: 12%;
-  /* Distance from top edge */
   right: 8%;
-  /* Slightly more from right than icon-b */
   width: 6%;
-  /* Size proportional to avatar */
   height: 6%;
-  border: calc(var(--size) * 0.01) solid #4ed21e;
-  /* Responsive border */
+  border: calc(var(--size) * 0.01) solid #606060;
   border-radius: 50%;
   z-index: 2;
-  /* Ensure it’s on top if needed */
 }
 
 /* Second dot */
 .icon-b {
   position: absolute;
   top: 7%;
-  /* Slightly below icon-a */
   right: 13%;
-  /* Closer to right edge */
   width: 6%;
-  /* Same size as icon-a */
   height: 6%;
-  border: calc(var(--size) * 0.01) solid #D2691E;
-  /* Responsive border */
+  border: calc(var(--size) * 0.01) solid #d2691e;
   border-radius: 50%;
   z-index: 1;
-  /* Below icon-a if they overlap */
+}
+
+/* Third dot */
+.icon-c {
+  position: absolute;
+  top: 17.5%;
+  right: 3.5%;
+  width: 6%;
+  height: 6%;
+  border: calc(var(--size) * 0.01) solid #4ed21e;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+#icons .icon-msg {
+  position: absolute;
+  left: 110%;
+  top: 50%;
+  transform: translateY(-50%) scale(0.95);
+  min-width: 180px;
+  background: rgba(20, 24, 32, 0.98);
+  color: var(--foreground);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18),
+    0 1.5px 6px rgba(221, 168, 83, 0.12);
+  padding: 16px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.25s cubic-bezier(0.4, 2, 0.6, 1),
+    transform 0.25s cubic-bezier(0.4, 2, 0.6, 1);
+}
+#icons > div:hover .icon-msg,
+#icons > div:focus .icon-msg {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) scale(1);
 }
 
 .logo {
@@ -335,7 +364,7 @@ textarea:focus {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
 
-    >* {
+    > * {
       height: 42px;
       width: 42px;
       text-align: center;
@@ -352,7 +381,6 @@ textarea:focus {
         opacity: 0.8;
       }
     }
-
   }
 }
 
@@ -492,7 +520,6 @@ textarea:focus {
 
 /* Welcome Message Styles */
 .welcome-message {
-  font-size: 2rem;
   text-align: center;
   max-width: 80%;
   margin: 0 auto;
@@ -509,6 +536,9 @@ textarea:focus {
   font-weight: 300;
   letter-spacing: 1px;
   line-height: 1.5;
+  font-size: 1.2rem;
+  font-style: italic;
+  font-family: "Segoe UI Light", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Example of a cool, light font stack */
 }
 
 @keyframes fadeInOut {

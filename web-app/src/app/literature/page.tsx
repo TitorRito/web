@@ -86,7 +86,7 @@ function Quote() {
         <div className="flex flex-col md:flex-row gap-12 w-full max-w-4xl items-center justify-center">
           {/* Left Column: Highlighted Author */}
           <div className="flex-1 flex flex-col items-center justify-center">
-            <div className="p-8 rounded-xl shadow-2xl border-4 border-indigo-800 flex flex-col items-center max-w-xl w-full animate-fade-in bg-white/10">
+            <div className="p-8 rounded-xl shadow-2xl border-4 border-indigo-800 flex flex-col items-center max-w-xl w-full animate-fade-in">
               <div className="text-2xl font-bold text-purple-400 mb-2">{quotesSections[selectedIdx].author}</div>
             </div>
           </div>
@@ -95,7 +95,7 @@ function Quote() {
             {quotesSections.map((item, idx) => (
               <div
                 key={idx}
-                className={`rounded px-4 py-3 text-base cursor-pointer transition-all duration-300 shadow-md hover:scale-105 border ${selectedIdx === idx ? 'border-cyan-400 bg-indigo-900/20' : 'border-transparent bg-white/5 text-cyan-500'}`}
+                className={`rounded px-4 py-3 text-base cursor-pointer transition-all duration-300 shadow-md hover:scale-105 border ${selectedIdx === idx ? 'border-cyan-400' : 'border-transparent text-cyan-500'}`}
                 onClick={() => setSelectedIdx(idx)}
               >
                 {item.quote}
@@ -129,7 +129,7 @@ function MyLibrary() {
         {items.map((item, idx) => (
           <div
             key={idx}
-            className="p-4 rounded shadow border border-indigo-900 bg-gradient-to-r from-gray-900/70 via-gray-800/80 to-indigo-950/70 max-w-2xl w-full"
+            className="p-4 rounded shadow border border-indigo-900 max-w-2xl w-full"
           >
             <div className="text-lg font-semibold text-indigo-200 mb-3">
               {item.title === 'optimal env' ? (
@@ -149,7 +149,7 @@ function MyLibrary() {
                   {item.title === 'optimal env' ? (
                     <Link
                       href={`/literature/config?read=${encodeURIComponent(child.name)}`}
-                      className="flex items-center gap-3 px-5 py-3 rounded-lg border border-indigo-800 bg-gradient-to-r from-gray-800 to-gray-900 text-indigo-100 font-medium shadow transition-all duration-200 hover:bg-indigo-900/70 hover:scale-[1.03] active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-700"
+                      className="flex items-center gap-3 px-5 py-3 rounded-lg border border-indigo-800 text-indigo-100 font-medium shadow transition-all duration-200 hover:scale-[1.03] active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-700"
                       style={{ minWidth: '160px' }}
                     >
                       <FaBookOpen className="text-indigo-400 text-xl" />
@@ -161,7 +161,7 @@ function MyLibrary() {
                       passHref
                       target={child.link.startsWith('/') ? undefined : '_blank'}
                       rel={child.link.startsWith('/') ? undefined : 'noopener noreferrer'}
-                      className="flex items-center gap-3 px-5 py-3 rounded-lg border border-indigo-800 bg-gradient-to-r from-gray-800 to-gray-900 text-indigo-100 font-medium shadow transition-all duration-200 hover:bg-indigo-900/70 hover:scale-[1.03] active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-700"
+                      className="flex items-center gap-3 px-5 py-3 rounded-lg border border-indigo-800 text-indigo-100 font-medium shadow transition-all duration-200 hover:scale-[1.03] active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-700"
                       style={{ minWidth: '160px' }}
                     >
                       <FaBookOpen className="text-indigo-400 text-xl" />

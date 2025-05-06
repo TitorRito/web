@@ -1,13 +1,13 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { IconType } from 'react-icons';
 import {
-  FaGithub, FaLinkedin, FaInstagram, FaFileAlt,
-  FaCalendar, FaWhatsapp, FaEnvelope, FaTwitter,
-  FaCode, FaTerminal, FaEdit, FaEthereum,
-  FaDatabase, FaPython, FaJsSquare, FaReact,
-  FaMapMarkerAlt, FaLaptop, FaEthereum as FaWeb3, FaWind
+  FaGithub, FaLinkedin, FaEthereum,
+  FaPython, FaJsSquare, FaReact, FaPhoneSquare,
+  FaMapMarkerAlt, FaLaptop, FaEthereum as FaWeb3
 } from 'react-icons/fa';
+import { SiGmail } from "react-icons/si";
+
 import Image from 'next/image';
 import { FiWind } from "react-icons/fi";
 
@@ -26,8 +26,8 @@ const logoItems: LogoItem[] = [
   // Social
   { name: 'GitHub', icon: FaGithub, linkUrl: 'https://github.com/', group: 'social' },
   { name: 'LinkedIn', icon: FaLinkedin, linkUrl: 'https://linkedin.com/', group: 'social' },
-  { name: 'Call', icon: FiWind, linkUrl: 'tel:+123456789', group: 'social' },
-  { name: 'Email', icon: FaEnvelope, linkUrl: 'mailto:someone@example.com', group: 'social' },
+  { name: 'Email', icon: SiGmail, linkUrl: 'mailto:someone@example.com', group: 'social' },
+  { name: 'Call', icon: FaPhoneSquare, linkUrl: 'tel:+123456789', group: 'social' },
   // Communication
   { name: 'Postgres', icon: () => <Image src="/postgres.svg" alt="Postgres" width={24} height={24} />, linkUrl: 'https://www.postgresql.org/', group: 'communication' },
   { name: 'HTTP', icon: FiWind, linkUrl: 'https://developer.mozilla.org/en-US/docs/Web/HTTP', group: 'communication' },
@@ -36,8 +36,8 @@ const logoItems: LogoItem[] = [
   // Devtools
   { name: 'Bash', icon: () => <Image src="/bash.svg" alt="Bash" width={24} height={24} />, linkUrl: 'https://www.gnu.org/software/bash/', group: 'devtools' },
   { name: 'C', icon: () => <Image src="/c.svg" alt="C" width={24} height={24} />, linkUrl: 'https://en.wikipedia.org/wiki/C_(programming_language)', group: 'devtools' },
-  { name: 'Vim', icon: () => <Image src="/vim.svg" alt="Vim" width={24} height={24} />, linkUrl: 'https://www.vim.org/', group: 'devtools' },
   { name: 'Docker', icon: () => <Image src="/docker.svg" alt="Docker" width={24} height={24} />, linkUrl: 'https://www.docker.com/', group: 'devtools' },
+  { name: 'Vim', icon: () => <Image src="/vim.svg" alt="Vim" width={24} height={24} />, linkUrl: 'https://www.vim.org/', group: 'devtools' },
   // Tech
   { name: 'Python', icon: FaPython, linkUrl: 'https://www.python.org/', group: 'tech' },
   { name: 'JavaScript', icon: FaJsSquare, linkUrl: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript', group: 'tech' },
@@ -68,122 +68,6 @@ function LogoChild({ items, gridPositions }: { items: LogoItem[], gridPositions?
   );
 }
 
-function QuoteCarousel() {
-  const initialQuotes = [
-    {
-      text: "Everything has a library nowadays"
-    },
-    {
-      text: "Prompts are powerful tools that accelerate thinking"
-    },
-    {
-      text: "Documennt for your later self, ... and peers"
-    },
-    {
-      text: "Don't doubt, make the mistake"
-    },
-    {
-      text: "Everything dwells, depending which way you look at it"
-    },
-    {
-      text: "The rich is not happier than the poor"
-    },
-    {
-      text: "I wish I knew this sooner, but jolly did I enjoy learning that"
-    },
-    {
-      text: "Anyone can build something now, I guess it's the mind that counts"
-    },
-    {
-      text: "I like to fix and create problems"
-    }
-  ];
-
-  // Fisher-Yates shuffle algorithm
-  const shuffleArray = (array: Array<{ text: string }>) => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-  };
-
-  const [quotes, setQuotes] = useState(initialQuotes);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isHovering, setIsHovering] = useState(false);
-  const quotesLength = quotes.length;
-
-  // Shuffle quotes on initial render
-  useEffect(() => {
-    setQuotes(shuffleArray(initialQuotes));
-  }, []);
-
-  const nextQuote = useCallback(() => {
-    setCurrentIndex(prevIndex => (prevIndex + 1) % quotesLength);
-  }, [quotesLength]);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    if (isPlaying) {
-      interval = setInterval(() => {
-        nextQuote();
-      }, 5000);
-    }
-
-    return () => clearInterval(interval);
-  }, [nextQuote, isPlaying]);
-
-  const togglePlay = () => {
-    setIsPlaying(prev => !prev);
-  };
-
-  return (
-    <div className="quotes-carousel">
-      <div className="carousel-container">
-        <div
-          className="carousel-content"
-          style={{ "--current-index": currentIndex } as React.CSSProperties}
-        >
-          {quotes.map((quote, index) => (
-            <div
-              className={`carousel-item ${isHovering ? 'hover-blur' : ''}`}
-              key={index}
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
-            >
-              <blockquote>
-                <p>"{quote.text}"</p>
-              </blockquote>
-              {isHovering && (
-                <button
-                  className="carousel-toggle-btn"
-                  onClick={togglePlay}
-                  aria-label={isPlaying ? "Pause quotes" : "Play quotes"}
-                >
-                  {isPlaying ? "❚❚" : "▶"}
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="carousel-controls">
-        <div className="carousel-dots">
-          {quotes.map((_, index) => (
-            <span
-              key={index}
-              className={`carousel-dot ${index === currentIndex ? 'active' : ''}`}
-              onClick={() => setCurrentIndex(index)}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function WelcomeMsg({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
@@ -239,6 +123,28 @@ function Footer() {
   );
 }
 
+// Icon struct for avatar icons
+const avatarIcons = [
+  {
+    key: 'icon-b',
+    name: 'Listen to what I listen to',
+    state: false,
+    msg: 'Listen to what I listen to',
+  },
+  {
+    key: 'icon-c',
+    name: 'Am I online?',
+    state: false, // Will be set by websocket in the future
+    msg: 'Am I online? (WebSocket status)',
+  },
+  {
+    key: 'icon-a',
+    name: 'Interested in this webApp?',
+    state: false,
+    msg: 'Interested in this webApp? Check the documentation.',
+  },
+];
+
 export default function Home() {
   const navItems = [
     { color: "#ff6b6b", name: "dynamic language" },
@@ -253,6 +159,9 @@ export default function Home() {
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
   const [showWelcome, setShowWelcome] = useState<boolean>(false); // Default to false now
   const [showTitor, setShowTitor] = useState<boolean>(false);
+  const [iconStates, setIconStates] = useState([false, false, false]);
+  const [mouseIn, setMouseIn] = useState<number | null>(null);
+  const [showMsg, setShowMsg] = useState('');
 
   // Component initialization with caching logic
   useEffect(() => {
@@ -305,8 +214,32 @@ export default function Home() {
         {showTitor && (
           <div className="titor fade-in">
             <div className="avatar">
-              <div className="icon-a"></div>
-              <div className="icon-b"></div>
+              <div id='icons'>
+                {avatarIcons.map((icon, idx) => (
+                  <div
+                    key={icon.key}
+                    className={icon.key}
+                    onClick={() => {
+                      const newStates = [...iconStates];
+                      newStates[idx] = !newStates[idx];
+                      setIconStates(newStates);
+                      console.log(`${icon.key} clicked`);
+                    }}
+                    onMouseEnter={() => {
+                      setMouseIn(idx);
+                      setShowMsg(icon.msg);
+                    }}
+                    onMouseLeave={() => {
+                      setMouseIn(null);
+                      setShowMsg('');
+                    }}
+                  >
+                    {mouseIn === idx && (
+                      <div className="icon-msg">{showMsg}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="logo">
               <LogoChild items={getLogoItemsByGroup('social')} />
