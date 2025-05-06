@@ -1,35 +1,36 @@
 import React, { useState, useEffect, useCallback } from 'react';
-export function QuoteCarousel() {
-    const initialQuotes = [
-        {
-            text: "Everything has a library nowadays"
-        },
-        {
-            text: "Prompts are powerful tools that accelerate thinking"
-        },
-        {
-            text: "Documennt for your later self, ... and peers"
-        },
-        {
-            text: "Don't doubt, make the mistake"
-        },
-        {
-            text: "Everything dwells, depending which way you look at it"
-        },
-        {
-            text: "The rich is not happier than the poor"
-        },
-        {
-            text: "I wish I knew this sooner, but jolly did I enjoy learning that"
-        },
-        {
-            text: "Anyone can build something now, I guess it's the mind that counts"
-        },
-        {
-            text: "I like to fix and create problems"
-        }
-    ];
 
+const initialQuotes = [
+    {
+        text: "Everything has a library nowadays"
+    },
+    {
+        text: "Prompts are powerful tools that accelerate thinking"
+    },
+    {
+        text: "Documennt for your later self, ... and peers"
+    },
+    {
+        text: "Don't doubt, make the mistake"
+    },
+    {
+        text: "Everything dwells, depending which way you look at it"
+    },
+    {
+        text: "The rich is not happier than the poor"
+    },
+    {
+        text: "I wish I knew this sooner, but jolly did I enjoy learning that"
+    },
+    {
+        text: "Anyone can build something now, I guess it's the mind that counts"
+    },
+    {
+        text: "I like to fix and create problems"
+    }
+];
+
+export function QuoteCarousel() {
     // Fisher-Yates shuffle algorithm
     const shuffleArray = (array: Array<{ text: string }>) => {
         const newArray = [...array];
@@ -49,7 +50,7 @@ export function QuoteCarousel() {
     // Shuffle quotes on initial render
     useEffect(() => {
         setQuotes(shuffleArray(initialQuotes));
-    }, [initialQuotes]);
+    }, []);
 
     const nextQuote = useCallback(() => {
         setCurrentIndex(prevIndex => (prevIndex + 1) % quotesLength);

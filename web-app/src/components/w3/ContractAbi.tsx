@@ -252,6 +252,38 @@ const ContractFunction: React.FC<{
   );
 };
 
+const filterItems = (items: SolItem[], itemType: SolItemType, searchFilters: SearchFilters): SolItem[] => {
+  if (
+    (itemType === SolItemType.READ && !searchFilters.includeRead) ||
+    (itemType === SolItemType.WRITE && !searchFilters.includeWrite) ||
+    (itemType === SolItemType.EVENT && !searchFilters.includeEvents)
+  ) {
+    return [];
+  }
+
+  return items.filter(item => {
+    const nameMatches = item.name.toLowerCase().includes(searchFilters.searchText.toLowerCase());
+
+    if (itemType === SolItemType.EVENT) {
+      return nameMatches;
+    }
+
+    let mutabilityMatches = false;
+
+    if (itemType === SolItemType.READ) {
+      mutabilityMatches =
+        (item.stateMutability === 'view' && searchFilters.stateMutability.view) ||
+        (item.stateMutability === 'pure' && searchFilters.stateMutability.pure);
+    } else if (itemType === SolItemType.WRITE) {
+      mutabilityMatches =
+        (item.stateMutability === 'nonpayable' && searchFilters.stateMutability.nonpayable) ||
+        (item.stateMutability === 'payable' && searchFilters.stateMutability.payable);
+    }
+
+    return nameMatches && mutabilityMatches;
+  });
+};
+
 const ContractABI = ({ contract }: { contract: Contract }) => {
   const [contractState, setContractState] = useState<ContractState>(() => {
     if (!contract.abi) return {};
@@ -284,44 +316,11 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
     }
   });
 
-  // Generic function to filter items based on search filters
-  const filterItems = (items: SolItem[], itemType: SolItemType): SolItem[] => {
-    if (
-      (itemType === SolItemType.READ && !searchFilters.includeRead) ||
-      (itemType === SolItemType.WRITE && !searchFilters.includeWrite) ||
-      (itemType === SolItemType.EVENT && !searchFilters.includeEvents)
-    ) {
-      return [];
-    }
-
-    return items.filter(item => {
-      const nameMatches = item.name.toLowerCase().includes(searchFilters.searchText.toLowerCase());
-
-      if (itemType === SolItemType.EVENT) {
-        return nameMatches;
-      }
-
-      let mutabilityMatches = false;
-
-      if (itemType === SolItemType.READ) {
-        mutabilityMatches =
-          (item.stateMutability === 'view' && searchFilters.stateMutability.view) ||
-          (item.stateMutability === 'pure' && searchFilters.stateMutability.pure);
-      } else if (itemType === SolItemType.WRITE) {
-        mutabilityMatches =
-          (item.stateMutability === 'nonpayable' && searchFilters.stateMutability.nonpayable) ||
-          (item.stateMutability === 'payable' && searchFilters.stateMutability.payable);
-      }
-
-      return nameMatches && mutabilityMatches;
-    });
-  };
-
   const { reads, writes, events } = parseAndCategorizeAbi(contract.abi);
 
-  const filteredReads = useMemo(() => filterItems(reads, SolItemType.READ), [reads, searchFilters, filterItems]);
-  const filteredWrites = useMemo(() => filterItems(writes, SolItemType.WRITE), [writes, searchFilters, filterItems]);
-  const filteredEvents = useMemo(() => filterItems(events, SolItemType.EVENT), [events, searchFilters, filterItems]);
+  const filteredReads = useMemo(() => filterItems(reads, SolItemType.READ, searchFilters), [reads, searchFilters]);
+  const filteredWrites = useMemo(() => filterItems(writes, SolItemType.WRITE, searchFilters), [writes, searchFilters]);
+  const filteredEvents = useMemo(() => filterItems(events, SolItemType.EVENT, searchFilters), [events, searchFilters]);
 
   const runExecute = React.useCallback(async (triggeredContract: [string, ContractState[string]]) => {
     const [functionName, funcState] = triggeredContract;

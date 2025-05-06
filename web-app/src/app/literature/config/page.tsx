@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
@@ -12,7 +12,7 @@ const items = [
     { name: 'fzf', link: 'https://github.com/junegunn/fzf' },
 ];
 
-export default function FilePage() {
+function FilePageContent() {
     const searchParams = useSearchParams();
     const selected = searchParams.get('read');
 
@@ -32,5 +32,13 @@ export default function FilePage() {
                 ))}
             </div>
         </div>
+    );
+}
+
+export default function FilePage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <FilePageContent />
+        </Suspense>
     );
 }
