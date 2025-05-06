@@ -5,7 +5,8 @@ import { usePathname } from 'next/navigation';
 
 const routes = [
     { name: 'Metana', path: '/metana' },
-    { name: 'Education', path: '/education' },
+    // { name: 'Education', path: '/education' },
+    { name: 'Literature', path: '/literature' },
     { name: 'Hobbies', path: '/hobbies' },
 ];
 

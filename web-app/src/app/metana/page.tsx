@@ -1,9 +1,10 @@
-import React from "react";
-import { DappCard } from "@/components/w3/DappCard";
 import { TypingAnimationProvider } from "@/components/TypingAnimationContext";
+import { DappCard } from "@/components/w3/DappCard";
 
 export default function MetanaPage() {
   const projects = [
+    // here add python with streamlight comming up, abi interfence , and dapp
+    // also add loveletter common!!!can
     {
       title: "My first Dapp",
       link: "metana/dapp",
@@ -49,7 +50,7 @@ export default function MetanaPage() {
               link={project.link}
               objectives={project.objectives}
               stack={project.stack}
-              index={index} // Pass index instead of delay
+              index={index}
             />
           ))}
         </div>

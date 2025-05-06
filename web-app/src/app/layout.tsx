@@ -3,7 +3,7 @@ import "./globals.css";
 import Navbar from '@/components/Navbar';
 
 export const metadata: Metadata = {
-  title: "by Vctrubio",
+  title: "http:github.com/vctrubio", //how to into a node 
   description: "clean",
 };
 

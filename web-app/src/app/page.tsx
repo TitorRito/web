@@ -227,10 +227,10 @@ export default function Home() {
 
   // Group 4: Additional Tech
   const group4: LogoItem[] = [
-    { name: 'Database', icon: FaDatabase, onClick: () => console.log('Database clicked') },
     { name: 'Python', icon: FaPython, onClick: () => console.log('Python clicked') },
     { name: 'JavaScript', icon: FaJsSquare, onClick: () => console.log('JavaScript clicked') },
     { name: 'React', icon: FaReact, onClick: () => console.log('React clicked') },
+    { name: 'Database', icon: FaDatabase, onClick: () => console.log('Database clicked') },
   ];
 
   const navItems = [
@@ -307,7 +307,7 @@ export default function Home() {
               <LogoChild items={group3} />
               <LogoChild items={group4} />
             </div>
-            <QuoteCarousel />
+            {/* <QuoteCarousel /> */}
           </div>
         )}
 
