@@ -88,6 +88,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             );
 
             setContract({
+                name: contract.name || null,
                 address: contract.address,
                 chainId: contract.chainId,
                 abi: contract.abi,

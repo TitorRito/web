@@ -15,6 +15,7 @@ export type User = {
 }
 
 export type Contract = {
+    name: string | null;
     address: string | null;
     chainId: number | null;
     abi: ethers.InterfaceAbi | null;
