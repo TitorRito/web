@@ -62,7 +62,7 @@ const ContractSearch: React.FC<ContractSearchProps> = ({
             onFiltersChange({
                 ...filters,
                 [filterKey]: {
-                    ...filters[filterKey as keyof SearchFilters],
+                    ...(filters[filterKey] as object),
                     [nestedKey]: !filters.stateMutability[nestedKey as keyof SearchFilters['stateMutability']]
                 }
             });

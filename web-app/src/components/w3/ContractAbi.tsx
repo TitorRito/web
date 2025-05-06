@@ -284,22 +284,6 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
     }
   });
 
-  useEffect(() => {
-    const triggeredContract = Object.entries(contractState).find(
-      ([_, state]) => state.trigger === true
-    );
-
-    if (triggeredContract) {
-      runExecute(triggeredContract);
-    }
-  }, [contractState]);
-
-  if (!contract.abi) {
-    return <NoAbiProvided />;
-  }
-
-  const { reads, writes, events } = parseAndCategorizeAbi(contract.abi);
-
   // Generic function to filter items based on search filters
   const filterItems = (items: SolItem[], itemType: SolItemType): SolItem[] => {
     if (
@@ -333,11 +317,13 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
     });
   };
 
-  const filteredReads = useMemo(() => filterItems(reads, SolItemType.READ), [reads, searchFilters]);
-  const filteredWrites = useMemo(() => filterItems(writes, SolItemType.WRITE), [writes, searchFilters]);
-  const filteredEvents = useMemo(() => filterItems(events, SolItemType.EVENT), [events, searchFilters]);
+  const { reads, writes, events } = parseAndCategorizeAbi(contract.abi);
 
-  const runExecute = async (triggeredContract: [string, ContractState[string]]) => {
+  const filteredReads = useMemo(() => filterItems(reads, SolItemType.READ), [reads, searchFilters, filterItems]);
+  const filteredWrites = useMemo(() => filterItems(writes, SolItemType.WRITE), [writes, searchFilters, filterItems]);
+  const filteredEvents = useMemo(() => filterItems(events, SolItemType.EVENT), [events, searchFilters, filterItems]);
+
+  const runExecute = React.useCallback(async (triggeredContract: [string, ContractState[string]]) => {
     const [functionName, funcState] = triggeredContract;
 
     console.log('Executing function:', functionName);
@@ -406,9 +392,21 @@ const ContractABI = ({ contract }: { contract: Contract }) => {
         return newState;
       });
     }
-  };
+  }, [contract.instance, setContractState]);
 
-  // window.state = contractState;
+  useEffect(() => {
+    const triggeredContract = Object.entries(contractState).find(
+      ([_, state]) => state.trigger === true
+    );
+
+    if (triggeredContract) {
+      runExecute(triggeredContract);
+    }
+  }, [contractState, runExecute]);
+
+  if (!contract.abi) {
+    return <NoAbiProvided />;
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-900 rounded-lg shadow-lg text-gray-200">

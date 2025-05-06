@@ -49,7 +49,7 @@ export function QuoteCarousel() {
     // Shuffle quotes on initial render
     useEffect(() => {
         setQuotes(shuffleArray(initialQuotes));
-    }, []);
+    }, [initialQuotes]);
 
     const nextQuote = useCallback(() => {
         setCurrentIndex(prevIndex => (prevIndex + 1) % quotesLength);

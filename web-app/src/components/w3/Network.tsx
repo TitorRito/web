@@ -9,7 +9,7 @@ interface NetworkDisplayProps {
     subtitle?: React.ReactNode;
 }
 
-const NetworkDisplayComponent: React.FC<NetworkDisplayProps> = ({ title, icon, content, subtitle, onClick }) => {
+const NetworkDisplayComponent: React.FC<NetworkDisplayProps> = ({ title, icon, content, subtitle }) => {
     return (
         <div className="space-y-1.5 relative">
             <div className="flex items-center text-xs text-gray-400 font-medium">
@@ -18,7 +18,6 @@ const NetworkDisplayComponent: React.FC<NetworkDisplayProps> = ({ title, icon, c
             </div>
             <div
                 className="bg-gray-800/70 px-3 py-2 rounded-lg text-gray-200 h-9 font-mono flex items-center justify-between hover:bg-gray-700/70 transition-colors cursor-pointer"
-                onClick={onClick}
             >
                 <div className="truncate mr-2">{content}</div>
                 {subtitle && <div className="text-xs text-gray-400 flex-shrink-0">{subtitle}</div>}
