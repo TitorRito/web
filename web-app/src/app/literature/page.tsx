@@ -156,11 +156,15 @@ function MyLibrary({ items }: { items: { title: string, children: { name: string
 }
 
 export default function LiteraturePage() {
-
+  // Remove flex-col and justify-center from the wrapper, use block and full height for snapping
   return (
-    <div className="w-screen min-h-screen flex flex-col justify-center overflow-y-scroll snap-y snap-mandatory">
-      <Quote />
-      <MyLibrary items={librarySections} />
+    <div className="w-screen min-h-screen h-screen overflow-y-scroll snap-y snap-mandatory">
+      <div className="h-screen snap-start">
+        <Quote />
+      </div>
+      <div className="h-screen snap-start">
+        <MyLibrary items={librarySections} />
+      </div>
     </div>
   );
 }
