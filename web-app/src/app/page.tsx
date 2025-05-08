@@ -33,11 +33,11 @@ const logoItems: LogoItem[] = [
   { name: 'Postgres', icon: () => <Image src="/postgres.svg" alt="Postgres" width={24} height={24} />, linkUrl: 'https://www.postgresql.org/', group: 'communication' },
   { name: 'HTTP', icon: FiWind, linkUrl: 'https://developer.mozilla.org/en-US/docs/Web/HTTP', group: 'communication' },
   { name: 'API', icon: FiWind, linkUrl: 'https://en.wikipedia.org/wiki/API', group: 'communication' },
-  { name: 'Node.js', icon: () => <Image src="/nodejs.svg" alt="Node.js" width={24} height={24} />, linkUrl: 'https://nodejs.org/', group: 'communication' },
+  { name: 'Docker', icon: () => <Image src="/docker.svg" alt="Docker" width={24} height={24} />, linkUrl: 'https://www.docker.com/', group: 'communication' },
   // Devtools
   { name: 'Bash', icon: () => <Image src="/bash.svg" alt="Bash" width={24} height={24} />, linkUrl: 'https://www.gnu.org/software/bash/', group: 'devtools' },
   { name: 'C', icon: () => <Image src="/c.svg" alt="C" width={24} height={24} />, linkUrl: 'https://en.wikipedia.org/wiki/C_(programming_language)', group: 'devtools' },
-  { name: 'Docker', icon: () => <Image src="/docker.svg" alt="Docker" width={24} height={24} />, linkUrl: 'https://www.docker.com/', group: 'devtools' },
+  { name: 'Git', icon: () => <Image src="/git.svg" alt="Git" width={24} height={24} />, linkUrl: 'https://git-scm.com/', group: 'devtools' },
   { name: 'Vim', icon: () => <Image src="/vim.svg" alt="Vim" width={24} height={24} />, linkUrl: 'https://www.vim.org/', group: 'devtools' },
   // Tech
   { name: 'Python', icon: FaPython, linkUrl: 'https://www.python.org/', group: 'tech' },

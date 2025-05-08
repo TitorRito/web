@@ -4,6 +4,7 @@ import '../../css/wireframe.css';
 
 export default function StackPage() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [activeBranch, setActiveBranch] = useState<number | null>(null);
 
   const seeds = [
     {
@@ -38,6 +39,10 @@ export default function StackPage() {
     }
   ];
 
+  const toggleBranch = (index: number) => {
+    setActiveBranch(activeBranch === index ? null : index);
+  };
+
   return (
     <div className="stack-container">
       <div className="master-mind">
@@ -51,11 +56,15 @@ export default function StackPage() {
           {seeds.map((seed, index) => (
             <div 
               key={index}
-              className={`seed-item ${seed.position} ${activeIndex === index ? 'active' : ''}`}
+              className={`seed-item ${seed.position} ${activeIndex === index ? 'active' : ''} ${activeBranch === index ? 'branch-active' : ''}`}
               onMouseEnter={() => setActiveIndex(index)}
               onMouseLeave={() => setActiveIndex(null)}
+              onClick={() => toggleBranch(index)}
             >
               <div className="connection-line"></div>
+              <div className="branch branch-left"></div>
+              <div className="branch branch-right"></div>
+              <div className="branch branch-middle"></div>
               <div className="seed-content">
                 <h3>{seed.title}</h3>
                 <div className="seed-details">

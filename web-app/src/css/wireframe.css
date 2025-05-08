@@ -5,13 +5,18 @@
   align-items: center;
   padding: 20px;
   background-color: #f8f9fa;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Remove debug borders */
+  border: none;
+  > * {
+    border: none;
+  }
 }
 
 .master-mind {
   position: relative;
-  width: 900px;
-  height: 700px;
+  width: 1100px; /* Increased from 900px */
+  height: 800px; /* Increased from 700px */
   margin: 0 auto;
 }
 
@@ -86,34 +91,41 @@
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* Wider top and bottom seeds */
+.seed-item.top,
+.seed-item.bottom {
+  width: 280px;
+}
+
+/* Adjust positions for more spacing with larger mastermind */
 .seed-item.top {
-  top: 0;
+  top: 10px; /* Moved up slightly for more vertical space */
   left: 50%;
   transform: translateX(-50%);
 }
 
 .seed-item.right-top {
-  top: 20%;
-  right: 0;
+  top: 20%; /* Moved higher for better spacing */
+  right: 20px; /* Pushed further out */
 }
 
 .seed-item.right-bottom {
-  bottom: 20%;
-  right: 0;
+  bottom: 20%; /* Moved higher for better spacing */
+  right: 20px; /* Pushed further out */
 }
 
 .seed-item.left-bottom {
-  bottom: 20%;
-  left: 0;
+  bottom: 20%; /* Moved higher for better spacing */
+  left: 20px; /* Pushed further out */
 }
 
 .seed-item.left-top {
-  top: 20%;
-  left: 0;
+  top: 20%; /* Moved higher for better spacing */
+  left: 20px; /* Pushed further out */
 }
 
 .seed-item.bottom {
-  bottom: 0;
+  bottom: 10px; /* Moved down slightly for more vertical space */
   left: 50%;
   transform: translateX(-50%);
 }
@@ -155,24 +167,178 @@
   transition: all 0.3s ease;
 }
 
-/* Connection lines positioning and styling */
+/* Connection lines positioning and styling for larger distances */
 .top .connection-line {
   width: 2px;
-  height: 100px;
-  bottom: -100px;
+  height: 160px; /* Increased from 140px for more spacing */
+  bottom: -160px;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .bottom .connection-line {
   width: 2px;
-  height: 100px;
-  top: -100px;
+  height: 160px; /* Increased from 140px for more spacing */
+  top: -160px;
   left: 50%;
   transform: translateX(-50%);
 }
 
-.right-top .connection-line, .right-bottom .connection-line {
+.right-top .connection-line,
+.right-bottom .connection-line {
+  width: 180px; /* Increased from 160px for more spacing */
+  height: 2px;
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
+}
+
+.left-top .connection-line,
+.left-bottom .connection-line {
+  width: 180px; /* Increased from 160px for more spacing */
+  height: 2px;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+}
+
+/* Branch styling */
+.branch {
+  position: absolute;
+  background-color: #cbd5e0;
+  transition: all 0.3s ease;
+}
+
+/* Branch positioning based on parent connection */
+.top .branch-left {
+  width: 1px;
+  height: 30px;
+  bottom: -30px;
+  left: -5px;
+  transform: rotate(-20deg);
+}
+
+.top .branch-right {
+  width: 1px;
+  height: 30px;
+  bottom: -30px;
+  right: -5px;
+  transform: rotate(20deg);
+}
+
+.top .branch-middle {
+  width: 1px;
+  height: 20px;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bottom .branch-left {
+  width: 1px;
+  height: 30px;
+  top: -30px;
+  left: -5px;
+  transform: rotate(20deg);
+}
+
+.bottom .branch-right {
+  width: 1px;
+  height: 30px;
+  top: -30px;
+  right: -5px;
+  transform: rotate(-20deg);
+}
+
+.bottom .branch-middle {
+  width: 1px;
+  height: 20px;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.right-top .branch-left,
+.right-bottom .branch-left {
+  height: 1px;
+  width: 30px;
+  right: 100%;
+  top: -5px;
+  transform: rotate(-20deg);
+}
+
+.right-top .branch-right,
+.right-bottom .branch-right {
+  height: 1px;
+  width: 30px;
+  right: 100%;
+  bottom: -5px;
+  transform: rotate(20deg);
+}
+
+/* Adjust branch positions for new connection lengths */
+.right-top .branch-middle,
+.right-bottom .branch-middle {
+  height: 1px;
+  width: 30px;
+  right: 205%; /* Adjusted for longer connection lines */
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.left-top .branch-left,
+.left-bottom .branch-left {
+  height: 1px;
+  width: 30px;
+  left: 100%;
+  top: -5px;
+  transform: rotate(20deg);
+}
+
+.left-top .branch-right,
+.left-bottom .branch-right {
+  height: 1px;
+  width: 30px;
+  left: 100%;
+  bottom: -5px;
+  transform: rotate(-20deg);
+}
+
+.left-top .branch-middle,
+.left-bottom .branch-middle {
+  height: 1px;
+  width: 30px;
+  left: 205%; /* Adjusted for longer connection lines */
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Active branch styling */
+.seed-item.branch-active .connection-line,
+.seed-item.branch-active .branch {
+  background-color: #4299e1;
+  box-shadow: 0 0 8px rgba(66, 153, 225, 0.6);
+}
+
+/* Pulse effect for active branches */
+@keyframes branchPulse {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  .bottom .connection-line {
+    width: 2px;
+    height: 100px;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.right-top .connection-line,
+.right-bottom .connection-line {
   width: 100px;
   height: 2px;
   top: 50%;
@@ -180,7 +346,8 @@
   transform: translateY(-50%);
 }
 
-.left-top .connection-line, .left-bottom .connection-line {
+.left-top .connection-line,
+.left-bottom .connection-line {
   width: 100px;
   height: 2px;
   top: 50%;
@@ -193,18 +360,53 @@
   background-color: rgba(66, 153, 225, 0.7);
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments for larger mastermind */
+@media (max-width: 1200px) {
+  .master-mind {
+    width: 900px;
+    height: 700px;
+  }
+  
+  /* Adjust connection lines for smaller container */
+  .top .connection-line {
+    height: 135px;
+    bottom: -135px;
+  }
+  
+  .bottom .connection-line {
+    height: 135px;
+    top: -135px;
+  }
+  
+  .right-top .connection-line,
+  .right-bottom .connection-line,
+  .left-top .connection-line,
+  .left-bottom .connection-line {
+    width: 150px;
+  }
+  
+  .right-top .branch-middle,
+  .right-bottom .branch-middle {
+    right: 175%;
+  }
+  
+  .left-top .branch-middle,
+  .left-bottom .branch-middle {
+    left: 175%;
+  }
+}
+
 @media (max-width: 992px) {
   .master-mind {
     width: 700px;
     height: 600px;
   }
-  
+
   .brain-center {
     width: 240px;
     height: 240px;
   }
-  
+
   .seed-item {
     width: 180px;
   }
@@ -218,7 +420,7 @@
     flex-direction: column;
     align-items: center;
   }
-  
+
   .brain-center {
     position: relative;
     width: 220px;
@@ -228,7 +430,7 @@
     top: auto;
     left: auto;
   }
-  
+
   .wireframe-container {
     position: relative;
     display: flex;
@@ -236,7 +438,7 @@
     gap: 20px;
     width: 100%;
   }
-  
+
   .seed-item {
     position: relative;
     width: 100%;
@@ -248,8 +450,12 @@
     bottom: auto;
     transform: none;
   }
-  
+
   .connection-line {
+    display: none;
+  }
+
+  .branch {
     display: none;
   }
 }
