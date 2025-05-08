@@ -10,6 +10,7 @@ import { SiGmail } from "react-icons/si";
 
 import Image from 'next/image';
 import { FiWind } from "react-icons/fi";
+import Link from 'next/link';
 
 // Define LogoItem type with group identity
 type LogoGroup = 'social' | 'communication' | 'devtools' | 'tech';
@@ -147,12 +148,12 @@ const avatarIcons = [
 
 export default function Home() {
   const navItems = [
-    { color: "#ff6b6b", name: "dynamic language" },
-    { color: "#4dabf7", name: "school and projects" },
-    { color: "#ffa94d", name: "my full stack tech stack" },
-    { color: "#999999", name: "subscriptions and recommendations" },
-    { color: "#9775fa", name: "blogs, archives, and aspirations" },
-    { color: "#38d9a9", name: "contact me" }
+    { href: "/languages", color: "#ff6b6b", name: "dynamic language" },
+    { href: "/education", color: "#4dabf7", name: "school and projects" },
+    { href: "/stack", color: "#ffa94d", name: "my full stack tech stack" },
+    { href: "/subscriptions", color: "#999999", name: "subscriptions and recommendations" },
+    { href: "/blogs", color: "#9775fa", name: "blogs, archives, and aspirations" },
+    { href: "/about", color: "#38d9a9", name: "about" }
   ];
 
   const [isLoading, setIsLoading] = useState(true);
@@ -254,25 +255,25 @@ export default function Home() {
         <div className="rito">
           <div className="nav-container">
             {navItems.map((item, index) => (
-              <div
-                key={index}
-                className={`
-                  nav-item 
-                  ${hoveredItem === index ? 'nav-item-active' : ''} 
-                  nav-item-animate
-                  ${index === navItems.length - 1 ? 'nav-item-special' : ''}
-                `}
-                style={{
-                  color: item.color,
-                  borderBottomColor: item.color,
-                  animationDelay: `${index * 0.2}s`
-                }}
-                onMouseEnter={() => setHoveredItem(index)}
-                onMouseLeave={() => setHoveredItem(null)}
-                onClick={() => handleNavClick(item)}
-              >
-                {item.name}
-              </div>
+              <Link href={item.href || "#"} key={index}>
+                <div
+                  className={`
+                    nav-item 
+                    ${hoveredItem === index ? 'nav-item-active' : ''} 
+                    nav-item-animate
+                    ${index === navItems.length - 1 ? 'nav-item-special' : ''}
+                  `}
+                  style={{
+                    color: item.color,
+                    borderBottomColor: item.color,
+                    animationDelay: `${index * 0.2}s`
+                  }}
+                  onMouseEnter={() => setHoveredItem(index)}
+                  onMouseLeave={() => setHoveredItem(null)}
+                >
+                  {item.name}
+                </div>
+              </Link>
             ))}
           </div>
         </div>

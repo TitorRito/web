@@ -1,0 +1,255 @@
+.stack-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.master-mind {
+  position: relative;
+  width: 900px;
+  height: 700px;
+  margin: 0 auto;
+}
+
+.brain-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+  z-index: 10;
+  transition: all 0.3s ease-in-out;
+}
+
+.brain-center h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #2d3748;
+  font-weight: 700;
+}
+
+.brain-center p {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #718096;
+}
+
+.pulse-circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: rgba(66, 153, 225, 0.1);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  70% {
+    transform: scale(1.1);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
+.wireframe-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.seed-item {
+  position: absolute;
+  width: 220px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.seed-item.top {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.seed-item.right-top {
+  top: 20%;
+  right: 0;
+}
+
+.seed-item.right-bottom {
+  bottom: 20%;
+  right: 0;
+}
+
+.seed-item.left-bottom {
+  bottom: 20%;
+  left: 0;
+}
+
+.seed-item.left-top {
+  top: 20%;
+  left: 0;
+}
+
+.seed-item.bottom {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.seed-content {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #edf2f7;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.seed-item:hover .seed-content,
+.seed-item.active .seed-content {
+  box-shadow: 0 8px 30px rgba(66, 153, 225, 0.2);
+  transform: translateY(-5px);
+  border-color: rgba(66, 153, 225, 0.5);
+}
+
+.seed-item h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+  color: #2d3748;
+}
+
+.seed-details p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #718096;
+  line-height: 1.5;
+}
+
+.connection-line {
+  position: absolute;
+  background-color: #cbd5e0;
+  z-index: -1;
+  transition: all 0.3s ease;
+}
+
+/* Connection lines positioning and styling */
+.top .connection-line {
+  width: 2px;
+  height: 100px;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bottom .connection-line {
+  width: 2px;
+  height: 100px;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.right-top .connection-line, .right-bottom .connection-line {
+  width: 100px;
+  height: 2px;
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
+}
+
+.left-top .connection-line, .left-bottom .connection-line {
+  width: 100px;
+  height: 2px;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+}
+
+.seed-item:hover .connection-line,
+.seed-item.active .connection-line {
+  background-color: rgba(66, 153, 225, 0.7);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .master-mind {
+    width: 700px;
+    height: 600px;
+  }
+  
+  .brain-center {
+    width: 240px;
+    height: 240px;
+  }
+  
+  .seed-item {
+    width: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .master-mind {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .brain-center {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin-bottom: 40px;
+    transform: none;
+    top: auto;
+    left: auto;
+  }
+  
+  .wireframe-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+  
+  .seed-item {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    transform: none;
+  }
+  
+  .connection-line {
+    display: none;
+  }
+}

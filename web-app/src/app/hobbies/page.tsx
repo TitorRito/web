@@ -2,12 +2,10 @@
 import { useRef } from 'react';
 
 const content = [
-  { name: 'videos', onClick: () => console.log('Clicked videos') },
-  { name: 'content', onClick: () => console.log('Clicked content') },
-  { name: 'social', onClick: () => console.log('Clicked social') },
+  { name: 'storytelling', onClick: () => console.log('Clicked social') },
   { name: 'kitetomania', onClick: () => console.log('Clicked kitetomania') },
   { name: 'programming', onClick: () => console.log('Clicked programming') },
-  { name: 'education', onClick: () => console.log('Clicked education') },
+  { name: 'diplomas', onClick: () => console.log('Clicked education') },
 ];
 
 export default function HobbiesPage() {
