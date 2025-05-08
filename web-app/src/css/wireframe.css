@@ -35,6 +35,26 @@
   position: relative;
 }
 
+.master-mind::after {
+  content: "";
+  position: absolute;
+  width: 450px;
+  height: 450px;
+  border: 1px solid rgba(221, 168, 83, 0.1);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.connections-visible .master-mind::after {
+  opacity: 1;
+}
+
 .brain-center {
   position: absolute;
   top: 50%;
@@ -43,8 +63,8 @@
   text-align: center;
   padding: 30px;
   border-radius: 50%;
-  width: 270px;
-  height: 270px;
+  width: 340px;  /* Increased from 270px */
+  height: 340px;  /* Increased from 270px */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -65,8 +85,10 @@
 
 .brain-center h1 {
   margin: 0;
-  font-size: 52px;
+  font-size: 42px;  /* Changed from 52px */
   font-weight: 600;
+  font-family: "Bytesized", sans-serif;  /* Added Bytesized font */
+  letter-spacing: 1px;
   background: linear-gradient(to right, #dda853, #f0cf96);
   -webkit-background-clip: text;
   background-clip: text;
@@ -74,10 +96,20 @@
   text-shadow: 0px 2px 4px rgba(0,0,0,0.3);
 }
 
-.brain-center p {
+.brain-center .catchphrase {
   margin: 12px 0 0;
-  font-size: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.brain-center .catchphrase-line {
+  font-size: 1.4rem;
   opacity: 0.85;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: 300;
+  letter-spacing: 0.8px;
 }
 
 .pulse-circle {
@@ -144,8 +176,8 @@
 .wireframe-container::before {
   content: "";
   position: absolute;
-  width: 500px;
-  height: 500px;
+  width: 600px; /* Increased from 500px */
+  height: 600px; /* Increased from 500px */
   border: 1px dashed rgba(221, 168, 83, 0.2);
   border-radius: 50%;
   top: 50%;
@@ -155,14 +187,15 @@
   z-index: 1;
   opacity: 0;
   transition: opacity 1s ease;
+  box-shadow: 0 0 0 1px rgba(221, 168, 83, 0.05);
 }
 
 /* The outer circle */
 .wireframe-container::after {
   content: "";
   position: absolute;
-  width: 800px;
-  height: 800px;
+  width: 900px; /* Increased from 800px */
+  height: 900px; /* Increased from 800px */
   border: 1px dotted rgba(221, 168, 83, 0.15);
   border-radius: 50%;
   top: 50%;
@@ -282,14 +315,15 @@
   width: 0;
   transition: width 1.5s ease, opacity 1.5s ease;
   opacity: 0;
+  z-index: 2;
 }
 
 .connections-visible .connection-line {
   opacity: 0.6;
-  width: 80px;
+  width: 120px; /* Increased from 80px for longer connections */
 }
 
-/* Specific connection line positioning based on seed position */
+/* Primary connection lines - direct to center */
 .top .connection-line {
   top: 100%;
   left: 50%;
@@ -304,26 +338,136 @@
   transform-origin: bottom;
 }
 
-.right-top .connection-line, 
-.right-bottom .connection-line {
+.right-top .connection-line {
   top: 50%;
   right: 100%;
-  transform: translateY(-50%);
+  transform: translateY(-50%) rotate(-15deg);
   transform-origin: right;
 }
 
-.left-top .connection-line,
-.left-bottom .connection-line {
+.right-bottom .connection-line {
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%) rotate(15deg);
+  transform-origin: right;
+}
+
+.left-top .connection-line {
   top: 50%;
   left: 100%;
-  transform: translateY(-50%) rotate(180deg);
+  transform: translateY(-50%) rotate(195deg);
   transform-origin: left;
 }
 
-.seed-item:hover .connection-line,
-.seed-item.active .connection-line {
-  opacity: 0.9;
-  box-shadow: 0 0 15px rgba(221, 168, 83, 0.4);
+.left-bottom .connection-line {
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%) rotate(165deg);
+  transform-origin: left;
+}
+
+/* Add secondary connection lines */
+.seed-item::before,
+.seed-item::after {
+  content: "";
+  position: absolute;
+  background: linear-gradient(to right, rgba(221, 168, 83, 0.05), rgba(221, 168, 83, 0.2));
+  height: 1px;
+  width: 0;
+  opacity: 0;
+  transition: width 2s ease, opacity 2s ease;
+  z-index: 1;
+}
+
+.connections-visible .seed-item::before,
+.connections-visible .seed-item::after {
+  opacity: 0.4;
+  width: 180px;
+}
+
+/* Secondary connection positioning */
+.top::before {
+  bottom: -80px;
+  left: 25%;
+  transform: rotate(135deg);
+  transform-origin: top left;
+}
+
+.top::after {
+  bottom: -80px;
+  right: 25%;
+  transform: rotate(-135deg);
+  transform-origin: top right;
+}
+
+.bottom::before {
+  top: -80px;
+  left: 25%;
+  transform: rotate(-135deg);
+  transform-origin: bottom left;
+}
+
+.bottom::after {
+  top: -80px;
+  right: 25%;
+  transform: rotate(135deg);
+  transform-origin: bottom right;
+}
+
+.right-top::before {
+  bottom: 30%;
+  right: 100%;
+  transform: rotate(30deg);
+  transform-origin: right;
+}
+
+.right-top::after {
+  top: 100%;
+  right: 30%;
+  transform: rotate(-30deg);
+  transform-origin: top right;
+}
+
+.right-bottom::before {
+  top: 30%;
+  right: 100%;
+  transform: rotate(-30deg);
+  transform-origin: right;
+}
+
+.right-bottom::after {
+  bottom: 100%;
+  right: 30%;
+  transform: rotate(30deg);
+  transform-origin: bottom right;
+}
+
+.left-top::before {
+  bottom: 30%;
+  left: 100%;
+  transform: rotate(-30deg);
+  transform-origin: left;
+}
+
+.left-top::after {
+  top: 100%;
+  left: 30%;
+  transform: rotate(30deg);
+  transform-origin: top left;
+}
+
+.left-bottom::before {
+  top: 30%;
+  left: 100%;
+  transform: rotate(30deg);
+  transform-origin: left;
+}
+
+.left-bottom::after {
+  bottom: 100%;
+  left: 30%;
+  transform: rotate(-30deg);
+  transform-origin: bottom left;
 }
 
 /* Branch lines */
@@ -494,6 +638,8 @@
     left: 0;
     transform: none;
     margin: 30px auto;
+    width: 280px; /* Adjusted for mobile */
+    height: 280px; /* Adjusted for mobile */
   }
 
   .wireframe-container {

@@ -91,7 +91,7 @@ export default function StackPage() {
       <div className="master-mind">
         <div className="brain-center">
           <div className="pulse-circle"></div>
-          <h1 className="developer-title">Full Stack Developer</h1>
+          <h1>Full Stack Developer</h1>
           <div className="catchphrase">
             <div className="catchphrase-line">the right tool</div>
             <div className="catchphrase-line">for the right job</div>
