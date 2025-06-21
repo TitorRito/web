@@ -5,9 +5,8 @@ import { usePathname } from 'next/navigation';
 
 const routes = [
     { name: 'Metana', path: '/metana' },
-    // { name: 'Education', path: '/education' },
-    { name: 'Literature', path: '/literature' },
-    { name: 'Hobbies', path: '/hobbies' },
+    { name: 'Blog', path: '/blog' },
+    { name: 'Contact', path: '/contact' },
 ];
 
 export default function Navbar() {
@@ -26,7 +25,7 @@ export default function Navbar() {
             <div>
             {!isHomePage && (
                 <Link href="/">
-                <div id='logo'>TR</div>
+                <div id='logo'>donkey drills</div>
                 </Link>
             )}
             </div>

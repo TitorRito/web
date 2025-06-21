@@ -4,50 +4,65 @@ import { IconType } from 'react-icons';
 import {
   FaGithub, FaLinkedin, FaEthereum,
   FaPython, FaJsSquare, FaReact, FaPhoneSquare,
-  FaMapMarkerAlt, FaLaptop, FaEthereum as FaWeb3
+  FaMapMarkerAlt, FaLaptop, FaEthereum as FaWeb3,
+  FaDatabase, FaServer, FaCode, FaTerminal,
+  FaGitAlt, FaVimeo, FaDocker, FaLinux, FaNodeJs,
+  FaHammer, FaPlus
 } from 'react-icons/fa';
-import { SiGmail } from "react-icons/si";
-
-import Image from 'next/image';
+import { SiGmail, SiPostgresql, SiGnubash, SiVim, SiTypescript, SiTailwindcss, SiCplusplus } from "react-icons/si";
 import { FiWind } from "react-icons/fi";
 import Link from 'next/link';
 
 // Define LogoItem type with group identity
-type LogoGroup = 'social' | 'communication' | 'devtools' | 'tech';
+type LogoGroup = 'social' | 'devtools' | 'languages' | 'frameworks' | 'tools';
 
 interface LogoItem {
   name: string;
-  icon: IconType | string;
+  icon: IconType;
   linkUrl: string;
   group: LogoGroup;
 }
 
 // All logo items in a single array with group identity
 const logoItems: LogoItem[] = [
-  // Social
-  { name: 'GitHub', icon: FaGithub, linkUrl: 'https://github.com/', group: 'social' },
-  { name: 'LinkedIn', icon: FaLinkedin, linkUrl: 'https://linkedin.com/', group: 'social' },
-  { name: 'Email', icon: SiGmail, linkUrl: 'mailto:someone@example.com', group: 'social' },
-  { name: 'Call', icon: FaPhoneSquare, linkUrl: 'tel:+123456789', group: 'social' },
-  // Communication
-  { name: 'Postgres', icon: () => <Image src="/postgres.svg" alt="Postgres" width={24} height={24} />, linkUrl: 'https://www.postgresql.org/', group: 'communication' },
-  { name: 'HTTP', icon: FiWind, linkUrl: 'https://developer.mozilla.org/en-US/docs/Web/HTTP', group: 'communication' },
-  { name: 'API', icon: FiWind, linkUrl: 'https://en.wikipedia.org/wiki/API', group: 'communication' },
-  { name: 'Docker', icon: () => <Image src="/docker.svg" alt="Docker" width={24} height={24} />, linkUrl: 'https://www.docker.com/', group: 'communication' },
-  // Devtools
-  { name: 'Bash', icon: () => <Image src="/bash.svg" alt="Bash" width={24} height={24} />, linkUrl: 'https://www.gnu.org/software/bash/', group: 'devtools' },
-  { name: 'C', icon: () => <Image src="/c.svg" alt="C" width={24} height={24} />, linkUrl: 'https://en.wikipedia.org/wiki/C_(programming_language)', group: 'devtools' },
-  { name: 'Git', icon: () => <Image src="/git.svg" alt="Git" width={24} height={24} />, linkUrl: 'https://git-scm.com/', group: 'devtools' },
-  { name: 'Vim', icon: () => <Image src="/vim.svg" alt="Vim" width={24} height={24} />, linkUrl: 'https://www.vim.org/', group: 'devtools' },
-  // Tech
-  { name: 'Python', icon: FaPython, linkUrl: 'https://www.python.org/', group: 'tech' },
-  { name: 'JavaScript', icon: FaJsSquare, linkUrl: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript', group: 'tech' },
-  { name: 'React', icon: FaReact, linkUrl: 'https://react.dev/', group: 'tech' },
-  { name: 'Solidity', icon: FaEthereum, linkUrl: 'https://docs.soliditylang.org/', group: 'tech' },
+  // Social - github, linkedin, email, call stay
+  { name: 'GitHub', icon: FaGithub, linkUrl: 'https://www.github.com/vctrubio', group: 'social' },
+  { name: 'LinkedIn', icon: FaLinkedin, linkUrl: 'https://www.linkedin.com/in/vctrubio/', group: 'social' },
+  { name: 'Email', icon: SiGmail, linkUrl: 'mailto:vctrubioe@vctrubio.com', group: 'social' },
+  { name: 'Call', icon: FaPhoneSquare, linkUrl: 'tel:++34686516248', group: 'social' },
+
+
+  // Devtools - git vim bash linux
+  { name: 'Git', icon: FaGitAlt, linkUrl: 'https://git-scm.com/', group: 'devtools' },
+  { name: 'Vim', icon: SiVim, linkUrl: 'https://www.vim.org/', group: 'devtools' },
+  { name: 'Bash', icon: SiGnubash, linkUrl: 'https://www.gnu.org/software/bash/', group: 'devtools' },
+  { name: 'Linux', icon: FaLinux, linkUrl: 'https://www.linux.org/', group: 'devtools' },
+  // Languages - c c++ typescript javascript
+  { name: 'C', icon: SiCplusplus, linkUrl: 'https://en.wikipedia.org/wiki/C_(programming_language)', group: 'languages' },
+  { name: 'C++', icon: SiCplusplus, linkUrl: 'https://en.wikipedia.org/wiki/C%2B%2B', group: 'languages' },
+  { name: 'TypeScript', icon: SiTypescript, linkUrl: 'https://www.typescriptlang.org/', group: 'languages' },
+  { name: 'JavaScript', icon: FaJsSquare, linkUrl: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript', group: 'languages' },
+  // Frameworks - react tailwind docker postgres  
+  { name: 'React', icon: FaReact, linkUrl: 'https://react.dev/', group: 'frameworks' },
+  { name: 'Postgres', icon: SiPostgresql, linkUrl: 'https://www.postgresql.org/', group: 'frameworks' },
+  { name: 'Tailwind', icon: SiTailwindcss, linkUrl: 'https://tailwindcss.com/', group: 'frameworks' },
+  { name: 'Docker', icon: FaDocker, linkUrl: 'https://www.docker.com/', group: 'frameworks' },
+  // Tools - solidity hardhat python node
+  { name: 'Solidity', icon: FaEthereum, linkUrl: 'https://docs.soliditylang.org/', group: 'tools' },
+  { name: 'Hardhat', icon: FaHammer, linkUrl: 'https://hardhat.org/', group: 'tools' },
+  { name: 'Python', icon: FaPython, linkUrl: 'https://www.python.org/', group: 'tools' },
+  { name: 'Node.js', icon: FaNodeJs, linkUrl: 'https://nodejs.org/', group: 'tools' },
 ];
 
 // Helper to get items by group
 const getLogoItemsByGroup = (group: LogoGroup) => logoItems.filter(item => item.group === group);
+
+// Handle item click function
+const handleItemClick = (item: LogoItem) => {
+  console.log('click bait');
+  // Comment out the default link behavior
+  // window.open(item.linkUrl, '_blank');
+};
 
 // Updated LogoChild to support grid position and tooltip placement
 function LogoChild({ items, gridPositions }: { items: LogoItem[], gridPositions?: [number, number][] }) {
@@ -56,12 +71,8 @@ function LogoChild({ items, gridPositions }: { items: LogoItem[], gridPositions?
     <div className="logo-child">
       {items.map((item, index) => (
         <div key={index} className="logo-item-with-tooltip" style={{ position: 'relative', display: 'inline-block' }}>
-          <div onClick={() => window.open(item.linkUrl, '_blank')} title={item.name}>
-            {typeof item.icon === 'string' ? (
-              <Image src={item.icon} alt={item.name} width={24} height={24} />
-            ) : (
-              <item.icon />
-            )}
+          <div onClick={() => handleItemClick(item)} title={item.name}>
+            <item.icon />
           </div>
         </div>
       ))}
@@ -148,12 +159,12 @@ const avatarIcons = [
 
 export default function Home() {
   const navItems = [
-    { href: "/languages", color: "#ff6b6b", name: "dynamic language" },
-    { href: "/education", color: "#4dabf7", name: "school and projects" },
-    { href: "/stack", color: "#ffa94d", name: "my full stack tech stack" },
-    { href: "/subscriptions", color: "#999999", name: "subscriptions and recommendations" },
-    { href: "/blogs", color: "#9775fa", name: "blogs, archives, and aspirations" },
-    { href: "/about", color: "#38d9a9", name: "about" }
+    { href: "/", color: "#ff6b6b", name: "dynamic language" },
+    { href: "/", color: "#4dabf7", name: "school and projects" },
+    { href: "/", color: "#ffa94d", name: "my full stack tech stack" },
+    { href: "/", color: "#999999", name: "subscriptions and recommendations" },
+    { href: "/", color: "#9775fa", name: "blogs, archives, and aspirations" },
+    { href: "/", color: "#38d9a9", name: "about" }
   ];
 
   const [isLoading, setIsLoading] = useState(true);
@@ -242,12 +253,15 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            <div className="logo">
+
+            {/* <div className="logo">
               <LogoChild items={getLogoItemsByGroup('social')} />
-              <LogoChild items={getLogoItemsByGroup('communication')} />
               <LogoChild items={getLogoItemsByGroup('devtools')} />
-              <LogoChild items={getLogoItemsByGroup('tech')} />
-            </div>
+              <LogoChild items={getLogoItemsByGroup('languages')} />
+              <LogoChild items={getLogoItemsByGroup('frameworks')} />
+              <LogoChild items={getLogoItemsByGroup('tools')} />
+            </div> */}
+
             {/* <QuoteCarousel /> */}
           </div>
         )}
@@ -266,7 +280,7 @@ export default function Home() {
                   style={{
                     color: item.color,
                     borderBottomColor: item.color,
-                    animationDelay: `${index * 0.2}s`
+                    animationDelay: `${index * 0.8}s`
                   }}
                   onMouseEnter={() => setHoveredItem(index)}
                   onMouseLeave={() => setHoveredItem(null)}

@@ -44,9 +44,9 @@ body {
   font-size: 16px;
 }
 
-span {
-  /* color: red; */
-}
+/* span {
+  color: red;
+} */
 
 button {
   border: 1px solid var(--foreground);
@@ -354,8 +354,8 @@ textarea:focus {
 
 .logo {
   display: grid;
-  width: 402px;
-  grid-template-columns: repeat(4, 1fr);
+  width: 500px;
+  grid-template-columns: repeat(5, 1fr);
   justify-items: center;
   align-items: center;
 
